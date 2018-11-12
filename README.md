@@ -1,6 +1,6 @@
 # Sargonsays English to Assyrian Dictionary web frontend #
 
-English to Assyrian dictionary [*sargonsays*](sargonsays.com) , made with ReactJS and ParseReact
+English to Assyrian dictionary [*sargonsays.com*](http://sargonsays.com) , made with ReactJS and ParseReact
 
 ## Setup
 
@@ -8,7 +8,7 @@ English to Assyrian dictionary [*sargonsays*](sargonsays.com) , made with ReactJ
 ```
 npm install
 ```
-### Create *.env* file with the following variables
+### Create *.env* file with the following variables or set an environment variable
 
 DB_CONN_STRING=mongodb://{user}:{psswd}@{host}:{port}/assyrian?ssl=true
 
