@@ -1,0 +1,6 @@
+#robots.txt www.sargonsays.com/robots.txt
+User-agent: *
+Disallow:
+
+
+Sitemap: http://www.sargonsays.com/sitemap.xml

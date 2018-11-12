@@ -1,0 +1,615 @@
+.about {
+  .body{
+    font-weight: medium;
+    font-size: 30px;
+  }
+}
+
+body {
+  margin: 0;
+  font-family: "Helvetica-Nueue", sans-serif, adiabene, East Syriac Adiabene, Code2000, Arial Unicode MS, Titus Cyberbit Basic, sans-serif;;
+  font-weight: lighter;
+  font-size: 20px;
+  line-height: normal;
+  background: #F5F5F5;
+  overflow-x: hidden !important;
+}
+
+/* Position and sizing of burger button */
+.bm-burger-button {
+  position: fixed;
+  width: 36px;
+  height: 30px;
+  left: 36px;
+  top: 100px;
+}
+
+/* Color/shape of burger icon bars */
+.bm-burger-bars {
+  background: #373a47;
+}
+
+/* Position and sizing of clickable cross button */
+.bm-cross-button {
+  height: 28px;
+  width: 28px;
+}
+
+/* Color/shape of close button cross */
+.bm-cross {
+  background: #bdc3c7;
+}
+.bm-menu-wrap {
+  overflow-y:hidden;
+}
+/* General sidebar styles */
+.bm-menu {
+  background: #373a47;
+  padding: 2.5em 1.5em 0;
+  font-size: 1.5em;
+}
+
+/* Morph shape necessary with bubble or elastic */
+.bm-morph-shape {
+  fill: #373a47;
+}
+
+/* Wrapper for item list */
+.bm-item-list {
+  color: #b8b7ad;
+  padding: 0.9em;
+  
+
+ font-family: 'Raleway', Arial, sans-serif;
+  a {
+    text-decoration: none;
+    color: #b8b7ad;
+    &:hover,
+    &:focus {
+      color: #c94e50;
+    }
+  }
+}
+
+/* Styling of overlay */
+.bm-overlay {
+  background: rgba(0, 0, 0, 0.3);
+  
+}
+@mobile:      ~"only screen and (max-width: 529px)";
+@tablet:      ~"only screen and (min-width: 530px) and (max-width: 949px)";
+@highdensity: ~"only screen and (-webkit-min-device-pixel-ratio: 1.5)",
+              ~"only screen and (min--moz-device-pixel-ratio: 1.5)",
+              ~"only screen and (-o-min-device-pixel-ratio: 3/2)",
+              ~"only screen and (min-device-pixel-ratio: 1.5)";
+
+
+/* Force table to not be like tables anymore */
+	table, thead, tbody, th, td, tr {
+    @media @mobile {
+      display: block;
+    }
+    @media @tablet {
+      display: block;
+    }
+	}
+
+  .noresults {
+    margin-top: 30px;
+    text-align: center;
+    font-size: 175%;
+    color: gray;
+  }
+
+.rc-collapse-header {
+  font-size: 140%;
+}
+.rc-collapse > .rc-collapse-item > .rc-collapse-header {
+  color: black;
+}
+/* NAVBAR */
+
+#navbar {
+  position: fixed;
+  width: 100%;
+  height: 40px;
+  color: white;
+  bottom: 0px;
+  z-index: 1000;
+  a {
+    display: inline-block;
+    margin: 20px;
+    text-align: center;
+    font-size: 15px;
+    margin-top: 10px;
+    color: gray;
+    text-decoration: none;
+    &:hover{
+      cursor: pointer;
+    }
+  }}
+
+/* LOGIN */
+
+#login {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  margin: auto;
+  .login-container {
+    width: 300px;
+    height: 230px;
+    background: white;
+    margin: auto;
+    margin-top: 150px;
+    text-align: center;
+    padding: 20px;
+    padding-top: 40px;
+    border-radius: 5px;
+    border: 1px solid lightgrey;
+    color: gray;
+  }
+  p {
+    font-size: 12px;
+  }
+  input {
+    border: 0;
+    outline:none;
+    box-shadow:none;
+    background: transparent;
+    border-bottom: 1px solid lightgray;
+    height: 40px;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 5px;
+    font-size: 20px;
+  }
+  .submit {
+    border: 0;
+    width: 100%;
+    height: 40px;
+    color: white;
+    margin-top: 20px;
+    border-radius: 5px;
+    font-size: 15px;
+    &.login {
+      background: #19a6b5;
+    }
+    &.signup {
+      margin-top: 5px;
+      background: #d4e1e2;
+    }
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
+
+/* Search */
+
+#search {
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+  margin-bottom: 10px;
+  .search-container {
+    width: 100%;
+    height: 150px;
+    background: white;
+    margin: auto;
+    margin-top: 25px;
+    text-align: center;
+    padding-bottom: 20px;
+    padding-top: 20px;
+    border-radius: 5px;
+    border: 1px solid lightgrey;
+    color: gray;
+    //max-width: 100% !important;
+    //overflow-x: hidden !important;
+    @media @mobile {
+      height: 180px;
+    }
+    @media @tablet {
+      height: 180;
+    }
+  }
+  p {
+    font-size: 16px;
+    color: darkslategray;
+  }
+  input {
+    border: 0;
+    outline:none;
+    box-shadow:none;
+    background: transparent;
+    border-bottom: 1px solid lightgray;
+    height: 65px;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 5px;
+    font-size: 20px;
+    @media @mobile {
+      height: 89;
+      font-size: 30px;
+    }
+    @media @tablet {
+      height: 89;
+      font-size: 30px;
+    }
+  }
+  .submit {
+    border: 0;
+    width: 97%;
+    height: 65px;
+    color: white;
+    margin-top: 20px;
+    border-radius: 5px;
+    font-size: 25px;
+    @media @mobile {
+      height: 89px;
+      font-size: 30px;
+    }
+    @media @tablet{
+      height: 89px;
+      font-size: 30px;
+    }
+    &.search {
+      background: #19a6b5;
+    }
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
+
+.phonetic {
+  margin-left: 20px;
+  margin-right: 20px;
+}
+/* TODOS */
+
+.todos {
+  width: 100%;
+  margin: 0 auto;
+  margin-top: 50px;
+  margin-bottom: 100px;
+  ol {
+    -webkit-padding-start: 0px;
+  }
+  .todo-quote {
+    text-align: center;
+  }
+  .todo-subquote {
+    text-align: center;
+    font-weight: 10;
+  }
+  .title {
+    font-weight: 100;
+    text-align: center;
+    color: #252525;
+  }
+  .todo-detail {
+    display: block;
+    position: fixed;
+    top:0px;
+    right: 0px;
+    height:100%;
+    width: 300px;
+    background: white;
+    padding-left: 20px;
+    padding-top: 20px;
+    border-left: 1px solid lightgrey;
+    .body {
+      font-size: 30px;
+    }
+    .close {
+      position: absolute;
+      left: 0px;
+      top:10px;
+      width: 40px;
+      height: 40px;
+      background: transparent;
+      border: 0;
+      font-size: 15px;
+      color:grey;
+      text-decoration: none;
+      text-align: center;
+      &:hover {
+        cursor: pointer;
+        opacity: 0.7;
+      }
+    }
+  }
+  .definitions-list {
+    width: 98%;
+    //min-width: 500px;
+    margin: 0 auto;
+    background: white;
+    border: 1px solid lightgrey;
+    border-radius: 5px 5px 0px 0px;
+    .definition-item {
+      position: relative;
+      display: block;
+      text-decoration: none;
+      overflow: hidden;
+      min-height:100px;
+      margin-top: 0px;
+      padding: 10px;
+      box-sizing: border-box;
+      border-bottom: 1px solid lightgrey;
+      width: 100%;
+      text-align: left;
+      color:black;
+      .body {
+        line-height: 26px;
+        color: #858585;
+        margin: 0;
+        padding-right: 20px;
+        // state button width + spacing
+        padding-left: calc(26px + 10px);
+        font-size: 16px;
+      }
+      .east {
+        unicode-bidi: embed;
+        font-size: 300%;
+        font-family: adiabene, East Syriac Adiabene, Code2000, Arial Unicode MS, Titus Cyberbit Basic, sans-serif;
+
+        right: 3px;
+        top: 0px;
+      }
+      .west {
+        unicode-bidi: embed;
+        font-family: kharput, Serto Kharput, Code2000, Arial Unicode MS, Titus Cyberbit Basic, sans-serif;
+        font-size: 300%;
+      }
+      .definition {
+        top: 100px;
+        text-align: center;
+        color: #252525;
+        //color: #858585;
+        margin-top: 50;
+        padding-right: 20px;
+        // state button width + spacing
+        padding-left: calc(26px + 10px);
+        .tooltip {
+        position: relative;
+        display: inline-block;
+        border-bottom: 1px dotted black;
+        }
+        .infoicon {
+          align-items: left;
+          justify-content: left;
+          display: flex;
+          font-size: 76%;
+          color: lightslategray;
+        }
+
+
+        .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 120px;
+        background-color: #555;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px 0;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%;
+        left: 50%;
+        margin-left: -60px;
+        opacity: 0;
+        transition: opacity 1s;
+        }
+
+        .tooltip .tooltiptext::after {
+        content: "";
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: #555 transparent transparent transparent;
+        }
+
+        .tooltip:hover .tooltiptext {
+        visibility: visible;
+        opacity: 1;
+        }
+      }
+
+      .play {
+        position: absolute;
+        right: 5px;
+        top: 10px;
+        background: transparent;
+        border: 0;
+        font-size: 15px;
+        color:grey;
+        &:hover {
+          cursor: pointer;
+          opacity: 0.7;
+        }
+        img {
+          height: 20px;
+        }
+      }
+      .state {
+        background: transparent;
+        width: 26px;
+        height: 26px;
+        border: 1px solid lightgrey;
+        border-radius: 15px;
+        float: left;
+        position: relative;
+        text-align: center;
+        .done {
+          width: 18px;
+          height: 18px;
+          position: absolute;
+          left: 3px;
+          top: 3px;
+          border-radius: 9px;
+          background: coral;
+        }
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
+  }
+
+  .todo-create {
+    position: relative;
+    width: 100%;
+    text-align: center;
+    height:40px;
+    padding: 0px;
+    background: white;
+    border: 1px solid lightgrey;
+    border-radius: 0px 0px 5px 5px;
+    margin-top: -2px;
+    input {
+      height: 100%;
+      width: 90%;
+      font-size: 15px;
+      border: 0;
+      outline:none;
+      box-shadow:none;
+      background: transparent;
+      color: grey;
+      font-weight: 100;
+      &:focus {
+        color: #606060;
+      }
+    }
+  }
+}
+
+@font-face {
+	font-family:'adiabene';
+	src:local('East Syriac Adiabene'),
+        url('../fonts/syrcomadiabene.woff') format('woff');
+}
+
+@font-face {
+	font-family:'kharput';
+	src:local('Serto Kharput'),
+        url('../fonts/syrcomkharput.woff') format('woff');
+}
+
+div.pos {
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  font-size: 75%;
+  color: lightslategray;
+}
+
+div.posnormal {
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  font-size: 100%;
+  color: lightslategray;
+}
+
+
+div.verifyBadge {
+  color: #19a6b5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .tooltip {
+  position: relative;
+  display: inline-block;
+  }
+
+  .tooltip .tooltiptext {
+  visibility: hidden;
+  width: 210px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -60px;
+  opacity: 0;
+  transition: opacity 1s;
+  }
+
+  .tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+  }
+
+  .tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+  }
+}
+div.verifyBadge p {
+  margin: 0 }
+
+.react-autosuggest__suggestions-container {
+  background-color: #fff;
+  display: none;
+position: relative;
+  display: block;
+    top: 1px;
+    border: 1px;
+    background-color: #fff;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    font-size: 34px;
+    z-index: 2;
+}
+
+.react-autosuggest__suggestion--focused {
+  background-color: #0C7EAF;
+  color: #fff;
+}
+
+.react-autosuggest__suggestion {
+  margin: 5px;
+}
+
+/*tag cloud*/
+@keyframes blinker {
+  50% { opacity: 0.0; }
+}
+
+.tagcloudbg {
+  background-color: #555;
+}
+
+.tagcloudmodal {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+a.nounderline {text-decoration: none; color: #fff; }
+
+html{
+  
+}
+
+.extraClass {
+  font-size: 20px !important;
+  pointer-events: auto !important;
+  &:hover {
+ visibility: visible !important;
+ opacity: 1 !important;
+  }
+ }

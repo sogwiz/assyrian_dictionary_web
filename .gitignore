@@ -1,0 +1,15 @@
+### OSX ###
+.DS_Store
+
+### Windows ###
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+dist/
+
+node_modules/
+bower_components/
+
+.env
+
