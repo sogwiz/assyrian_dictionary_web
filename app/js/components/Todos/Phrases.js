@@ -6,6 +6,8 @@ import ParseReact from 'parse-react'
 import ReactDataGrid from 'react-data-grid'
 import { Button, OverlayTrigger, Panel, PanelGroup, Popover, Table, Tooltip } from 'react-bootstrap';
 import GoogleAd from './GoogleAd.js';
+import ReactAudioPlayer from 'react-audio-player'
+import AudioHelperString from '../util/AudioHelper.js'
 
 const LinkCellFormatter = React.createClass({
     propTypes: {
@@ -69,7 +71,7 @@ class Phrases extends React.Component {
 
         const query = new Parse.Query.or(query1, query2)
             .descending('partofspeech')
-            
+
 
         const that = this;
 
@@ -116,46 +118,50 @@ class Phrases extends React.Component {
                 <Tooltip id={entry.get('searchkeynum')}><strong>Click</strong> to see details about the spelling, audio, origin, and more about this phrase</Tooltip>
             );
 
-            if(i%4==0){
-                donate = (<GoogleAd 
-                    client="ca-pub-4439019971526085" 
-                    slot="9718385117" 
-                    format="auto" 
-                  />)
+            if (i % 4 == 0) {
+                donate = (<GoogleAd
+                    client="ca-pub-4439019971526085"
+                    slot="9718385117"
+                    format="auto"
+                />)
             }
 
             entries.push(
                 <Panel header={entry.get('english')} eventKey={entry.get('searchkeynum')}>
                     <Table>
-    <tbody>
-      <tr>
-        <td>Phonetic - East<h4>{entry.get('phonetic')}</h4></td>
-        <td>Phonetic - West<h4>{entry.get('phonetic_west')}</h4></td>
-      </tr>
-    </tbody>
-  </Table>
-                        <p>
+                        <tbody>
+                            <tr>
+                                <td>Phonetic - East<h4>{entry.get('phonetic')}</h4></td>
+                                <td>Phonetic - West<h4>{entry.get('phonetic_west')}</h4></td>
+                            </tr>
+                            <tr>
+                                <td><ReactAudioPlayer src={AudioHelperString(entry.get('audio'),'e',entry.get('searchkeynum'))} /></td>
+                                <td><ReactAudioPlayer src={AudioHelperString(entry.get('audio'),'w',entry.get('searchkeynum'))} /></td>
+                            </tr>
+                        </tbody>
+                    </Table>
+                    <p>
                         <OverlayTrigger placement="bottom" overlay={tooltip}>
                             <a href={"/searchkey/" + entry.get('searchkeynum')}>
                                 <Button bsStyle="primary">Learn more</Button>
                             </a></OverlayTrigger>
-                        </p>
-                        {donate}
+                    </p>
+                    {donate}
                 </Panel>
-                    );
+            );
         }
 
         return (
             <div>
-                        {<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css" />}
-                        {<link rel="stylesheet" href="https://bootswatch.com/3/cosmo/bootstrap.min.css"/>}
-                        <br /><br /><br />
-                        <h1>Phrases</h1>
-                        <PanelGroup activeKey={this.state.activeKey} onSelect={this.handleSelect.bind(this)} accordion>
-                            {entries}
-                        </PanelGroup>
-                    </div>
-                    );
+                {<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css" />}
+                {<link rel="stylesheet" href="https://bootswatch.com/3/cosmo/bootstrap.min.css" />}
+                <br /><br /><br />
+                <h1>Phrases</h1>
+                <PanelGroup activeKey={this.state.activeKey} onSelect={this.handleSelect.bind(this)} accordion>
+                    {entries}
+                </PanelGroup>
+            </div>
+        );
     }
 }
 

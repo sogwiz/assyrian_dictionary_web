@@ -13,4 +13,17 @@ const AudioHelper = (originalString) => {
         return audioFile;
     }
 }
-export default AudioHelper;
+//export default AudioHelper;
+
+const AudioHelperString = (originalString, region, searchkeynum) => {
+    var audioFile = originalString;
+    if(audioFile){
+        if(!audioFile.includes('http')){
+            audioFile = 'http://assyrianlanguages.org/sureth/' +  originalString;
+          }
+          return audioFile;
+    }else {
+        return "https://assyrianaudio.blob.core.windows.net/audioblobs/"+region+"_entry"+searchkeynum+".mp3";
+    }
+}
+export default AudioHelperString;
