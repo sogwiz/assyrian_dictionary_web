@@ -136,7 +136,7 @@ class Phrases extends React.Component {
                             </tr>
                             <tr>
                                 <td><ReactAudioPlayer src={AudioHelperString(entry.get('audio'),'e',entry.get('searchkeynum'))} /></td>
-                                <td><ReactAudioPlayer src={AudioHelperString(entry.get('audio'),'w',entry.get('searchkeynum'))} /></td>
+                                <td><ReactAudioPlayer src={AudioHelperString(entry.get('audio_west'),'w',entry.get('searchkeynum'))} /></td>
                             </tr>
                         </tbody>
                     </Table>
