@@ -1,6 +1,7 @@
 import React from 'react'
 import NavBar from './NavBar'
 import MenuBurger from './MenuBurger'
+import Footer from './Footer.js'
 import Helmet from "react-helmet";
 class App extends React.Component {
 
@@ -15,6 +16,7 @@ class App extends React.Component {
       />
       <MenuBurger/>
         {this.props.children}
+        <Footer><a href="/about">About</a> / <a href="/">Search</a></Footer>
       </div>
     )
   }
