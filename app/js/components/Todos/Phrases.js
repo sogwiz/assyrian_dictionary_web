@@ -128,15 +128,16 @@ class Phrases extends React.Component {
 
             entries.push(
                 <Panel header={entry.get('english')} eventKey={entry.get('searchkeynum')}>
-                    <Table>
+                    <Table responsive>
                         <tbody>
                             <tr>
                                 <td>Phonetic - East<h4>{entry.get('phonetic')}</h4></td>
-                                <td>Phonetic - West<h4>{entry.get('phonetic_west')}</h4></td>
+                                <td><ReactAudioPlayer src={AudioHelperString(entry.get('audio'), 'e', entry.get('searchkeynum'))} /></td>
+
                             </tr>
                             <tr>
-                                <td><ReactAudioPlayer src={AudioHelperString(entry.get('audio'),'e',entry.get('searchkeynum'))} /></td>
-                                <td><ReactAudioPlayer src={AudioHelperString(entry.get('audio_west'),'w',entry.get('searchkeynum'))} /></td>
+                                <td>Phonetic - West<h4>{entry.get('phonetic_west')}</h4></td>
+                                <td><ReactAudioPlayer src={AudioHelperString(entry.get('audio_west'), 'w', entry.get('searchkeynum'))} /></td>
                             </tr>
                         </tbody>
                     </Table>

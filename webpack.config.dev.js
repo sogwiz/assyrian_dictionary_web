@@ -25,7 +25,8 @@ module.exports = {
       'process.env': {
         'NODE_ENV': JSON.stringify('development'),
         'REACT_PARSE_APP_ID' : JSON.stringify(process.env.REACT_PARSE_APP_ID),
-        'REACT_PARSE_JS_KEY' : JSON.stringify(process.env.REACT_PARSE_JS_KEY)
+        'REACT_PARSE_JS_KEY' : JSON.stringify(process.env.REACT_PARSE_JS_KEY),
+        'REACT_PARSE_SERVER' : JSON.stringify(process.env.REACT_PARSE_SERVER)
       }
     }),
     new webpack.NoErrorsPlugin()

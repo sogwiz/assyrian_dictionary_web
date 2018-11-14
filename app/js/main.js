@@ -4,14 +4,11 @@ import ReactDOM from 'react-dom'
 //import { render } from 'react-snapshot';
 import {Router, Route, IndexRoute, browserHistory} from 'react-router'
 
-//const PARSE_APP_ID = 's6CWs4ntdmIZgrQ0MfDT02DgRKTp4q3InQHUA77U'
-//const PARSE_JS_KEY = 'F9rFXoA9svREjJOfxoFedVUBdhqWQBOZtszuiEK4'
-
 const PARSE_APP_ID = process.env.REACT_PARSE_APP_ID
 const PARSE_JS_KEY = process.env.REACT_PARSE_JS_KEY
 
 Parse.initialize(PARSE_APP_ID, PARSE_JS_KEY)
-Parse.serverURL = 'https://assyrian-433.nodechef.com/parse';
+Parse.serverURL = process.env.REACT_PARSE_SERVER;
 
 /* Routes components */
 import App from './components/App'
