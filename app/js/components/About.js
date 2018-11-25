@@ -108,6 +108,7 @@ class About extends React.Component {
           <NavDropdown eventKey="4" title="Features">
             <MenuItem eventKey="4.1" href="/phrases">Phrases</MenuItem>
             <MenuItem eventKey="4.2" href="/proverbs">Proverbs</MenuItem>
+            <MenuItem eventKey="4.21" href="/trends">Trends</MenuItem>
             <MenuItem divider />
             <MenuItem eventKey="4.3" href="/">Search</MenuItem>
           </NavDropdown>
@@ -143,6 +144,9 @@ class About extends React.Component {
         
         <h1 className='title'>Why the Advertisements?</h1>
         I'd love to make this a clean looking and academic site without advertisements. To reach that design and fiscal goal, the site needs 100 subscribers. Check out the Trends page to determine how many paying subscribers the site has.
+        
+        <h1 className='title'>Open Source Codebase</h1>
+        That's right. The codebase for sargonsays is available on <a href="https://github.com/sogwiz/assyrian_dictionary_web" target='_blank'>github</a>. Currently, the web frontend logic is open sourced. Soon, the backend logic that performs the data heuristics to optimize search results will also be available on github as open source.
         <br/><br/>
         <Grid>
         <Row className="show-grid">
