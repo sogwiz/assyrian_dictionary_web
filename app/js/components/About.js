@@ -2,6 +2,8 @@ import React from 'react'
 import { browserHistory } from 'react-router';
 import { Button, ButtonGroup, ButtonToolbar, Carousel, Col, Grid, Image, Jumbotron, ListGroup, ListGroupItem, MenuItem, Nav, NavItem, NavDropdown, PageHeader, Panel, Popover, Row, Tab, Table, Tabs, Tooltip, OverlayTrigger, Thumbnail, PanelGroup } from 'react-bootstrap'; 
 import ReactGA from 'react-ga';
+import FinanceTable from './FinanceTable.js';
+import Roadmap from './Roadmap.js';
 
 class About extends React.Component {
   constructor(props) {
@@ -64,7 +66,7 @@ class About extends React.Component {
 
     const popoverBottom = (
       <Popover id="popover-positioned-bottom" title="Thank you">
-        <strong>Holy dolma!</strong> Thank you for considering the Maybe Later option. Here's how to say <a href="/word/maybe">maybe</a> and <a href="/word/later">later</a> in Assyrian
+        <strong>Holy dolma!</strong> Thank you for considering the Maybe Later option. Here's how to say <a href="/word/maybe">maybe</a> and <a href="/word/later">later</a> and <a href="/word/birthday">birthday</a> in Assyrian
       </Popover>
     );
 
@@ -146,7 +148,7 @@ class About extends React.Component {
         I'd love to make this a clean looking and academic site without advertisements. To reach that design and fiscal goal, the site needs 100 subscribers. Check out the Trends page to determine how many paying subscribers the site has.
         
         <h1 className='title'>Open Source Codebase</h1>
-        That's right. The codebase for sargonsays is available on <a href="https://github.com/sogwiz/assyrian_dictionary_web" target='_blank'>github</a>. Currently, the web frontend logic is open sourced. Soon, the backend logic that performs the data heuristics to optimize search results will also be available on github as open source.
+        That's right. In the spirit of transparency, the codebase for sargonsays is opensource and available on <a href="https://github.com/sogwiz/assyrian_dictionary_web" target='_blank'>github</a>. Currently, the web frontend logic is open sourced. Soon, the backend logic that performs the data heuristics to optimize search results will also be available on github as open source.
         <br/><br/>
         <Grid>
         <Row className="show-grid">
@@ -164,7 +166,7 @@ class About extends React.Component {
           <Tab.Pane eventKey={2}>
             <Carousel>
     <Carousel.Item>
-      <img width={900} height={500} alt="900x500" src={require("images/anb.png")}/>
+      <img width={900} height={500} alt="900x500" src={require("images/carousel.png")}/>
       <Carousel.Caption>
         <h3>Maryam : ANB Satellite</h3>
         <p>Hi my friend...I wanted to share this moment captured by our camera operator. I am looking up a word on sargonsays.com right before a recording! Thank you for the Assyrian invention of the year, has made my life so much easier..🙏🏼</p>
@@ -195,14 +197,15 @@ class About extends React.Component {
           </Tab.Pane>
           <Tab.Pane eventKey={3}>
           <Jumbotron>
-    <h1>You could be a hero...</h1>
+    <h1>Be a part of a solution...</h1>
     <Grid>
     <Row>
       <p>...<strong>keep the Assyrian language alive</strong>. The Assyrian language is at a crucial juncture in history, struggling to survive. Support a digital footprint that empowers people to fall in love with the Assyrian language</p>
       </Row>
       </Grid>
       <br/>
-    
+          
+      <Roadmap/>
       <div className="well" style={wellStyles}>
     <a href="https://sargonsays.memberful.com/checkout?plan=23192"><OverlayTrigger placement="top" overlay={tooltipRepeat}><Button bsStyle="primary" bsSize="large" onClick={this.handleSuperHeroButtonClick.bind(this)} block>Superhero - Support $2/month.</Button></OverlayTrigger></a>
     <br/>
@@ -214,7 +217,7 @@ class About extends React.Component {
 <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1"/>
 </form>}
 <OverlayTrigger trigger="click" placement="bottom" overlay={popoverBottom}>
-<Button bsSize="large" onClick={this.handleMaybeButtonClick.bind(this)} block>Maybe Later</Button>
+<Button bsSize="large" onClick={this.handleMaybeButtonClick.bind(this)} block>Maybe Later on my Birthday</Button>
 </OverlayTrigger>
     </div>
  
@@ -232,17 +235,7 @@ class About extends React.Component {
 
   </Jumbotron>
             <br/>
-            <PanelGroup accordion>
-    <Panel header="Cost and Revenue Streams" eventKey="1">
-    <ListGroup>
-    <ListGroupItem bsStyle="success" header="$25.00 per month">Advertising Revenue on Google Adsense (I want to remove ads to make it a clean site)</ListGroupItem>
-    <ListGroupItem header="Volunteer">Linguistic Researchers and community members who keep the language data pristine and correct (30 hours a month)</ListGroupItem>
-    <ListGroupItem header="Volunteer">Software Development Time and Energy (20 hours a month)</ListGroupItem>
-    <ListGroupItem bsStyle="danger" header="$25.00 per month">Cloud Hosting for web app on Microsoft Azure and domain on DreamHost</ListGroupItem>
-    <ListGroupItem bsStyle="danger" header="$10.00 per month">Cloud Hosting on Nodechef for App Container ($4) and Database Server ($5)</ListGroupItem>
-  </ListGroup>
-  </Panel>
-      </PanelGroup>
+            <FinanceTable/>
   <Grid>
     <Row>
     <OverlayTrigger trigger="hover" placement="top" delayHide={2000} overlay={popoverLamassu}>
