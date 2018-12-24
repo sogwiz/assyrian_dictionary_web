@@ -285,7 +285,7 @@ class Trends extends React.Component {
                             <Row>
                                 <Col xs={6} md={4}>
                                     <Jumbotron>
-                                        <h1>270,000+</h1>
+                                        <h1>283,000+</h1>
                                         <p>Searches</p>
                                         <p>
                                             <OverlayTrigger placement="bottom" overlay={tooltip1}>
