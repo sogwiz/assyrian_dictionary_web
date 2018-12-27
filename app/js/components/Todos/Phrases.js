@@ -65,17 +65,20 @@ class Phrases extends React.Component {
     queryPhrases() {
         const query1 = new Parse.Query('DictionaryDefinition')
             .equalTo('partofspeech', 'phrase')
+            .ascending('english')
 
+        /*
         const query2 = new Parse.Query('DictionaryDefinition')
             .equalTo('partofspeech', 'interjection')
 
         const query = new Parse.Query.or(query1, query2)
             .descending('partofspeech')
+        */
 
 
         const that = this;
 
-        query.find({
+        query1.find({
             success: function (results) {
                 that.setState({
                     rows: results

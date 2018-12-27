@@ -112,7 +112,7 @@ class RecentUpdates extends React.Component {
                     rowGetter={this.rowGetter.bind(this)}
                     rowsCount={this.state.rows.length}
                     minHeight={500} 
-                    minColumnWidth={150}/>
+                    minColumnWidth={200}/>
         )
     }
 }

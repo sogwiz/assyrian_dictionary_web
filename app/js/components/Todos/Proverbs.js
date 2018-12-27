@@ -50,7 +50,7 @@ class Proverbs extends React.Component {
             const entry = this.state.rows[i];
 
             const tooltip = (
-                <Tooltip id={entry.get('b2dynamicentityid')}><strong>Meaning</strong> {entry.get('subtext')}</Tooltip>
+                <Tooltip id={entry.get('b2dynamicentityid')}><strong>Meaning to idiomatic expression: </strong> {entry.get('subtext')}</Tooltip>
             );
 
             var donate = "";
@@ -71,10 +71,10 @@ class Proverbs extends React.Component {
             <Panel header={entry.get('text')} eventKey={entry.get('b2dynamicentityid')}>
             <h2>{entry.get('title')}</h2>
             <br/>
-            <p><OverlayTrigger placement="bottom" overlay={tooltip}>
-                <Button bsStyle="primary">Learn more</Button>
+            <OverlayTrigger placement="bottom" overlay={tooltip}>
+            <p>{entry.get('subtext')}</p>
                 </OverlayTrigger>
-            </p>
+            
             {donate}
             <br/>
             </Panel>
