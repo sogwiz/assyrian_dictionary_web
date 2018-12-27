@@ -46,6 +46,7 @@ ReactDOM.render((
       <Route path='/phrases' component={Phrases}/>
       <Route path='/proverbs' component={Proverbs}/>
       <Route path="/support" component={About}/>
+      <Route path="/updates" component={Trends}/>
     </Route>
     <Route component={App} path='/admin/:searchTerm'>
       <Route path='/login' component={Login}/>

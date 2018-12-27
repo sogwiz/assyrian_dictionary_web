@@ -6,9 +6,10 @@ import ReactDataGrid from 'react-data-grid'
 import _ from 'lodash'
 import { slide as Menu } from 'react-burger-menu'
 import TrendsDefinitions from './TrendsDefinitions'
-import { Button, ButtonGroup, ButtonToolbar, Col, Grid, Jumbotron, PageHeader, Panel, Row, Tab, Tabs, Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { Button, ButtonGroup, ButtonToolbar, Col, Grid, Jumbotron, PageHeader, Panel, Popover, Row, Tab, Tabs, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import { TagCloud } from 'react-tagcloud';
 import ReactTooltip from 'react-tooltip'
+import RecentUpdates from './RecentUpdates';
 //require('./../../../assets/bootstrap/css/bootstrap-iso.css')
 //import './../../../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 //require('./../../../assets/styles/main.less')
@@ -32,12 +33,18 @@ class Trends extends React.Component {
     constructor(props) {
         super(props);
 
+        var defaultKey = 2;
+    if(this.props.location.pathname && this.props.location.pathname.includes("updates")){
+      defaultKey = 4;
+    }
+
         this.state = {
             rows: new Array(),
             rowsCopy: new Array(),
             rowsVerified: new Array(),
             isSearching: false,
-            lastSearch: 'Last Query Time'
+            lastSearch: 'Last Query Time',
+            key: defaultKey
         };
 
         this._columns = [
@@ -272,6 +279,13 @@ class Trends extends React.Component {
         const tooltip4 = (
             <Tooltip id="tooltip4"><strong>Activity</strong> is essential to any web app. People use this dictionary alot. Refresh the page to see the most recent search query time</Tooltip>
         );
+
+        const popoverHoverFocus = (
+            <Popover id="popover-trigger-hover-focus" title="Transparency">
+              <strong>It's important</strong> we show you that we keep the dictionary data up to date. This is an ongoing effort and is possible thanks to your continued support. To earn your support, it is imperative we show you that we actively work on improving the data quality in the dictionary. 
+            </Popover>
+          );
+
         if (this.state == null || this.state.rows == null || this.state.rows.length < 1) { return (<div />); }
         return (
 
@@ -279,7 +293,7 @@ class Trends extends React.Component {
                 {<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css" />}
                 {<link rel="stylesheet" href="https://bootswatch.com/3/cosmo/bootstrap.min.css"/>}
                 <br /><br /><br />
-                <Tabs defaultActiveKey={2} id="uncontrolled-tab-example">
+                <Tabs defaultActiveKey={this.state.key} id="uncontrolled-tab-example">
                     <Tab eventKey={1} title="Statistics">
                         <Grid>
                             <Row>
@@ -376,6 +390,17 @@ class Trends extends React.Component {
                                 />
                             </Row>
                         </Grid>
+                    </Tab>
+                    <Tab eventKey={4} title="Recent Updates">
+                        <Grid>
+                            <Row>
+                            <OverlayTrigger trigger={['hover', 'focus']} placement="bottom" overlay={popoverHoverFocus}>
+                                <h3>Terms and Definitions added recently</h3>
+                            </OverlayTrigger>
+                                <RecentUpdates />
+                            </Row>
+                        </Grid>
+
                     </Tab>
                 </Tabs>
 
