@@ -13,7 +13,7 @@ const LinkCellFormatter = React.createClass({
 
     render() {
         const term = this.props.value;
-        const urlTerm = "http://sargonsays.com/searchkey/" + term.toString().split(":")[1];
+        const urlTerm = "/searchkey/" + term.toString().split(":")[1];
         return (
             <div>
                 <a href={urlTerm}>{term.toString().split(":")[0]}</a>

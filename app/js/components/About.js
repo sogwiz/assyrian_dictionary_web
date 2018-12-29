@@ -111,6 +111,7 @@ class About extends React.Component {
             <MenuItem eventKey="4.1" href="/phrases">Phrases</MenuItem>
             <MenuItem eventKey="4.2" href="/proverbs">Proverbs</MenuItem>
             <MenuItem eventKey="4.21" href="/trends">Trends</MenuItem>
+            <MenuItem eventKey="4.22" href="/updates">Updates</MenuItem>
             <MenuItem divider />
             <MenuItem eventKey="4.3" href="/">Search</MenuItem>
           </NavDropdown>

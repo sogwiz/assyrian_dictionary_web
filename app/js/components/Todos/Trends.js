@@ -21,7 +21,7 @@ const LinkCellFormatter = React.createClass({
 
     render() {
         const term = this.props.value;
-        const urlTerm = "http://sargonsays.com/word/" + term;
+        const urlTerm = "/word/" + term;
         return (
             <div>
                 <a href={urlTerm}>{term}</a>
@@ -325,7 +325,7 @@ class Trends extends React.Component {
                                         <h1>5 new</h1>
                                         <p>terms added weekly</p>
                                         <p><OverlayTrigger placement="bottom" overlay={tooltip3}>
-                                            <Button bsStyle="primary">Learn more</Button>
+                                            <a href="/updates"><Button bsStyle="primary">Learn more</Button></a>
                                         </OverlayTrigger>
                                         </p>
                                     </Jumbotron>
@@ -342,6 +342,15 @@ class Trends extends React.Component {
                                 </Col>
                             </Row>
                             <Row>
+                                <Col xs={6} md={4}>
+                                    <Jumbotron>
+                                        <h1>1</h1>
+                                        <p>Open source github repo(s)</p>
+                                        <p>
+                                        <a href="https://github.com/sogwiz/assyrian_dictionary_web"><Button bsStyle="primary">Github Repo</Button></a>
+                                        </p>
+                                    </Jumbotron>
+                                </Col>
                                 <Col xs={6} md={4}>
                                     <Jumbotron>
                                         <h1>4</h1>
