@@ -7,6 +7,30 @@ import GoogleAd from './GoogleAd.js';
 import ReactGA from 'react-ga';
 import RelatedSearches from './RelatedSearches.js'
 
+function displayNoSearchResults(searchTerm){
+  var terms = searchTerm.split(" ")
+  
+  //user could be searching for a phrase translation
+  var result = [];
+  result.push(<strong>{searchTerm}</strong>)
+  
+  var helpStr = ". If searching for a phrase, you can try each individual word "
+  var barStr = " | "
+  if(terms.length > 1){
+    result.push(helpStr)
+    result.push(<br/>)
+    for (var i = 0 ; i<terms.length; i++){
+      var urlStr = "/word/" + terms[i]
+      result.push(<a href={urlStr}>{terms[i]}</a>)
+      result.push( barStr )
+    }
+    result.pop()
+    result.push(<br/>)
+    return result;
+  }
+  return searchTerm;
+}
+
 class DefinitionsList extends React.Component {
 
   constructor(props) {
@@ -66,10 +90,11 @@ const btn = accordion ? 'accordion' : 'collapse';
 
     if(this.props.todos.length==0){
       console.log('no search results for ' + this.props.searchTerm)
+      const outputStr = displayNoSearchResults(this.props.searchTerm)
       return (
         <div>
-        <p className='noresults'>No results found for "{this.props.searchTerm}", but you can view related searches below or post your question on the <a href='https://groups.google.com/forum/#!forum/assyrian-app-dictionary'
-          target='_blank'>forum</a></p>
+        <p className='noresults'>No results found for {outputStr}. Have you tried the <a href='https://groups.google.com/forum/#!forum/assyrian-app-dictionary'
+  target='_blank'>forum</a>?</p>
     <RelatedSearches searchTerm={this.props.searchTerm}/>
     {gAd}
         </div>
