@@ -60,7 +60,8 @@ class DefinitionsList extends React.Component {
     });
     ReactGA.event({
       category: 'User',
-      action: 'toggleRelatedWords'
+      action: 'toggleRelatedWords',
+      label: 'toggleRelated'
     });
   }
 
