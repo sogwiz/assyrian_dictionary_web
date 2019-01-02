@@ -337,7 +337,7 @@ class Search extends React.Component {
     const query = new Parse.Query('DictionaryWordDefinitionList')
     query.equalTo('word', input.toLowerCase().trim())
       .include('dictionary_definition_obj')
-      .limit(30)
+      .limit(50)
       .descending('boost')
 
     query.find({

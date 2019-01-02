@@ -48,13 +48,7 @@ class DefinitionsList extends React.Component {
     todos: [],
   }
 
-  onChange(activeKey) {
-    this.setState({
-      activeKey,
-    });
-  }
-
-  toggle() {
+  toggle = (activeKey) => {
     this.setState({
       accordion: !this.state.accordion,
     });
@@ -108,9 +102,10 @@ const btn = accordion ? 'accordion' : 'collapse';
       return <TodoItem key={todo.objectId} todo={todo} idxEntry={index}/>
     })
 
+    var headerText = items.length-1 + " More Results";
     var collapse = (
-  <Collapse accordion={this.state.accordion}>
-    <Panel header="More Results" key='1' onChange={this.toggle} >
+  <Collapse accordion={this.state.accordion} onChange={this.toggle} >
+    <Panel header={headerText} key='1'>
       {items.slice(1,items.length)}
     </Panel>
   </Collapse>
