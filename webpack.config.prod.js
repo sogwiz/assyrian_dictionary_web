@@ -33,6 +33,10 @@ module.exports = {
     }, {
       test: /\.(png|jpg|jpeg|gif|svg|woff|woff2)$/,
       loader: 'file?name=images/[hash].[ext]'
+    },
+    {
+      test: /\.json$/,
+      loader: 'json-loader'
     }]
   },
   plugins: [

@@ -1,0 +1,35 @@
+apiVersion: 2018-10-01
+location: westus2
+name: yamltest5
+properties:
+  containers:
+  - name: mycontainer
+    properties:
+      environmentVariables:
+        - name: 'DB_CONN_STRING'
+          secureValue: 'DB_CONN_STRING'
+        - name: 'REACT_PARSE_APP_ID'
+          secureValue: 'REACT_PARSE_APP_ID'
+        - name: 'REACT_PARSE_JS_KEY'
+          secureValue: 'REACT_PARSE_JS_KEY'
+        - name: 'REACT_PARSE_SERVER'
+          value: 'REACT_PARSE_SERVER'
+        - name: 'PORT'
+          value: '80'
+      image: sogwiz/sargonsays
+      ports:
+        - port: '80'
+      resources:
+        requests:
+          cpu: 1.0
+          memoryInGB: 1
+  osType: Linux
+  restartPolicy: Always
+  ipAddress:
+    type: Public
+    ports:
+    - protocol: tcp
+      port: '80'
+    dnsNameLabel: 'sargonsayspublic'
+tags: null
+type: Microsoft.ContainerInstance/containerGroups
