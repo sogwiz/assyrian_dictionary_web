@@ -1,8 +1,4 @@
 import React from 'react'
-const ParseComponent = ParseReact.Component(React)
-mixins: [ParseReact.Mixin]
-import Parse from 'parse'
-import ParseReact from 'parse-react'
 import ReactDataGrid from 'react-data-grid'
 import { Button, OverlayTrigger, Panel, PanelGroup, Popover, Table, Tooltip } from 'react-bootstrap';
 import GoogleAd from './GoogleAd.js';
@@ -63,35 +59,15 @@ class Phrases extends React.Component {
     }
 
     queryPhrases() {
-        const query1 = new Parse.Query('DictionaryDefinition')
-            .equalTo('partofspeech', 'phrase')
-            .ascending('english')
-
-        /*
-        const query2 = new Parse.Query('DictionaryDefinition')
-            .equalTo('partofspeech', 'interjection')
-
-        const query = new Parse.Query.or(query1, query2)
-            .descending('partofspeech')
-        */
-
 
         const that = this;
-
-        query1.find({
-            success: function (results) {
+        fetch('/api/phrases')
+            .then((response) => response.json())
+            .then (data => {
                 that.setState({
-                    rows: results
+                    rows: data
                 })
-            },
-            error: function (error) {
-                that.setState({
-                    error: true,
-                    errorObj: error,
-                    rows: []
-                })
-            }
-        })
+            })
     }
 
     rowGetter(i) {
@@ -118,7 +94,7 @@ class Phrases extends React.Component {
             const entry = this.state.rows[i];
             var donate = "";
             const tooltip = (
-                <Tooltip id={entry.get('searchkeynum')}><strong>Click</strong> to see details about the spelling, audio, origin, and more about this phrase</Tooltip>
+                <Tooltip id={entry['searchkeynum']}><strong>Click</strong> to see details about the spelling, audio, origin, and more about this phrase</Tooltip>
             );
 
             if (i % 4 == 0) {
@@ -130,23 +106,23 @@ class Phrases extends React.Component {
             }
 
             entries.push(
-                <Panel header={entry.get('english')} eventKey={entry.get('searchkeynum')}>
+                <Panel header={entry['english']} eventKey={entry['searchkeynum']}>
                     <Table responsive>
                         <tbody>
                             <tr>
-                                <td>Phonetic - East<h4>{entry.get('phonetic')}</h4></td>
-                                <td><ReactAudioPlayer src={AudioHelperString(entry.get('audio'), 'e', entry.get('searchkeynum'))} /></td>
+                                <td>Phonetic - East<h4>{entry['phonetic']}</h4></td>
+                                <td><ReactAudioPlayer src={AudioHelperString(entry['audio'], 'e', entry['searchkeynum'])} /></td>
 
                             </tr>
                             <tr>
-                                <td>Phonetic - West<h4>{entry.get('phonetic_west')}</h4></td>
-                                <td><ReactAudioPlayer src={AudioHelperString(entry.get('audio_west'), 'w', entry.get('searchkeynum'))} /></td>
+                                <td>Phonetic - West<h4>{entry['phonetic_west']}</h4></td>
+                                <td><ReactAudioPlayer src={AudioHelperString(entry['audio_west'], 'w', entry['searchkeynum'])} /></td>
                             </tr>
                         </tbody>
                     </Table>
                     <p>
                         <OverlayTrigger placement="bottom" overlay={tooltip}>
-                            <a href={"/searchkey/" + entry.get('searchkeynum')}>
+                            <a href={"/searchkey/" + entry['searchkeynum']}>
                                 <Button bsStyle="primary">Learn more</Button>
                             </a></OverlayTrigger>
                     </p>

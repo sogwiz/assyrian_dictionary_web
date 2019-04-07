@@ -102,6 +102,28 @@ function removeDuplicatesBy(keyFn, array) {
   });
 }
 
+app.get('/api/proverb', function(req, res) {
+  res.setHeader('Content-Type', 'application/json');
+  app.locals.db.collection('Proverb').find().toArray(function (err, result) {
+    if (err || !result || !result[0]) {
+      console.log("error fetching proverbs" + err)
+    }else {
+      res.send(result);
+    }
+  })
+});
+
+app.get('/api/phrases', function(req, res) {
+  res.setHeader('Content-Type', 'application/json');
+  app.locals.db.collection('DictionaryDefinition').find({"partofspeech":{ $eq :"phrase"}}).sort( { "english": 1 } ).toArray(function (err, result) {
+    if (err || !result || !result[0]) {
+      console.log("error fetching phrases" + err)
+    }else {
+      res.send(result);
+    }
+  })
+});
+
 app.get('/api/word/related/:searchTerm', function(req, res) {
   res.setHeader('Content-Type', 'application/json');
     

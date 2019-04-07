@@ -1,8 +1,4 @@
 import React from 'react'
-const ParseComponent = ParseReact.Component(React)
-mixins: [ParseReact.Mixin]
-import Parse from 'parse'
-import ParseReact from 'parse-react'
 import {Button, OverlayTrigger, Panel, PanelGroup, Popover, Tooltip} from 'react-bootstrap';
 import GoogleAd from './GoogleAd.js';
 
@@ -22,9 +18,21 @@ class Proverbs extends React.Component {
       }
 
     queryProverbs() {
-        const query = new Parse.Query('Proverb')
         const that = this;
-
+        
+        fetch('/api/proverb')
+        .then((response) => response.json())
+        .then (data => {
+            /*let searches = data.map((singleWord => {
+                return (
+                <li><a href={"/word/"+singleWord.word}>{singleWord.word}</a></li>
+                )
+            }))*/
+            that.setState({
+                rows: data
+            })
+        })
+        /*
         query.find({
             success: function (results) {
                 that.setState({
@@ -39,6 +47,7 @@ class Proverbs extends React.Component {
                 })
             }
         })
+        */
     }
 
     render(){
@@ -50,7 +59,7 @@ class Proverbs extends React.Component {
             const entry = this.state.rows[i];
 
             const tooltip = (
-                <Tooltip id={entry.get('b2dynamicentityid')}><strong>Meaning to idiomatic expression: </strong> {entry.get('subtext')}</Tooltip>
+                <Tooltip id={entry['b2dynamicentityid']}><strong>Meaning to idiomatic expression: </strong> {entry['subtext']}</Tooltip>
             );
 
             var donate = "";
@@ -68,11 +77,11 @@ class Proverbs extends React.Component {
             }
 
             entries.push(
-            <Panel header={entry.get('text')} eventKey={entry.get('b2dynamicentityid')}>
-            <h2>{entry.get('title')}</h2>
+            <Panel header={entry['text']} eventKey={entry['b2dynamicentityid']}>
+            <h2>{entry['title']}</h2>
             <br/>
             <OverlayTrigger placement="bottom" overlay={tooltip}>
-            <p>{entry.get('subtext')}</p>
+            <p>{entry['subtext']}</p>
                 </OverlayTrigger>
             
             {donate}
