@@ -4,6 +4,32 @@ English to Assyrian dictionary [*sargonsays.com*](http://sargonsays.com) , made 
 
 ## Setup
 
+## Via Docker
+### Docker Compose
+
+This will stand up a local development environment with a seeded database and frontend code. App will be running on localhost:3001
+
+```
+docker-compose up --build
+```
+
+### Docker
+To run via docker. In this example, you'll be able to open a local web browser to localhost:80
+```
+docker run --restart always -e DB_CONN_STRING='DB_CONN_STR' -e REACT_PARSE_APP_ID=REACT_PARSE_ID -e REACT_PARSE_JS_KEY=REACT_PARSE_JS_KEY -e REACT_PARSE_SERVER=https://assyrian-433.nodechef.com/parse -p 80:3001 -d sogwiz/sargonsays 
+```
+
+Docker example via env file
+```
+docker run --env-file ./.env -p 80:3001 -d sogwiz/sargonsays
+```
+
+Docker example via Azure Container Instances ACI
+See azure/README.md
+
+
+## Via NPM
+
 ### Install npm project dependencies
 ```
 npm install
@@ -50,17 +76,3 @@ This code will bundle both `javascript` and `styles` to `dist/` folder, generati
 - Sass or Less
 - [Eslint](http://eslint.org/)
 - [React Router](https://github.com/rackt/react-router)
-
-### Docker
-To run via docker. In this example, you'll be able to open a local web browser to localhost:49160
-```
-docker run -e DB_CONN_STRING='DB_CONN_STR' -e REACT_PARSE_APP_ID=REACT_PARSE_ID -e REACT_PARSE_JS_KEY=REACT_PARSE_JS_KEY -e REACT_PARSE_SERVER=https://assyrian-433.nodechef.com/parse -p 80:3001 -d sogwiz/sargonsays 
-```
-
-Docker example via env file
-```
-docker run --env-file ./.env -p 80:3001 -d sogwiz/sargonsays
-```
-
-Docker example via Azure Container Instances ACI
-See azure/README.md

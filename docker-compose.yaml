@@ -1,0 +1,33 @@
+mongodb:
+  image: mongo
+  ports:
+    - "27017:27017"
+
+mongo-seed:
+  build: ./deploy/mongo-seed
+  links:
+    - mongodb
+
+web:
+  restart: always
+  #image: sogwiz/sargonsays
+  build: ./
+  ports:
+    - "3001:3001"
+  environment:
+    - DB_CONN_STRING=mongodb://mongodb:27017/assyrian
+    - REACT_PARSE_APP_ID=REACT_PARSE_APP_ID
+    - REACT_PARSE_JS_KEY=REACT_PARSE_JS_KEY
+    - REACT_PARSE_SERVER=REACT_PARSE_SERVER
+  links:
+    - mongodb
+
+# lb:
+#   restart: always
+#   image: dockercloud/haproxy
+#   links:
+#     - web
+#   volumes:
+#     - /var/run/docker.sock:/var/run/docker.sock
+#   ports:
+#     - 80:80
