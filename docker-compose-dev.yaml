@@ -1,0 +1,37 @@
+mongodb:
+  image: mongo
+  ports:
+    - "27017:27017"
+
+mongo-seed:
+  build: ./deploy/mongo-seed
+  links:
+    - mongodb
+
+web:
+  restart: always
+  image: node:8
+  volumes:
+      - ./:/usr/src/app
+  working_dir: /usr/src/app
+  ports:
+    - "3001"
+  environment:
+    # mongodb:27017 is a direct reference to the 'mongodb' mongo container
+    - DB_CONN_STRING=mongodb://mongodb:27017/assyrian
+    - REACT_PARSE_APP_ID=REACT_PARSE_APP_ID
+    - REACT_PARSE_JS_KEY=REACT_PARSE_JS_KEY
+    - REACT_PARSE_SERVER=REACT_PARSE_SERVER
+  links:
+    - mongodb
+  command: bash -c "npm install && npm run start"
+
+lb:
+  restart: always
+  image: dockercloud/haproxy
+  links:
+    - web
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+  ports:
+    - 80:80
