@@ -3,12 +3,16 @@ var express = require('express');
 var webpack = require('webpack');
 var config = require('./webpack.config.dev');
 var MongoClient = require('mongodb').MongoClient
+var compression = require('compression')
+
 // redis-client.js
 const redis = require('redis');
 const redisClient = redis.createClient(process.env.REDIS_URL);
 
 
 var app = express();
+//compress all responses
+app.use(compression())
 var compiler = webpack(config);
 require('dotenv').config();
 
