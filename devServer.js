@@ -3,6 +3,10 @@ var express = require('express');
 var webpack = require('webpack');
 var config = require('./webpack.config.dev');
 var MongoClient = require('mongodb').MongoClient
+// redis-client.js
+const redis = require('redis');
+const redisClient = redis.createClient(process.env.REDIS_URL);
+
 
 var app = express();
 var compiler = webpack(config);
@@ -104,13 +108,24 @@ function removeDuplicatesBy(keyFn, array) {
 
 app.get('/api/proverb', function(req, res) {
   res.setHeader('Content-Type', 'application/json');
-  app.locals.db.collection('Proverb').find().toArray(function (err, result) {
-    if (err || !result || !result[0]) {
-      console.log("error fetching proverbs" + err)
+  redisClient.get('proverbs', (err, result) => {
+    if (result){
+      console.log("reading proverbs from redis")
+      return res.status(200).send(result);
     }else {
-      res.send(result);
+      console.log("reading proverbs from db")
+      app.locals.db.collection('Proverb').find().toArray(function (err, result) {
+        if (err || !result || !result[0]) {
+          console.log("error fetching proverbs" + err)
+        }else {
+          //console.log(result, typeof result);
+          redisClient.set('proverbs',JSON.stringify(result),'EX',36000)
+          res.send(result);
+        }
+      })
     }
   })
+  
 });
 
 app.get('/api/phrases', function(req, res) {

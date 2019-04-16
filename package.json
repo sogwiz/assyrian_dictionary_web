@@ -81,6 +81,7 @@
     "react-transform-hmr": "^1.0.4",
     "react-uikit-badge": "^2.0.1",
     "redbox-react": "^1.2.10",
+    "redis": "^2.8.0",
     "style-loader": "^0.13.1",
     "webpack": "^1.13.1",
     "webpack-dev-middleware": "^1.6.1",

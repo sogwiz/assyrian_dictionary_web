@@ -1,3 +1,5 @@
+#use this docker-compose file to enable hot reloading of the front end app
+#developer can modify local frontend code and see the changes live in docker container
 mongodb:
   image: mongo
   ports:
@@ -7,6 +9,12 @@ mongo-seed:
   build: ./deploy/mongo-seed
   links:
     - mongodb
+
+redis:
+  image: redis
+  container_name: cache
+  expose:
+    - 6379
 
 web:
   restart: always
@@ -22,8 +30,10 @@ web:
     - REACT_PARSE_APP_ID=REACT_PARSE_APP_ID
     - REACT_PARSE_JS_KEY=REACT_PARSE_JS_KEY
     - REACT_PARSE_SERVER=REACT_PARSE_SERVER
+    - REDIS_URL=redis://cache
   links:
     - mongodb
+    - redis
   command: bash -c "npm install && npm run start"
 
 lb:
