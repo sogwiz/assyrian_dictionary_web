@@ -1,16 +1,15 @@
 # Sargonsays English to Assyrian Dictionary web frontend #
 
-English to Assyrian dictionary [*sargonsays.com*](http://sargonsays.com) , made with ReactJS and ParseReact
+English to Assyrian dictionary [*sargonsays.com*](http://sargonsays.com) , frontend made with ReactJS and API with Express. *To run this app locally*, it is highly recommended to use the Docker Compose approach as new dependencies like redis have been added.
 
 ## Setup
 
-## Via Docker
 ### Docker Compose
 
-This will stand up a local development environment with a seeded database and frontend code. App will be running on localhost:3001
+This will stand up a local development environment with a seeded database and frontend code. App will be running on localhost:80
 
 ```
-docker-compose up --build
+docker-compose -f docker-compose-dev.yaml up --build
 ```
 
 ### Docker
