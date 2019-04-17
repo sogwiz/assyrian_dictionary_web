@@ -108,7 +108,6 @@ class Trends extends React.Component {
 
             }
         })
-
     }
 
     queryTrends() {
@@ -117,33 +116,27 @@ class Trends extends React.Component {
             searchTime: new Date().getTime(),
         });
 
-        const query = new Parse.Query('SearchStat')
-            .limit(150)
-            .descending('queries')
-
-        const that = this;
-
-        query.find({
-            success: function (results) {
-                that.setState({
-                    isSearching: false,
-                    rows: results,
-                    rowsCopy: results
-                })
-            },
-            error: function (error) {
-                that.setState({
-                    isSearching: false,
-                    error: true,
-                    errorObj: error,
-                    rows: []
-                })
-            }
-        })
+        const that = this
+        fetch('/api/searchstats')
+                    .then((response) => response.json())
+                    .then (data => {
+                        that.setState({
+                            isSearching: false,
+                            rows: data,
+                            rowsCopy: data
+                        })
+                    })
+                    .catch((error) => {
+                        that.setState({
+                            isSearching: false,
+                            error: true,
+                            errorObj: error,
+                            rows: []
+                        })
+                      })
     }
 
     queryVerified() {
-
         const query = new Parse.Query('DictionaryWordDefinitionList')
             .limit(200)
             .equalTo('boost', 100)
@@ -177,7 +170,8 @@ class Trends extends React.Component {
 
         if (this.state.rows != null && this.state.rows.length > 0) {
             var listitem = this.state.rowsCopy[i];
-            listitem.set("prank", i.toString());
+            //listitem.set("prank", i.toString());
+            listitem["prank"] = i.toString()
 
             //listitem.set('rank') = i.toString();
             //console.log("listitemrank is " + listitem.get('prank'));
@@ -186,7 +180,7 @@ class Trends extends React.Component {
             //var definition = {objectId: listitem.objectId, boost : listitem.get('boost'), searchkeynum : listitem.get('searchkeynum'), 
             //word: listitem.get('word'), phonetic : listitem.get('dictionary_definition_obj').get('phonetic'), 
             //east: listitem.get('dictionary_definition_obj').get('east')}
-            if (this.checkWhiteListString(listitem)) {
+            if (this.checkWhiteListString(listitem, false)) {
                 return listitem;
             }
             //return definition;
@@ -222,7 +216,7 @@ class Trends extends React.Component {
             //var definition = {objectId: listitem.objectId, boost : listitem.get('boost'), searchkeynum : listitem.get('searchkeynum'), 
             //word: listitem.get('word'), phonetic : listitem.get('dictionary_definition_obj').get('phonetic'), 
             //east: listitem.get('dictionary_definition_obj').get('east')}
-            if (this.checkWhiteListString(listitem)) {
+            if (this.checkWhiteListString(listitem, true)) {
                 return listitem;
             }
             //return definition;
@@ -231,9 +225,15 @@ class Trends extends React.Component {
 
     }
 
-    checkWhiteListString(searchStat) {
+    checkWhiteListString(searchStat, isParseObj) {
         if (searchStat) {
-            var term = searchStat.get('word');
+            //var term = searchStat.get('word');
+            var term
+            if(isParseObj == true){
+                term = searchStat.get('word')
+            }else{
+                term = searchStat['word']
+            }
             if (term) {
                 if (_.includes(term, "fuck") || _.includes(term, "dick")) {
 
@@ -242,7 +242,6 @@ class Trends extends React.Component {
                 }
             }
         }
-
         return false;
     }
 
@@ -460,14 +459,14 @@ class TrendsCloud extends React.Component {
               </span>
       )
           var data = terms.map(function(obj){
-              var wordText = obj.get('word')
+              var wordText = obj['word']
               if (_.includes(wordText, "fuck") || _.includes(wordText, "dick")) {
                     wordText = "profanity"
                 } 
 
             return( {
              value: wordText,
-             count: obj.get('queries') 
+             count: obj['queries']
             })
           })
           return ( 

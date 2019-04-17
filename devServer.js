@@ -134,30 +134,114 @@ app.get('/api/proverb', function(req, res) {
 
 app.get('/api/phrases', function(req, res) {
   res.setHeader('Content-Type', 'application/json');
-  app.locals.db.collection('DictionaryDefinition').find({"partofspeech":{ $eq :"phrase"}}).sort( { "english": 1 } ).toArray(function (err, result) {
-    if (err || !result || !result[0]) {
-      console.log("error fetching phrases" + err)
+  redisClient.get('phrases', (err, result) => {
+    if (result) {
+      return res.status(200).send(result);
     }else {
-      res.send(result);
+      console.log('reading phrases from db')
+      app.locals.db.collection('DictionaryDefinition').find({"partofspeech":{ $eq :"phrase"}}).sort( { "english": 1 } ).toArray(function (err, result) {
+        if (err || !result || !result[0]) {
+          console.log("error fetching phrases" + err)
+        } else {
+          redisClient.set('phrases', JSON.stringify(result),'EX',36000)
+          res.send(result);
+        }
+      })
+    }
+
+  })
+})
+
+app.get('/api/searchstats', function(req, res) {
+  res.setHeader('Content-Type', 'application/json');
+  const redisKey = 'searchstats'
+  redisClient.get(redisKey, (err, result) => {
+    if (result) {
+      return res.status(200).send(result)
+    } else {
+      console.log('reading searchstats from db')
+      app.locals.db.collection('SearchStat').find().limit(250).sort({queries:-1}).toArray(function (err, result) {
+        if(err){
+          console.log("error fetching searchstats from db ")
+          console.log(err)
+        }else {
+          redisClient.set(redisKey, JSON.stringify(result),'EX',10800)
+          res.send(result)
+        }
+      })
     }
   })
-});
+})
 
+app.get('/api/verified', function(req, res) {
+  res.setHeader('Content-Type', 'application/json')
+  const redisKey = 'verified'
+
+  redisClient.get(redisKey, (err, result) => {
+    if (result) {
+      return res.status(200).send(result)
+    } else {
+      console.log('reading verified from db')
+      app.locals.db.collection('DictionaryWordDefinitionList').find({boost: 100}).limit(350).toArray(function (err, result) {
+        if(err){
+          console.log("error fetching verified from db ")
+          console.log(err)
+        }else {
+          redisClient.set(redisKey, JSON.stringify(result),'EX',36000)
+          res.send(result)
+        }
+      })
+    }
+  })
+
+})
+
+// used by the popup modal when showing the tag cloud "Related Searches"
+app.get('/api/searchkeynum/related/:searchkeynum', function(req, res) {
+  res.setHeader('Content-Type', 'application/json')
+  const redisKey = 'searchkeynum/related/' + req.params.searchkeynum
+
+  redisClient.get(redisKey, (err, result) => {
+    if(result) {
+      return res.status(200).send(result);
+    }else {
+      console.log('reading /api/searchkeynum/related from db')
+      app.locals.db.collection('DictionaryWordDefinitionList').find({'searchkeynum': parseInt(req.params.searchkeynum)}).limit(30).sort({boost:-1}).toArray(function(err, result) {
+        if (err || !result || !result[0]) {
+          console.log("Couldn't find related searchkeynum from db " +  req.params.searchkeynum)
+          console.log(err)
+        }else {
+          redisClient.set(redisKey, JSON.stringify(result),'EX',36000)
+          res.send(result)
+        }
+      })
+    }
+  })
+})
+
+// used after a user performs a search. this is the bottom of the page "Searches related to"
 app.get('/api/word/related/:searchTerm', function(req, res) {
   res.setHeader('Content-Type', 'application/json');
-    
-    app.locals.db.collection('DictionaryWordDefinitionList').find({"$text": {"$search": req.params.searchTerm}}, {score: {"$meta": 'textScore'}}).limit(300).sort({score: {"$meta": 'textScore'}}).toArray(function (err, result) {
-    //db.collection('DictionaryWordDefinitionList').find({"word":req.params.searchTerm}).limit(1).sort( { boost: -1 } ).toArray(function (err, result) {
-      if (err || !result || !result[0]) {
-        console.log("error")
-      }else {
-        resultArr = removeDuplicatesBy(x => x.word, result);
-        res.send(resultArr);
-      }
-    })
-  
-  //res.send(JSON.stringify({ a: 1 }, null, 3));
-});
+  const redisKey = 'word/related/' + req.params.searchTerm
+  redisClient.get(redisKey, (err, result) => {
+    if(result) {
+      return res.status(200).send(result);
+    }else {
+      app.locals.db.collection('DictionaryWordDefinitionList').find({"$text": {"$search": req.params.searchTerm}}, {score: {"$meta": 'textScore'}}).limit(300).sort({score: {"$meta": 'textScore'}}).toArray(function (err, result) {
+        console.log('reading api/word/related from db')
+        //db.collection('DictionaryWordDefinitionList').find({"word":req.params.searchTerm}).limit(1).sort( { boost: -1 } ).toArray(function (err, result) {
+          if (err || !result || !result[0]) {
+            console.log("error")
+          }else {
+            resultArr = removeDuplicatesBy(x => x.word, result);
+            redisClient.set(redisKey, JSON.stringify(resultArr),'EX',36000)
+            res.send(resultArr);
+          }
+        })
+    }
+  })
+  // res.send(JSON.stringify({ a: 1 }, null, 3));
+})
 
 app.get('*', function(req, res) {
   res.sendFile(path.join(__dirname, 'index.html'));

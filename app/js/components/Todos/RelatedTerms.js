@@ -1,8 +1,5 @@
 import React from 'react'
 import { Link } from 'react-router'
-mixins: [ParseReact.Mixin]
-import Parse from 'parse'
-import ParseReact from 'parse-react'
 import { TagCloud } from 'react-tagcloud';
 import ReactTooltip from 'react-tooltip'
 
@@ -18,25 +15,20 @@ class RelatedTerms extends React.Component {
   }
 
   queryRelatedTerms(searchkeynum) {
+  /*
   const query = new Parse.Query('DictionaryWordDefinitionList')
   .equalTo('searchkeynum',parseInt(searchkeynum))
   .descending('boost')
   .limit(30)
-
-  const that = this;
-  query.find({
-
-      success: function (results) {
-          //let lastTime = results[0]['updatedAt'];
-          that.setState({
-            relatedSearchTerms: results
-          })
-      },
-      error: function (error) {
-
-      }
-  })
-
+  */
+ const that = this
+ fetch('/api/searchkeynum/related/'+searchkeynum)
+            .then((response) => response.json())
+            .then (data => {
+                that.setState({
+                  relatedSearchTerms: data
+                })
+            })
   }
 
   render() {
@@ -95,8 +87,8 @@ class FancyTerms extends React.Component {
   )
       var data = terms.map(function(obj){
         return( {
-         value: obj.get('word'),
-         count: obj.get('boost') 
+         value: obj['word'],
+         count: obj['boost'] 
         })
       })
       return ( 
