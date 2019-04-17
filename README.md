@@ -49,14 +49,6 @@ npm run start
 
 It will setup a server with live reload on `localhost:3000`. Live reloading is for both javascript and styles.
 
-#### Run linter
-
-```
-npm run lint
-```
-
-Will output eventually code mistakes
-
 #### Build the code
 
 ```
@@ -67,6 +59,7 @@ This code will bundle both `javascript` and `styles` to `dist/` folder, generati
 
 ## What's inside ?
 - Webpack
+- ExpressJS for rest API, routing, and EJS templating views (primarily to provide server side url preview for social media preview shares and seo)
 - Babel
 - [React transform boilerplate](https://github.com/gaearon/react-transform-boilerplate)
    - Hot reloading
