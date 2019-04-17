@@ -8,7 +8,7 @@ var compression = require('compression')
 // redis-client.js
 const redis = require('redis');
 const redisClient = redis.createClient(process.env.REDIS_URL);
-
+const DURATION_SECONDS_REDIS_DEFAULT = 36000
 
 var app = express();
 //compress all responses
@@ -114,7 +114,6 @@ app.get('/api/proverb', function(req, res) {
   res.setHeader('Content-Type', 'application/json');
   redisClient.get('proverbs', (err, result) => {
     if (result){
-      console.log("reading proverbs from redis")
       return res.status(200).send(result);
     }else {
       console.log("reading proverbs from db")
@@ -123,7 +122,7 @@ app.get('/api/proverb', function(req, res) {
           console.log("error fetching proverbs" + err)
         }else {
           //console.log(result, typeof result);
-          redisClient.set('proverbs',JSON.stringify(result),'EX',36000)
+          redisClient.set('proverbs',JSON.stringify(result),'EX',DURATION_SECONDS_REDIS_DEFAULT)
           res.send(result);
         }
       })
@@ -143,7 +142,7 @@ app.get('/api/phrases', function(req, res) {
         if (err || !result || !result[0]) {
           console.log("error fetching phrases" + err)
         } else {
-          redisClient.set('phrases', JSON.stringify(result),'EX',36000)
+          redisClient.set('phrases', JSON.stringify(result),'EX',DURATION_SECONDS_REDIS_DEFAULT)
           res.send(result);
         }
       })
@@ -187,7 +186,7 @@ app.get('/api/verified', function(req, res) {
           console.log("error fetching verified from db ")
           console.log(err)
         }else {
-          redisClient.set(redisKey, JSON.stringify(result),'EX',36000)
+          redisClient.set(redisKey, JSON.stringify(result),'EX',DURATION_SECONDS_REDIS_DEFAULT)
           res.send(result)
         }
       })
@@ -211,13 +210,39 @@ app.get('/api/searchkeynum/related/:searchkeynum', function(req, res) {
           console.log("Couldn't find related searchkeynum from db " +  req.params.searchkeynum)
           console.log(err)
         }else {
-          redisClient.set(redisKey, JSON.stringify(result),'EX',36000)
+          redisClient.set(redisKey, JSON.stringify(result),'EX',DURATION_SECONDS_REDIS_DEFAULT)
           res.send(result)
         }
       })
     }
   })
 })
+
+// used in the searchkeynum detail page via TodoDetail.js (sargonsays.com/searchkey/53064)
+app.get('/api/searchkeynum/:searchkeynum', function(req, res) {
+  res.setHeader('Content-Type', 'application/json')
+  const redisKey = 'searchkeynum/' + req.params.searchkeynum
+
+  redisClient.get(redisKey, (err, result) => {
+    if(result) {
+      return res.status(200).send(result);
+    }else {
+      console.log('reading /api/searchkeynum from db')
+      app.locals.db.collection('DictionaryDefinition').find({'searchkeynum': parseInt(req.params.searchkeynum)}).toArray(function(err, result) {
+        if (err || !result || !result[0]) {
+          console.log("Couldn't find DictionaryDefinition searchkeynum from db " +  req.params.searchkeynum)
+          console.log(err)
+        }else {
+          redisClient.set(redisKey, JSON.stringify(result),'EX',DURATION_SECONDS_REDIS_DEFAULT)
+          res.send(result)
+        }
+      })
+    }
+  })
+
+
+})
+
 
 // used after a user performs a search. this is the bottom of the page "Searches related to"
 app.get('/api/word/related/:searchTerm', function(req, res) {
@@ -234,7 +259,7 @@ app.get('/api/word/related/:searchTerm', function(req, res) {
             console.log("error")
           }else {
             resultArr = removeDuplicatesBy(x => x.word, result);
-            redisClient.set(redisKey, JSON.stringify(resultArr),'EX',36000)
+            redisClient.set(redisKey, JSON.stringify(resultArr),'EX',DURATION_SECONDS_REDIS_DEFAULT)
             res.send(resultArr);
           }
         })

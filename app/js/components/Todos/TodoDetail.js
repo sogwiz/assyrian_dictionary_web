@@ -1,8 +1,5 @@
 import React from 'react'
 import { Link } from 'react-router'
-mixins: [ParseReact.Mixin]
-import Parse from 'parse'
-import ParseReact from 'parse-react'
 import ReactModal from 'react-modal'
 import {Button, Col, Grid, Row} from 'react-bootstrap'
 import DefinitionHelper from './DefinitionHelper'
@@ -27,24 +24,16 @@ class TodoDetail extends React.Component {
   }
 
   queryKey() {
-    //console.log("searchkeynum = " + this.props.params.searchkeynum)
-    const query = new Parse.Query('DictionaryDefinition')
-        .equalTo('searchkeynum',parseInt(this.props.params.searchkeynum))
-        .limit(1)
 
     const that = this;
-    query.find({
 
-        success: function (results) {
-            //let lastTime = results[0]['updatedAt'];
-            that.setState({
-                searchResults: results
-            })
-        },
-        error: function (error) {
-
-        }
-    })
+    fetch('/api/searchkeynum/' + this.props.params.searchkeynum)
+                    .then((response) => response.json())
+                    .then (data => {
+                        that.setState({
+                          searchResults: data
+                        })
+                    })
 }
 
   render() {
@@ -59,33 +48,33 @@ class TodoDetail extends React.Component {
         Find out more about the <a href={"http://assyrianlanguages.org/sureth/dosearch.php?searchkey="+this.props.params.searchkeynum+"&language=id"} target="_blank">term</a> you clicked on.
           </div>)
       }
-      //const cf = this.getCleanArrWithHtml(dictionary_definition_obj.get('cf'));
-      //const seealso = this.getCleanArrWithHtml(dictionary_definition_obj.get('seealso'));
+      //const cf = this.getCleanArrWithHtml(dictionary_definition_obj['cf'));
+      //const seealso = this.getCleanArrWithHtml(dictionary_definition_obj['seealso'));
 
       //var rows = [];
-      const cf = (<DefinitionHelper arr={dictionary_definition_obj.get('cf')}/>);
-      const seealso = (<DefinitionHelper arr={dictionary_definition_obj.get('seealso')}/>);
+      const cf = (<DefinitionHelper arr={dictionary_definition_obj['cf']}/>);
+      const seealso = (<DefinitionHelper arr={dictionary_definition_obj['seealso']}/>);
       
-      const phonetic = PhoneticEastHelper(dictionary_definition_obj.get('phonetic'));
+      const phonetic = PhoneticEastHelper(dictionary_definition_obj['phonetic']);
 
-      const phonetic_west = PhoneticWestHelper(dictionary_definition_obj.get('phonetic_west'));
+      const phonetic_west = PhoneticWestHelper(dictionary_definition_obj['phonetic_west']);
 
-      const audioEast = PhoneticWestHelper(dictionary_definition_obj.get('audio'));
-      const audioWest = PhoneticWestHelper(dictionary_definition_obj.get('audio_west'));
+      const audioEast = PhoneticWestHelper(dictionary_definition_obj['audio']);
+      const audioWest = PhoneticWestHelper(dictionary_definition_obj['audio_west']);
 
       return (
         <div className="todos">
 <ul itemscope itemtype="http://schema.org/BreadcrumbList">
 
-     Definition: {dictionary_definition_obj.get('definition_arr').join("\n").replace(/^ : /,"")}
-     <p>Category: {dictionary_definition_obj.get('partofspeech')}</p>
+     Definition: {dictionary_definition_obj['definition_arr'].join("\n").replace(/^ : /,"")}
+     <p>Category: {dictionary_definition_obj['partofspeech']}</p>
        <p className='definition'>
-       East: <span className="east">{dictionary_definition_obj.get('east')}</span>
+       East: <span className="east">{dictionary_definition_obj['east']}</span>
        <span className="phonetic">({phonetic})</span>
        <ReactAudioPlayer src={audioEast}/>
      </p>
      <p className='definition'>
-       West: <span className="west">{dictionary_definition_obj.get('west')}</span>
+       West: <span className="west">{dictionary_definition_obj['west']}</span>
        <span className="phonetic">({phonetic_west})</span>
        <ReactAudioPlayer src={audioWest}/>
      </p>
@@ -95,18 +84,18 @@ class TodoDetail extends React.Component {
      </p>
      <p>
      <li itemprop="itemListElement" itemscope
-      itemtype="http://schema.org/ListItem" itemprop="name">Source : {dictionary_definition_obj.get('source')}</li>
+      itemtype="http://schema.org/ListItem" itemprop="name">Source : {dictionary_definition_obj['source']}</li>
       <li itemprop="itemListElement" itemscope
-      itemtype="http://schema.org/ListItem" itemprop="name">Dialect : {dictionary_definition_obj.get('dialect')}</li>
+      itemtype="http://schema.org/ListItem" itemprop="name">Dialect : {dictionary_definition_obj['dialect']}</li>
       <li itemprop="itemListElement" itemscope
       itemtype="http://schema.org/ListItem" itemprop="name">
-       Origins : {dictionary_definition_obj.get('origins')}</li>
+       Origins : {dictionary_definition_obj['origins']}</li>
        <li itemprop="itemListElement" itemscope
       itemtype="http://schema.org/ListItem" itemprop="name">See Also : {seealso}</li>
       <li itemprop="itemListElement" itemscope
-      itemtype="http://schema.org/ListItem" itemprop="name">Root : {dictionary_definition_obj.get('root')}</li>
+      itemtype="http://schema.org/ListItem" itemprop="name">Root : {dictionary_definition_obj['root']}</li>
       <li itemprop="itemListElement" itemscope
-      itemtype="http://schema.org/ListItem" itemprop="name">Semantics : {dictionary_definition_obj.get('semantics')}</li>
+      itemtype="http://schema.org/ListItem" itemprop="name">Semantics : {dictionary_definition_obj['semantics']}</li>
        
      </p>
      </ul>
