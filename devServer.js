@@ -80,10 +80,22 @@ app.get('/word/:searchTerm', function(req, res) {
         return
       })
     })
-  
-
   //res.render('index', {title: req.params.searchTerm});
 });
+
+app.get('/api/autosuggest/:searchTerm', function(req, res){
+  res.setHeader('Content-Type', 'application/json');
+
+  //app.locals.db.collection('DictionaryWordDefinitionList').find({"word":{$regex:"^" + req.params.searchTerm}}).limit(50).sort( { "boost": -1 } ).toArray(function (err, result) {  
+  //app.locals.db.collection('DictionaryWordDefinitionList').find({"word":req.params.searchTerm}).limit(50).sort( { "boost": -1 } ).toArray(function (err, result) {
+    app.locals.db.collection('DictionaryWordDefinitionList').find({"word":new RegExp('^'+req.params.searchTerm)}).limit(50).sort( { "boost": -1 } ).toArray(function (err, result) {
+    if (err || !result || !result[0]) {
+      console.log("error fetching autosuggest" + err)
+    } else {
+      res.send(result);
+    }
+  })
+})
 
 app.get('/proverbs', function(req, res) {
   res.render('index', {title: "proverbs and quotes"});

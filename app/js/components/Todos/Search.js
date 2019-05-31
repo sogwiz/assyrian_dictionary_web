@@ -144,28 +144,20 @@ class Search extends React.Component {
     this.lastRequestId = setTimeout(() => {
       const that = this;
 
-      const query = new Parse.Query('DictionaryWordDefinitionList')
-      query.startsWith('word', value.toLowerCase().trim())
-        .limit(50)
-        .descending('boost')
-
-      query.find({
-        success: function (results) {
-          that.setState({
-            isLoading: false,
-            suggestions: [...new Set(results.map(item => item.get('word')))],
-          })
-        },
-        error: function (error) {
-          that.setState({
-            isLoading: false,
-            error: true,
-            errorObj: error,
-            suggestions: [...new Set(results.map(item => item.get('word')))],
-          })
-        }
-      })
-
+      fetch('/api/autosuggest/' + value.toLowerCase().trim())
+                    .then((response) => response.json())
+                    .then (results => {
+                        that.setState({
+                            isLoading: false,
+                            suggestions: [...new Set(results.map(item => item['word']))],
+                        })
+                    })
+                    .catch((error) => {
+                        that.setState({
+                            isLoading: false,
+                            suggestions: [...new Set(results.map(item => item['word']))]
+                        })
+                      })
     }, 1000);
   }
 
