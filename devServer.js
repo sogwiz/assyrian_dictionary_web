@@ -7,6 +7,7 @@ var compression = require('compression')
 
 // redis-client.js
 const redis = require('redis');
+//const redis = require('redis-mock');
 const redisClient = redis.createClient(process.env.REDIS_URL);
 const DURATION_SECONDS_REDIS_DEFAULT = 36000
 
@@ -85,14 +86,22 @@ app.get('/word/:searchTerm', function(req, res) {
 
 app.get('/api/autosuggest/:searchTerm', function(req, res){
   res.setHeader('Content-Type', 'application/json');
+  const redisKey = 'autosuggest/' + req.params.searchTerm
 
-  //app.locals.db.collection('DictionaryWordDefinitionList').find({"word":{$regex:"^" + req.params.searchTerm}}).limit(50).sort( { "boost": -1 } ).toArray(function (err, result) {  
-  //app.locals.db.collection('DictionaryWordDefinitionList').find({"word":req.params.searchTerm}).limit(50).sort( { "boost": -1 } ).toArray(function (err, result) {
-    app.locals.db.collection('DictionaryWordDefinitionList').find({"word":new RegExp('^'+req.params.searchTerm)}).limit(50).sort( { "boost": -1 } ).toArray(function (err, result) {
-    if (err || !result || !result[0]) {
-      console.log("error fetching autosuggest" + err)
-    } else {
-      res.send(result);
+  redisClient.get(redisKey, (err, result) => {
+    if (result){
+      //console.log("Reading autosuggest from cache")
+      return res.status(200).send(result);
+    }else {
+      //console.log("Reading autosuggest from db")
+      app.locals.db.collection('DictionaryWordDefinitionList').find({"word":new RegExp('^'+req.params.searchTerm)}).limit(50).sort( { "boost": -1 } ).toArray(function (err, result) {
+        if (err || !result || !result[0]) {
+          console.log("error fetching autosuggest" + err)
+        } else {
+          redisClient.set(redisKey,JSON.stringify(result),'EX',DURATION_SECONDS_REDIS_DEFAULT)
+          res.send(result);
+        }
+      })
     }
   })
 })
@@ -302,4 +311,3 @@ app.get('*', function(req, res) {
       });
     }
   });
-
