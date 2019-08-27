@@ -43,6 +43,7 @@ class RecentUpdates extends React.Component {
 
         this.state = {
             rows: new Array(),
+            setRows: new Array(),
             isLoading: false
         };
 
@@ -50,11 +51,17 @@ class RecentUpdates extends React.Component {
             {
                 name: 'Word or phrase',
                 key: 'word',
-                formatter: LinkCellFormatter
+                formatter: LinkCellFormatter,
+                sortable: true
             },
             {
-                name: 'Add / Update Date',
+                name: 'Updated',
                 key: '_updated_at',
+                formatter: DateCellFormatter
+            },
+            {
+                name: 'Created',
+                key: '_created_at',
                 formatter: DateCellFormatter
             }
         ]
@@ -67,7 +74,7 @@ class RecentUpdates extends React.Component {
         })
         
         const query = new Parse.Query('DictionaryWordDefinitionList')
-        query.limit(50).descending('_updated_at')
+        query.limit(100).descending('_updated_at')
 
         const that = this;
         query.find({
@@ -96,7 +103,7 @@ class RecentUpdates extends React.Component {
 
         if(this.state.rows != null && this.state.rows.length > 0) {
             var listitem = this.state.rows[i]
-            var result = {word: listitem.get('word') + ":" + listitem.get("searchkeynum"), _updated_at: listitem.updatedAt.toString(), searchkeynum: listitem.get('searchkeynum')}
+            var result = {word: listitem.get('word') + ":" + listitem.get("searchkeynum"), _updated_at: listitem.updatedAt.toString(), _created_at: listitem.createdAt.toString(), searchkeynum: listitem.get('searchkeynum')}
             return result
         }
         return null
@@ -105,6 +112,7 @@ class RecentUpdates extends React.Component {
     render() {
         if (this.state == null || this.state.rows == null || this.state.rows.length < 1) { return (<div />)}
 
+        
         return (
                 <ReactDataGrid
                     enableCellSelect={true}
@@ -112,7 +120,8 @@ class RecentUpdates extends React.Component {
                     rowGetter={this.rowGetter.bind(this)}
                     rowsCount={this.state.rows.length}
                     minHeight={500} 
-                    minColumnWidth={200}/>
+                    minColumnWidth={200}
+                      />
         )
     }
 }

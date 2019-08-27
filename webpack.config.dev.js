@@ -7,7 +7,8 @@ require('dotenv').config();
 module.exports = {
   devtool: 'source-map',
   entry: [
-    './app/js/main'
+    './app/js/main',
+    'webpack-hot-middleware/client'
   ],
   output: {
     path: path.join(__dirname, 'dist'),
