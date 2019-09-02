@@ -1,0 +1,1 @@
+The agz files are generated via Studio 3T -> Export Collection -> mongodump -> bson mongodump archive (enable compression)
