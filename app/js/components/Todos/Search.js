@@ -143,7 +143,6 @@ class Search extends React.Component {
     // Fake request
     this.lastRequestId = setTimeout(() => {
       const that = this;
-
       fetch('/api/autosuggest/' + value.toLowerCase().trim())
                     .then((response) => response.json())
                     .then (results => {

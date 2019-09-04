@@ -219,12 +219,20 @@ app.get('/api/verified', function(req, res) {
 app.get('/api/word/search/:searchTerm', function(req, res) {
   res.setHeader('Content-Type', 'application/json');
   const redisKey = 'word/search/' + req.params.searchTerm
+
+  const useragent = req.header('user-agent')
+  var isWebRequest = true;
+  //so that we don't log curl requests that prime the cache
+  if(useragent && useragent.startsWith("curl")){
+    isWebRequest = false;
+  }
+
   redisClient.get(redisKey, (err, result) => {
     if (result) {
-      console.log('CACHE:SearchResult:'+req.params.searchTerm)
+      if(isWebRequest)console.log('CACHE:SearchResult:'+req.params.searchTerm)
       return res.status(200).send(result);
     }else {
-      console.log('DB:SearchResult:'+req.params.searchTerm)
+      if(isWebRequest)console.log('DB:SearchResult:'+req.params.searchTerm)
         app.locals.db.collection('DictionaryWordDefinitionList').aggregate([
           { $match: { word: { $eq: req.params.searchTerm }}},
           { $limit : 50},
@@ -241,7 +249,9 @@ app.get('/api/word/search/:searchTerm', function(req, res) {
         {"$unwind":"$definition"}
       ]).toArray(function (err, result) {
         if (err || !result || !result[0]) {
-          console.log("error fetching search results" + err)
+          console.log("error fetching search results " + err)
+          //for some reason, this line must not be deleted
+          res.send(result);
         } else {
           redisClient.set(redisKey, JSON.stringify(result),'EX',DURATION_SECONDS_REDIS_DEFAULT)
           res.send(result);
