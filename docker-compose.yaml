@@ -1,29 +1,32 @@
-redis:
-  restart: always
-  image: redis
-  container_name: cache
-  expose:
-    - 6379
+version: '2'
 
-web:
-  restart: always
-  image: sogwiz/sargonsays
-  ports:
-    - "3001"
-  env_file:
-    - .env
-  environment:
-    # mongodb:27017 is a direct reference to the 'mongodb' mongo container
-    - REDIS_URL=redis://cache
-  links:
-    - redis
+services:
+  redis:
+    restart: always
+    image: redis
+    container_name: cache
+    expose:
+      - 6379
 
-lb:
-  restart: always
-  image: dockercloud/haproxy
-  links:
-    - web
-  volumes:
-    - /var/run/docker.sock:/var/run/docker.sock
-  ports:
-    - 80:80
+  web:
+    restart: always
+    image: sogwiz/sargonsays
+    ports:
+      - "3001"
+    env_file:
+      - .env
+    environment:
+      # mongodb:27017 is a direct reference to the 'mongodb' mongo container
+      - REDIS_URL=redis://cache
+    links:
+      - redis
+
+  lb:
+    image: dockercloud/haproxy
+    restart: always
+    links:
+      - web
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 80:80

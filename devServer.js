@@ -9,7 +9,7 @@ var compression = require('compression')
 const redis = require('redis');
 //const redis = require('redis-mock');
 const redisClient = redis.createClient(process.env.REDIS_URL);
-const DURATION_SECONDS_REDIS_DEFAULT = 36000
+const DURATION_SECONDS_REDIS_DEFAULT = 720000
 
 var app = express();
 //compress all responses
@@ -215,6 +215,43 @@ app.get('/api/verified', function(req, res) {
   })
 
 })
+
+app.get('/api/word/search/:searchTerm', function(req, res) {
+  res.setHeader('Content-Type', 'application/json');
+  const redisKey = 'word/search/' + req.params.searchTerm
+  redisClient.get(redisKey, (err, result) => {
+    if (result) {
+      console.log('CACHE:SearchResult:'+req.params.searchTerm)
+      return res.status(200).send(result);
+    }else {
+      console.log('DB:SearchResult:'+req.params.searchTerm)
+        app.locals.db.collection('DictionaryWordDefinitionList').aggregate([
+          { $match: { word: { $eq: req.params.searchTerm }}},
+          { $limit : 50},
+          { $sort : { "boost": -1 }},
+          {
+            $lookup:
+              {
+                from: "DictionaryDefinition",
+                localField: "dictionary_definition",
+                foreignField: "_id",
+                as: "definition"
+              }
+         },
+        {"$unwind":"$definition"}
+      ]).toArray(function (err, result) {
+        if (err || !result || !result[0]) {
+          console.log("error fetching search results" + err)
+        } else {
+          redisClient.set(redisKey, JSON.stringify(result),'EX',DURATION_SECONDS_REDIS_DEFAULT)
+          res.send(result);
+        }
+      })
+    }
+
+  })
+})
+
 
 // used by the popup modal when showing the tag cloud "Related Searches"
 app.get('/api/searchkeynum/related/:searchkeynum', function(req, res) {
