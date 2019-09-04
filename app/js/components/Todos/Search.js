@@ -326,12 +326,30 @@ class Search extends React.Component {
 
     console.log('query word ' + input)
     Parse.Cloud.run('searchStats', { word: input.toLowerCase().trim() });
+    /*
     const query = new Parse.Query('DictionaryWordDefinitionList')
     query.equalTo('word', input.toLowerCase().trim())
       .include('dictionary_definition_obj')
       .limit(50)
-      .descending('boost')
+      .descending('boost')*/
 
+      fetch('/api/word/search/'+input.toLowerCase().trim())
+                 .then((response) => response.json())
+                 .then (results => {
+                     that.setState({
+                      isSearching: false,
+                      searchQuery : input,
+
+                       data: [...new Set(results.map(item => item))],
+                     })
+                 })
+                 .catch(error => this.setState({ error:true, 
+                  errorObj:error, 
+                  isSearching: false,
+                  data: []
+                 }));
+
+       /*
     query.find({
       success: function (results) {
         that.setState({
@@ -349,6 +367,7 @@ class Search extends React.Component {
         })
       }
     })
+    */
   }
 
 

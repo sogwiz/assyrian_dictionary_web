@@ -36,39 +36,41 @@ class TodoItem extends React.Component {
   render() {
     const todo = this.props.todo
     const idxEntry = this.props.idxEntry + 1
+    const dictionary_definition_obj = todo['definition']
+    
 
-    if(!todo.dictionary_definition_obj.phonetic){
-      todo.dictionary_definition_obj.phonetic = ''
+    if(!dictionary_definition_obj.phonetic){
+      dictionary_definition_obj.phonetic = ''
     }
-    if(!todo.dictionary_definition_obj.phonetic_west){
-      todo.dictionary_definition_obj.phonetic_west = ''
+    if(!dictionary_definition_obj.phonetic_west){
+      dictionary_definition_obj.phonetic_west = ''
     }
 
     var rows = [];
     rows.push(<EastDefinitionRow todo={todo}/>);
     rows.push(<WestDefinitionRow todo={todo}/>);
 
-    //var contentDesc = "English Assyrian Translation " + todo.word + " " + todo.dictionary_definition_obj.definition_arr.join("\n").replace(/^ : /,"");
-    var contentDesc = "Translate " + todo.word + " from English to Assyrian. " + todo.dictionary_definition_obj.east + " ( " + todo.dictionary_definition_obj.phonetic + " )";
+    //var contentDesc = "English Assyrian Translation " + todo.word + " " + dictionary_definition_obj.definition_arr.join("\n").replace(/^ : /,"");
+    var contentDesc = "Translate " + todo.word + " from English to Assyrian. " + dictionary_definition_obj.east + " ( " + dictionary_definition_obj.phonetic + " )";
 
     const percentConfidence = Math.round(this.props.todo.boost);
-    const cf = (<DefinitionHelper arr={todo.dictionary_definition_obj.cf}/>);
-    const seealso = (<DefinitionHelper arr={todo.dictionary_definition_obj.seealso}/>);
-    const source = todo.dictionary_definition_obj.source;
+    const cf = (<DefinitionHelper arr={dictionary_definition_obj.cf}/>);
+    const seealso = (<DefinitionHelper arr={dictionary_definition_obj.seealso}/>);
+    const source = dictionary_definition_obj.source;
     
     return (
       <div className='definition-item' onClick={this.renderDetail.bind(this)} id={idxEntry}>
       <li itemprop="itemListElement" itemscope
       itemtype="http://schema.org/ListItem">
       <meta itemprop="position" content={idxEntry} />
-      <p className='definition'>{todo.dictionary_definition_obj.definition_arr.join("\n").replace(/^ : /,"")}</p>
+      <p className='definition'>{dictionary_definition_obj.definition_arr.join("\n").replace(/^ : /,"")}</p>
       <span>{rows}</span>
 
      {this.getSEORenderer(this.props.idxEntry, contentDesc)}
      {this.getBadgeRenderer(todo.boost)} 
      
       <div className="definition"><span className="infoicon"><span className="tooltip">&#9432;<span className="tooltiptext">Sources :<br/> {source}</span></span></span></div>
-      <div className="pos">{todo.dictionary_definition_obj.partofspeech}</div>
+      <div className="pos">{dictionary_definition_obj.partofspeech}</div>
       
       <ReactModal 
            isOpen={this.state.showModal}
@@ -76,15 +78,15 @@ class TodoItem extends React.Component {
            onRequestClose={this.handleCloseModal}
         >
         <p>Search term : {todo.word}</p>
-        Definition: {todo.dictionary_definition_obj.definition_arr.join("\n").replace(/^ : /,"")}
-        <p>Category: {todo.dictionary_definition_obj.partofspeech}</p>
+        Definition: {dictionary_definition_obj.definition_arr.join("\n").replace(/^ : /,"")}
+        <p>Category: {dictionary_definition_obj.partofspeech}</p>
           <p className='definition'>
-          East: <span className="east">{todo.dictionary_definition_obj.east}</span>
-          <span className="phonetic">({PhoneticEastHelper(todo.dictionary_definition_obj.phonetic)})</span>
+          East: <span className="east">{dictionary_definition_obj.east}</span>
+          <span className="phonetic">({PhoneticEastHelper(dictionary_definition_obj.phonetic)})</span>
         </p>
         <p className='definition'>
-          West: <span className="west">{todo.dictionary_definition_obj.west}</span>
-          <span className="phonetic">({PhoneticWestHelper(todo.dictionary_definition_obj.phonetic_west)})</span>
+          West: <span className="west">{dictionary_definition_obj.west}</span>
+          <span className="phonetic">({PhoneticWestHelper(dictionary_definition_obj.phonetic_west)})</span>
         </p>
         
         <p className='definition'>
@@ -93,17 +95,17 @@ class TodoItem extends React.Component {
         <p>
           <ul>
         <li itemprop="itemListElement" itemscope
-      itemtype="http://schema.org/ListItem">Source : {todo.dictionary_definition_obj.source}</li>
+      itemtype="http://schema.org/ListItem">Source : {dictionary_definition_obj.source}</li>
       <li itemprop="itemListElement" itemscope
-      itemtype="http://schema.org/ListItem">Dialect : {todo.dictionary_definition_obj.dialect}</li>
+      itemtype="http://schema.org/ListItem">Dialect : {dictionary_definition_obj.dialect}</li>
       <li itemprop="itemListElement" itemscope
-      itemtype="http://schema.org/ListItem">Origins : {todo.dictionary_definition_obj.origins}</li>
+      itemtype="http://schema.org/ListItem">Origins : {dictionary_definition_obj.origins}</li>
       <li itemprop="itemListElement" itemscope
       itemtype="http://schema.org/ListItem">See Also : {seealso}</li>
       <li itemprop="itemListElement" itemscope
-      itemtype="http://schema.org/ListItem">Root : {todo.dictionary_definition_obj.root}</li>
+      itemtype="http://schema.org/ListItem">Root : {dictionary_definition_obj.root}</li>
       <li itemprop="itemListElement" itemscope
-      itemtype="http://schema.org/ListItem">Semantics : {todo.dictionary_definition_obj.semantics}</li>
+      itemtype="http://schema.org/ListItem">Semantics : {dictionary_definition_obj.semantics}</li>
       </ul>
         </p>
         <p>
@@ -177,7 +179,7 @@ class TodoItem extends React.Component {
 
   handleOpenModal () {
     this.setState({ showModal: true });
-    ReactGA.modalview('/word/'+this.props.todo.word+'/searchkey/'+this.props.todo.dictionary_definition_obj.searchkeynum);
+    ReactGA.modalview('/word/'+this.props.todo.word+'/searchkey/'+this.props.dictionary_definition_obj.searchkeynum);
   }
   
   handleCloseModal () {
@@ -190,30 +192,31 @@ export default TodoItem
 class EastDefinitionRow extends React.Component {
   render() {
     const todo = this.props.todo
+    const dictionary_definition_obj = todo['definition']
     var phonetic = '';
-    if(todo.dictionary_definition_obj.phonetic){
-      phonetic = '('+PhoneticEastHelper(todo.dictionary_definition_obj.phonetic)+')';
+    if(dictionary_definition_obj.phonetic){
+      phonetic = '('+PhoneticEastHelper(dictionary_definition_obj.phonetic)+')';
     }
 
-    if(todo.dictionary_definition_obj.audio){
-      var audioFile = todo.dictionary_definition_obj.audio;
+    if(dictionary_definition_obj.audio){
+      var audioFile = dictionary_definition_obj.audio;
       if(!audioFile.includes('http')){
-        audioFile = 'http://assyrianlanguages.org/sureth/' +  todo.dictionary_definition_obj.audio;
+        audioFile = 'http://assyrianlanguages.org/sureth/' +  dictionary_definition_obj.audio;
       }
       
       return (
-        <div data-key={todo.dictionary_definition_obj.searchkeynum}  data-id={todo.dictionary_definition_obj.objectId} itemprop="name">
+        <div data-key={dictionary_definition_obj.searchkeynum}  data-id={dictionary_definition_obj.objectId} itemprop="name">
           <span className="definition"><span className="tooltip">east <span className="tooltiptext">Eastern Dialect</span></span></span>
-          <span className="east">{todo.dictionary_definition_obj.east}</span>
+          <span className="east">{dictionary_definition_obj.east}</span>
           <span className="phonetic">{phonetic}</span>
           <span><ReactAudioPlayer src={audioFile}/></span>
         </div>
       );
     }else {
       return (
-        <div data-key={todo.dictionary_definition_obj.searchkeynum}  data-id={todo.dictionary_definition_obj.objectId}>
+        <div data-key={dictionary_definition_obj.searchkeynum}  data-id={dictionary_definition_obj.objectId}>
         <span className="definition"><span className="tooltip">east <span className="tooltiptext">Eastern Dialect</span></span></span>
-        <span className="east">{todo.dictionary_definition_obj.east}</span>
+        <span className="east">{dictionary_definition_obj.east}</span>
         <span className="phonetic">{phonetic}</span>
         </div>
       );
@@ -224,22 +227,23 @@ class EastDefinitionRow extends React.Component {
 class WestDefinitionRow extends React.Component {
   render() {
     const todo = this.props.todo
-    var westernUnicode = todo.dictionary_definition_obj.west_western
+    const dictionary_definition_obj = todo['definition']
+    var westernUnicode = dictionary_definition_obj.west_western
     if(!westernUnicode){
-      westernUnicode = todo.dictionary_definition_obj.west
+      westernUnicode = dictionary_definition_obj.west
     }
 
     var phonetic = '';
-    if(todo.dictionary_definition_obj.phonetic_west){
-      phonetic = '('+PhoneticWestHelper(todo.dictionary_definition_obj.phonetic_west)+')';
+    if(dictionary_definition_obj.phonetic_west){
+      phonetic = '('+PhoneticWestHelper(dictionary_definition_obj.phonetic_west)+')';
     }
     
     
 
-    if(todo.dictionary_definition_obj.audio_west){
-      var audioFile = todo.dictionary_definition_obj.audio_west
+    if(dictionary_definition_obj.audio_west){
+      var audioFile = dictionary_definition_obj.audio_west
       return (
-        <div data-key={todo.dictionary_definition_obj.searchkeynum}  data-id={todo.dictionary_definition_obj.objectId}>
+        <div data-key={dictionary_definition_obj.searchkeynum}  data-id={dictionary_definition_obj.objectId}>
         <span className="definition"><span className="tooltip">west <span className="tooltiptext">Western Dialect</span></span></span>
           <span className="west">{westernUnicode}</span>
           <span className="phonetic">{phonetic}</span>
@@ -250,7 +254,7 @@ class WestDefinitionRow extends React.Component {
       );
     }else {
       return (
-        <div data-key={todo.dictionary_definition_obj.searchkeynum} data-id={todo.dictionary_definition_obj.objectId}>
+        <div data-key={dictionary_definition_obj.searchkeynum} data-id={dictionary_definition_obj.objectId}>
         <span className="definition"><span className="tooltip">west <span className="tooltiptext">Western Dialect</span></span></span>
           <span className="west">{westernUnicode}</span>
           <span className="phonetic">{phonetic}</span>
