@@ -11,6 +11,8 @@ services:
   web:
     restart: always
     image: sogwiz/sargonsays
+    volumes:
+        - ./logs/:/usr/src/app/logs
     ports:
       - "3001"
     env_file:

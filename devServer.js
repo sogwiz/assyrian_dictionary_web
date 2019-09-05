@@ -4,12 +4,48 @@ var webpack = require('webpack');
 var config = require('./webpack.config.dev');
 var MongoClient = require('mongodb').MongoClient
 var compression = require('compression')
+const os = require('os');
+const hostname = os.hostname()
 
 // redis-client.js
 const redis = require('redis');
 //const redis = require('redis-mock');
 const redisClient = redis.createClient(process.env.REDIS_URL);
-const DURATION_SECONDS_REDIS_DEFAULT = 720000
+const DURATION_SECONDS_REDIS_DEFAULT = 720000;
+
+var winston = require('winston');
+  require('winston-daily-rotate-file');
+
+  var transport = new (winston.transports.DailyRotateFile)({
+    filename: 'logs/application-%DATE%.log',
+    datePattern: 'YYYY-MM-DD-HH',
+    zippedArchive: true,
+    maxSize: '20m',
+    maxFiles: '90d'
+  });
+
+  /*
+  transport.on('rotate', function(oldFilename, newFilename) {
+    // do something fun
+  });*/
+
+  const { createLogger, format, transports } = require('winston');
+const { combine, timestamp, label, printf } = format;
+
+  const myFormat = printf(({ level, message, label, timestamp }) => {
+    return `${timestamp} [${label}] ${level}: ${message}`;
+  });
+
+  var logger = winston.createLogger({
+    format: combine(
+      label({ label: 'sargonsays_'+hostname }),
+      timestamp(),
+      format.json()
+    ),
+    transports: [
+      transport
+    ]
+  });
 
 var app = express();
 //compress all responses
@@ -56,7 +92,7 @@ app.get('/sitemap2.xml', (req, res) => (
 //this is just for SEO server side rendering purposes
 //doesn't get called on client side search UNLESS the user views page source
 app.get('/word/:searchTerm', function(req, res) {
-  console.log('sever invoked');
+  logger.info('sever invoked');
     
     const db = app.locals.db;
     //TODO: there's no reason why this shouldn't be made into just one query.
@@ -74,7 +110,7 @@ app.get('/word/:searchTerm', function(req, res) {
           //db.close();
           return
         }
-        console.log("search result")
+        logger.info("search result")
         var textToRender = searchresult[0]['east'] + " ( " + searchresult[0]['phonetic'] +" )"
         res.render('index', {title: "word for " + req.params.searchTerm + "  : " + textToRender, word: req.params.searchTerm});
         //db.close();
@@ -90,13 +126,13 @@ app.get('/api/autosuggest/:searchTerm', function(req, res){
 
   redisClient.get(redisKey, (err, result) => {
     if (result){
-      //console.log("Reading autosuggest from cache")
+      //logger.info("Reading autosuggest from cache")
       return res.status(200).send(result);
     }else {
-      //console.log("Reading autosuggest from db")
+      //logger.info("Reading autosuggest from db")
       app.locals.db.collection('DictionaryWordDefinitionList').find({"word":new RegExp('^'+req.params.searchTerm)}).limit(50).sort( { "boost": -1 } ).toArray(function (err, result) {
         if (err || !result || !result[0]) {
-          console.log("error fetching autosuggest" + err)
+          logger.info("error fetching autosuggest" + err)
         } else {
           redisClient.set(redisKey,JSON.stringify(result),'EX',DURATION_SECONDS_REDIS_DEFAULT)
           res.send(result);
@@ -137,12 +173,12 @@ app.get('/api/proverb', function(req, res) {
     if (result){
       return res.status(200).send(result);
     }else {
-      console.log("reading proverbs from db")
+      logger.info("reading proverbs from db")
       app.locals.db.collection('Proverb').find().toArray(function (err, result) {
         if (err || !result || !result[0]) {
-          console.log("error fetching proverbs" + err)
+          logger.info("error fetching proverbs" + err)
         }else {
-          //console.log(result, typeof result);
+          //logger.info(result, typeof result);
           redisClient.set('proverbs',JSON.stringify(result),'EX',DURATION_SECONDS_REDIS_DEFAULT)
           res.send(result);
         }
@@ -158,10 +194,10 @@ app.get('/api/phrases', function(req, res) {
     if (result) {
       return res.status(200).send(result);
     }else {
-      console.log('reading phrases from db')
+      logger.info('reading phrases from db')
       app.locals.db.collection('DictionaryDefinition').find({"partofspeech":{ $eq :"phrase"}}).sort( { "english": 1 } ).toArray(function (err, result) {
         if (err || !result || !result[0]) {
-          console.log("error fetching phrases" + err)
+          logger.info("error fetching phrases" + err)
         } else {
           redisClient.set('phrases', JSON.stringify(result),'EX',DURATION_SECONDS_REDIS_DEFAULT)
           res.send(result);
@@ -179,11 +215,11 @@ app.get('/api/searchstats', function(req, res) {
     if (result) {
       return res.status(200).send(result)
     } else {
-      console.log('reading searchstats from db')
+      logger.info('reading searchstats from db')
       app.locals.db.collection('SearchStat').find().limit(250).sort({queries:-1}).toArray(function (err, result) {
         if(err){
-          console.log("error fetching searchstats from db ")
-          console.log(err)
+          logger.info("error fetching searchstats from db ")
+          logger.info(err)
         }else {
           redisClient.set(redisKey, JSON.stringify(result),'EX',10800)
           res.send(result)
@@ -201,11 +237,11 @@ app.get('/api/verified', function(req, res) {
     if (result) {
       return res.status(200).send(result)
     } else {
-      console.log('reading verified from db')
+      logger.info('reading verified from db')
       app.locals.db.collection('DictionaryWordDefinitionList').find({boost: 100}).limit(350).toArray(function (err, result) {
         if(err){
-          console.log("error fetching verified from db ")
-          console.log(err)
+          logger.info("error fetching verified from db ")
+          logger.info(err)
         }else {
           redisClient.set(redisKey, JSON.stringify(result),'EX',DURATION_SECONDS_REDIS_DEFAULT)
           res.send(result)
@@ -229,10 +265,10 @@ app.get('/api/word/search/:searchTerm', function(req, res) {
 
   redisClient.get(redisKey, (err, result) => {
     if (result) {
-      if(isWebRequest)console.log('CACHE:SearchResult:'+req.params.searchTerm)
+      if(isWebRequest)logger.info('CACHE:SearchResult:'+req.params.searchTerm)
       return res.status(200).send(result);
     }else {
-      if(isWebRequest)console.log('DB:SearchResult:'+req.params.searchTerm)
+      if(isWebRequest)logger.info('DB:SearchResult:'+req.params.searchTerm)
         app.locals.db.collection('DictionaryWordDefinitionList').aggregate([
           { $match: { word: { $eq: req.params.searchTerm }}},
           { $limit : 50},
@@ -249,7 +285,7 @@ app.get('/api/word/search/:searchTerm', function(req, res) {
         {"$unwind":"$definition"}
       ]).toArray(function (err, result) {
         if (err || !result || !result[0]) {
-          console.log("error fetching search results " + err)
+          logger.info("error fetching search results " + err)
           //for some reason, this line must not be deleted
           res.send(result);
         } else {
@@ -272,11 +308,11 @@ app.get('/api/searchkeynum/related/:searchkeynum', function(req, res) {
     if(result) {
       return res.status(200).send(result);
     }else {
-      console.log('reading /api/searchkeynum/related from db')
+      logger.info('reading /api/searchkeynum/related from db')
       app.locals.db.collection('DictionaryWordDefinitionList').find({'searchkeynum': parseInt(req.params.searchkeynum)}).limit(30).sort({boost:-1}).toArray(function(err, result) {
         if (err || !result || !result[0]) {
-          console.log("Couldn't find related searchkeynum from db " +  req.params.searchkeynum)
-          console.log(err)
+          logger.info("Couldn't find related searchkeynum from db " +  req.params.searchkeynum)
+          logger.info(err)
         }else {
           redisClient.set(redisKey, JSON.stringify(result),'EX',DURATION_SECONDS_REDIS_DEFAULT)
           res.send(result)
@@ -295,11 +331,11 @@ app.get('/api/searchkeynum/:searchkeynum', function(req, res) {
     if(result) {
       return res.status(200).send(result);
     }else {
-      console.log('reading /api/searchkeynum from db')
+      logger.info('reading /api/searchkeynum from db')
       app.locals.db.collection('DictionaryDefinition').find({'searchkeynum': parseInt(req.params.searchkeynum)}).toArray(function(err, result) {
         if (err || !result || !result[0]) {
-          console.log("Couldn't find DictionaryDefinition searchkeynum from db " +  req.params.searchkeynum)
-          console.log(err)
+          logger.info("Couldn't find DictionaryDefinition searchkeynum from db " +  req.params.searchkeynum)
+          logger.info(err)
         }else {
           redisClient.set(redisKey, JSON.stringify(result),'EX',DURATION_SECONDS_REDIS_DEFAULT)
           res.send(result)
@@ -321,10 +357,10 @@ app.get('/api/word/related/:searchTerm', function(req, res) {
       return res.status(200).send(result);
     }else {
       app.locals.db.collection('DictionaryWordDefinitionList').find({"$text": {"$search": req.params.searchTerm}}, {score: {"$meta": 'textScore'}}).limit(300).sort({score: {"$meta": 'textScore'}}).toArray(function (err, result) {
-        console.log('reading api/word/related from db')
+        logger.info('reading api/word/related from db')
         //db.collection('DictionaryWordDefinitionList').find({"word":req.params.searchTerm}).limit(1).sort( { boost: -1 } ).toArray(function (err, result) {
           if (err || !result || !result[0]) {
-            console.log("error")
+            logger.info("error")
           }else {
             resultArr = removeDuplicatesBy(x => x.word, result);
             redisClient.set(redisKey, JSON.stringify(resultArr),'EX',DURATION_SECONDS_REDIS_DEFAULT)
@@ -344,17 +380,17 @@ app.get('*', function(req, res) {
   MongoClient.connect(connectionString, function (err, db) {
     if (err) {
       //res.send(JSON.stringify({ error: "couldn't connect to db" }, null, 3));
-      console.log("couldn't connect to mongo ")
-      console.log(err)
+      logger.info("couldn't connect to mongo ")
+      logger.info(err)
       return
     }else {
       app.listen(port, function(error) {
         if (error) {
-          console.log(error);
+          logger.info(error);
           return;
         }
         app.locals.db = db;
-        console.log('Listening at ' + host + ':' + port);
+        logger.info('Listening at ' + host + ':' + port);
       });
     }
   });
