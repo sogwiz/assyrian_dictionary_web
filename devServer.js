@@ -263,39 +263,70 @@ app.get('/api/word/search/:searchTerm', function(req, res) {
     isWebRequest = false;
   }
 
-  redisClient.get(redisKey, (err, result) => {
-    if (result) {
-      if(isWebRequest)logger.info('CACHE:SearchResult:'+req.params.searchTerm)
-      return res.status(200).send(result);
-    }else {
-      if(isWebRequest)logger.info('DB:SearchResult:'+req.params.searchTerm)
-        app.locals.db.collection('DictionaryWordDefinitionList').aggregate([
-          { $match: { word: { $eq: req.params.searchTerm }}},
-          { $limit : 50},
-          { $sort : { "boost": -1 }},
-          {
-            $lookup:
-              {
-                from: "DictionaryDefinition",
-                localField: "dictionary_definition",
-                foreignField: "_id",
-                as: "definition"
-              }
-         },
-        {"$unwind":"$definition"}
-      ]).toArray(function (err, result) {
-        if (err || !result || !result[0]) {
-          logger.info("error fetching search results " + err)
-          //for some reason, this line must not be deleted
-          res.send(result);
-        } else {
-          redisClient.set(redisKey, JSON.stringify(result),'EX',DURATION_SECONDS_REDIS_DEFAULT)
-          res.send(result);
+  var isEnglish = /^[a-zA-Z0-9]/.test(req.params.searchTerm)
+  if(!isEnglish){
+    console.log("Assyrian search")
+    app.locals.db.collection('DictionaryDefinition').find({"$text": {"$search": req.params.searchTerm}}, {score: {"$meta": 'textScore'}}).limit(300).sort({score: {"$meta": 'textScore'}}).toArray(function (err, result) {
+      if (err || !result || !result[0]) {
+        logger.info("error fetching Assyrian search results " + err)
+        //for some reason, this line must not be deleted
+        res.send(result);
+      }else{
+        var output = []
+        
+        var index;
+        for (index=0; index<result.length; index++){
+          var item = result[index];
+          
+          output.push({
+            "_id":item["searchkeynum"],
+            "word":"",
+            "boost":0,
+            "searchkeynum":item["searchkeynum"],
+            "definition":item
+          }
+          );
         }
-      })
-    }
-
-  })
+        res.send(output);
+      }
+      
+    })
+  }
+  else{
+    redisClient.get(redisKey, (err, result) => {
+      if (result) {
+        if(isWebRequest)logger.info('CACHE:SearchResult:'+req.params.searchTerm)
+        return res.status(200).send(result);
+      }else {
+        if(isWebRequest)logger.info('DB:SearchResult:'+req.params.searchTerm)
+          app.locals.db.collection('DictionaryWordDefinitionList').aggregate([
+            { $match: { word: { $eq: req.params.searchTerm }}},
+            { $limit : 50},
+            { $sort : { "boost": -1 }},
+            {
+              $lookup:
+                {
+                  from: "DictionaryDefinition",
+                  localField: "dictionary_definition",
+                  foreignField: "_id",
+                  as: "definition"
+                }
+           },
+          {"$unwind":"$definition"}
+        ]).toArray(function (err, result) {
+          if (err || !result || !result[0]) {
+            logger.info("error fetching search results " + err)
+            //for some reason, this line must not be deleted
+            res.send(result);
+          } else {
+            redisClient.set(redisKey, JSON.stringify(result),'EX',DURATION_SECONDS_REDIS_DEFAULT)
+            res.send(result);
+          }
+        })
+      }
+  
+    })
+  }
 })
 
 

@@ -5,23 +5,26 @@ services:
   #use this docker-compose file to enable hot reloading of the front end app
   #developer can modify local frontend code and see the changes live in docker container
   mongodb:
+    restart: "no"
     image: mongo
     ports:
       - "27017:27017"
 
   mongo-seed:
+    restart: "no"
     build: ./deploy/mongo-seed
     links:
       - mongodb
 
   redis:
+    restart: "no"
     image: redis
     container_name: cache
     expose:
       - 6379
 
   web:
-    restart: always
+    restart: "no"
     image: node:8
     volumes:
         - ./:/usr/src/app
@@ -41,7 +44,7 @@ services:
     command: bash -c "npm install && npm run start"
 
   lb:
-    restart: always
+    restart: "no"
     image: dockercloud/haproxy
     links:
       - web

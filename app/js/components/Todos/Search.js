@@ -184,7 +184,7 @@ class Search extends React.Component {
     const { value, suggestions } = this.state;
     // Autosuggest will pass through all these props to the input element.
     const inputProps = {
-      placeholder: 'Search in English',
+      placeholder: 'Search in English or Assyrian',
       value,
       onChange: this.onChange,
       onKeyDown: this.onKeyUp.bind(this)
@@ -332,6 +332,7 @@ class Search extends React.Component {
       .limit(50)
       .descending('boost')*/
 
+
       fetch('/api/word/search/'+input.toLowerCase().trim())
                  .then((response) => response.json())
                  .then (results => {
@@ -347,6 +348,9 @@ class Search extends React.Component {
                   isSearching: false,
                   data: []
                  }));
+    
+
+
 
        /*
     query.find({
