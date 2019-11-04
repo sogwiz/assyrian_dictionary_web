@@ -81,7 +81,8 @@ class Librarian extends ParseComponent {
 
         return (
             
-            <div style={{ height: 800 }}>
+            <div style={{ height: 1200 }}>
+            <button onClick={({searchTerm}) => this.handleCache(this.props.params.searchTerm)}>Reset Cache</button>
             {this.state.showComponent ?
            <Editor /> :
            null
@@ -111,6 +112,11 @@ class Librarian extends ParseComponent {
         
         );
     }
+    handleCache(searchTerm) {
+            fetch('/api/cache/del/'+searchTerm,{method:'PUT'})
+                          .then((response) => console.log(response))
+    }
+
     changeState(){
         console.log('changing state')
         this.tree=null;
@@ -156,6 +162,8 @@ class Librarian extends ParseComponent {
         ParseReact.Mutation.Set(node.todo, {boost:newBoost, modification:'admin'}).dispatch().then(
             () => this.changeState()
         );
+
+        this.handleCache(this.props.params.searchTerm)
 
         
     }

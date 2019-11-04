@@ -353,6 +353,20 @@ app.get('/api/searchkeynum/related/:searchkeynum', function(req, res) {
   })
 })
 
+app.put('/api/cache/del/:searchTerm', function(req, res) {
+  res.setHeader('Content-Type', 'application/json')
+  const redisKey = 'word/search/' + req.params.searchTerm
+  redisClient.del(redisKey, function(err, response){
+    console.log("Redis Del", response)
+    if(response == 1){
+      res.sendStatus(200)
+    }else{
+      res.sendStatus(500)
+    }
+    //res.send(response)
+  })
+})
+
 // used in the searchkeynum detail page via TodoDetail.js (sargonsays.com/searchkey/53064)
 app.get('/api/searchkeynum/:searchkeynum', function(req, res) {
   res.setHeader('Content-Type', 'application/json')
