@@ -3,9 +3,12 @@ import NavBar from './NavBar'
 import MenuBurger from './MenuBurger'
 import Footer from './Footer.js'
 import Helmet from "react-helmet";
+import { toast } from 'react-toastify';
 class App extends React.Component {
 
   render() {
+    // Call it once in your app. At the root of your app is the best place
+  toast.configure()
     return (
       <div>
       <Helmet

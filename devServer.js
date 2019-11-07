@@ -1,6 +1,7 @@
 var path = require('path');
 var express = require('express');
 var webpack = require('webpack');
+var bodyParser = require('body-parser');
 var config = require('./webpack.config.dev');
 var MongoClient = require('mongodb').MongoClient
 var compression = require('compression')
@@ -60,6 +61,7 @@ app.use(require('webpack-dev-middleware')(compiler, {
   noInfo: true,
   publicPath: config.output.publicPath
 }));
+app.use(bodyParser.json());
 
 var connectionString = process.env.DB_CONN_STRING;
 
@@ -351,6 +353,14 @@ app.get('/api/searchkeynum/related/:searchkeynum', function(req, res) {
       })
     }
   })
+})
+
+app.post('/api/word/request/:searchTerm', function(req, res) {
+  res.setHeader('Content-Type', 'application/json')
+
+  console.log("/api/word/request/:", req.params.searchTerm + " : " + req.body.email)
+  
+  res.sendStatus(200)
 })
 
 app.put('/api/cache/del/:searchTerm', function(req, res) {
