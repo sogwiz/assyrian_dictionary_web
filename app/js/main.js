@@ -43,6 +43,7 @@ ReactDOM.render((
       <Route path='/about' component={About}/>
       <Route path='/trends' component={Trends}/>
       <Route path='/thanks' component={Thanks}/>
+      <Route path='/suggest' component={Thanks}/>
       <Route path='/phrases' component={Phrases}/>
       <Route path='/proverbs' component={Proverbs}/>
       <Route path="/support" component={About}/>

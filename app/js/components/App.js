@@ -19,7 +19,7 @@ class App extends React.Component {
       />
       <MenuBurger/>
         {this.props.children}
-        <Footer><a href="/about">About</a> / <a href="/">Search</a></Footer>
+        <Footer><a href="/about">About</a> | <a href="/">Search</a> | <a href="/suggest">Suggest</a></Footer>
       </div>
     )
   }

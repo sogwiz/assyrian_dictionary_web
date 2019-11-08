@@ -5,8 +5,19 @@ var bodyParser = require('body-parser');
 var config = require('./webpack.config.dev');
 var MongoClient = require('mongodb').MongoClient
 var compression = require('compression')
+var Mailgun = require('mailgun-js');
+const rateLimit = require("express-rate-limit");
+
 const os = require('os');
 const hostname = os.hostname()
+
+var emailAPIKey = process.env.EMAIL_API_KEY;
+var emailDomain = "mg.sargonsays.com";
+var emailFrom = "info@sargonsays.com";
+var mailgun = new Mailgun({apiKey: emailAPIKey, domain: emailDomain});
+
+var queueRequestedWords = [];//queue of requested words to add to dictionary
+
 
 // redis-client.js
 const redis = require('redis');
@@ -73,12 +84,21 @@ var connectionString = process.env.DB_CONN_STRING;
 
 app.set('view engine', 'ejs');
 
+
 const options = {
   root: __dirname + '/static/',
   headers: {
     'Content-Type': 'text/plain;charset=UTF-8',
   }
 };
+
+
+const emailRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 20, // limit each IP to 10 requests per windowMs
+  message: "Too many requests. Please try again after an hour"
+});
+
 app.get('/robots.txt', (req, res) => (
   res.status(200).sendFile('robots.txt', options)
 ));
@@ -355,12 +375,57 @@ app.get('/api/searchkeynum/related/:searchkeynum', function(req, res) {
   })
 })
 
-app.post('/api/word/request/:searchTerm', function(req, res) {
+app.post('/api/word/request/:searchTerm', emailRateLimiter, function(req, res) {
   res.setHeader('Content-Type', 'application/json')
 
   console.log("/api/word/request/:", req.params.searchTerm + " : " + req.body.email)
+
+  var recipients = "assyrian-app-dictionary@googlegroups.com";
+  if(req.body.email && req.body.email !==""){
+      recipients += ", "+req.body.email;
+  }
+
+  var searchTerm = req.params.searchTerm.trim();
+  if(searchTerm.length>155){
+    searchTerm = searchTerm.substring(0,154)
+  }
+
+  if(queueRequestedWords.includes(searchTerm)){
+    res.status(429).send("Word already submitted")
+    return
+  }else{
+    queueRequestedWords.push(searchTerm)
+    if(queueRequestedWords.length>20){
+      queueRequestedWords.shift();//remove the oldest item
+    }
+  }
+
+
+  var data = {
+    from: emailFrom,
+    to: recipients,
+    subject: "Translation Request : " + searchTerm,
+    html:  "Translation Request Submitted via <a href='sargonsays.com'>sargonsays.com</a> site: " + searchTerm
+  }
   
-  res.sendStatus(200)
+  mailgun.messages().send(data, function (err, body) {
+    //If there is an error, render the error page
+    if (err) {
+        //res.render('error', { error : err});
+        console.log("got an error: ", err);
+    }
+    //Else we can greet    and leave
+    else {
+        //Here "submitted.jade" is the view file for this landing page 
+        //We pass the variable "email" from the url parameter in an object rendered by Jade
+        //res.render('submitted', { email : req.params.mail });
+        console.log(body);
+    }
+  })  
+  
+    res.sendStatus(200)
+
+  
 })
 
 app.put('/api/cache/del/:searchTerm', function(req, res) {

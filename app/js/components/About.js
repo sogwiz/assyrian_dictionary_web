@@ -103,6 +103,7 @@ class About extends React.Component {
           </NavItem>
           <NavDropdown eventKey="3" title="How to Help">
             <MenuItem eventKey="3.1">Use It. Share it</MenuItem>
+            <MenuItem eventKey="3.2" href="/suggest">Request / Suggest a translation</MenuItem>
             <MenuItem eventKey="3.3">Feedback</MenuItem>
             <MenuItem divider />
             <MenuItem eventKey={3}>Donate</MenuItem>
