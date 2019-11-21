@@ -13,6 +13,10 @@ import GoogleAd from './GoogleAd'
 import Badge from 'react-uikit-badge';
 import ReactTooltip from 'react-tooltip'
 import RelatedSearches from './RelatedSearches'
+import Dropdown from 'react-dropdown';
+import ReactGA from 'react-ga';
+// import 'react-dropdown/style.css';
+//import Select from 'react-select';
 
 const languages = [
   {
@@ -67,6 +71,8 @@ class Search extends React.Component {
       isSearching: false,
       data: [],
       searchQuery: '',
+      eastfont: localStorage.getItem('eastfont') || 'east',
+      westfont: localStorage.getItem('westfont') || 'west'
     };
 
     this.lastRequestId = null;
@@ -77,7 +83,6 @@ class Search extends React.Component {
       this.onSearchFromUrl();
     } else {
       console.log('no search url param');
-
     }
 
   }
@@ -193,6 +198,8 @@ class Search extends React.Component {
     var quote = this.getQuote();
 
     const state = JSON.stringify(this.state);
+    const eastfont = this.state.eastfont;
+    const westfont = this.state.westfont;
 
     const tooltipSupport = (
       <ReactTooltip id='happyFace' type='info'>
@@ -205,6 +212,17 @@ class Search extends React.Component {
           </ReactTooltip>
     );
 
+    const options = [
+      {type:'group', name:'Font', items:[
+        {value: 'east', label:'East Syriac Adiabene - ܣܘܼܪܝܼܬ݂', className: 'east'},
+        {value: 'east-syriac-qasha', label: 'East Syriac Qasha - ܣܘܼܪܝܼܬ݂', className: 'east-syriac-qasha'},
+        {value: 'estrangelo-antioch', label: 'Estrangelo Antioch - ܣܘܼܪܝܼܬ݂', className: 'estrangelo-antioch'},
+        {value: 'estrangelo-midyat', label: 'Estrangelo Midyat - ܣܘܼܪܝܼܬ݂', className: 'estrangelo-midyat'},
+        {value: 'estrangelo-nisibin', label: 'Estrangelo Nisibin - ܣܘܼܪܝܼܬ݂', className: 'estrangelo-nisibin'}
+      ]
+    }
+      
+    ];
     if ( (this.state.data && this.state.data.length > 0)||(this.props.params.searchTerm) ) {
 
       return (
@@ -229,7 +247,9 @@ class Search extends React.Component {
               <button className='submit search' onClick={this.onSearchFromSearchBar.bind(this)}>Search</button>
               {tooltipSupport}
               <a href="https://sargonsays.memberful.com/checkout?plan=23192" data-tip data-for='happyFace'><button>Support sargonsays</button></a>
-              <div className='todos'><DefinitionsList todos={this.state.data} searchTerm={this.state.searchQuery}/></div>
+              <br/><br/>
+              <Dropdown options={options} onChange={this.onChangeFont.bind(this)} value={eastfont} placeholder="Select a font" />
+              <div className='todos'><DefinitionsList todos={this.state.data} searchTerm={this.state.searchQuery} eastfont={eastfont} westfont={westfont}/></div>
             </div>
           </div>
         </div>
@@ -293,6 +313,21 @@ class Search extends React.Component {
     const input = this.state.value.toLowerCase().trim();
     this.onSearch(input);
 
+  }
+
+  onChangeFont(option){
+      
+      localStorage.setItem("eastfont",option.value)
+      this.setState({
+        eastfont:option.value
+      })  
+
+      ReactGA.event({
+        category: 'User',
+        action: 'fontselect',
+        label: option.value
+      });
+    
   }
 
   onSearch(inputVal) {

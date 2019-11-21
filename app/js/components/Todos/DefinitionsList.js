@@ -6,6 +6,7 @@ import Helmet from "react-helmet";
 import GoogleAd from './GoogleAd.js';
 import ReactGA from 'react-ga';
 import RelatedSearches from './RelatedSearches.js'
+import CollapseResults from './CollapseResults.js';
 
 function displayNoSearchResults(searchTerm){
   var terms = searchTerm.split(" ")
@@ -37,7 +38,6 @@ class DefinitionsList extends React.Component {
     super(props);
     this.state = {accordion: false,
       activeKey: ['1']};
-      ReactGA.initialize('UA-6312595-17');
   }
 
   static propTypes = {
@@ -86,10 +86,11 @@ const btn = accordion ? 'accordion' : 'collapse';
     if(this.props.todos.length==0){
       console.log('no search results for ' + this.props.searchTerm)
       const outputStr = displayNoSearchResults(this.props.searchTerm)
+      const urlSuggest = "/suggest?q="+this.props.searchTerm
       return (
         <div>
         <p className='noresults'>No results found for {outputStr}. Have you tried the <a href='https://groups.google.com/forum/#!forum/assyrian-app-dictionary'
-  target='_blank'>forum</a>?</p>
+  target='_blank'>forum</a> or requested a <a href={urlSuggest}>translation suggestion</a>?</p>
     <RelatedSearches searchTerm={this.props.searchTerm}/>
     {gAd}
         </div>
@@ -99,17 +100,18 @@ const btn = accordion ? 'accordion' : 'collapse';
 
 //todo: do we need to change anything here when we're using the new search?
     const items = this.props.todos.map((todo, index) => {
-      return <TodoItem key={todo.objectId} todo={todo} idxEntry={index}/>
+      return <TodoItem key={todo.objectId} todo={todo} idxEntry={index} key={index} eastfont={this.props.eastfont} westfont={this.props.westfont}/>
     })
 
-    var headerText = items.length-1 + " More Results";
+    const headerText = items.length-1 + " More Results";
+    /*
     var collapse = (
   <Collapse accordion={this.state.accordion} onChange={this.toggle} >
     <Panel header={headerText} key='1'>
       {items.slice(1,items.length)}
     </Panel>
   </Collapse>
-);
+);*/
 
 var titleText = "Online English Assyrian Dictionary : " + this.props.todos[0].word;
     return (
@@ -120,7 +122,7 @@ var titleText = "Online English Assyrian Dictionary : " + this.props.todos[0].wo
           <meta property="og:description" content={titleText} />
         </Helmet>
       	{items[0]}
-         {collapse}
+         <CollapseResults accordion={this.state.accordion} onChange={this.toggle} headerText={headerText} items={items} />
          <br/>
          <RelatedSearches searchTerm={this.props.searchTerm}/>
          {gAd}

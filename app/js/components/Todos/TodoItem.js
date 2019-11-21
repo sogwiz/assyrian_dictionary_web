@@ -34,7 +34,10 @@ class TodoItem extends React.Component {
 
 
   render() {
+  
     const todo = this.props.todo
+    
+  
     const idxEntry = this.props.idxEntry + 1
     const dictionary_definition_obj = todo['definition']
     
@@ -47,8 +50,8 @@ class TodoItem extends React.Component {
     }
 
     var rows = [];
-    rows.push(<EastDefinitionRow todo={todo}/>);
-    rows.push(<WestDefinitionRow todo={todo}/>);
+    rows.push(<EastDefinitionRow todo={todo} font={this.props.eastfont} key={idxEntry+"e"}/>);
+    rows.push(<WestDefinitionRow todo={todo} font={this.props.westfont} key={idxEntry+"w"}/>);
 
     //var contentDesc = "English Assyrian Translation " + todo.word + " " + dictionary_definition_obj.definition_arr.join("\n").replace(/^ : /,"");
     var contentDesc = "Translate " + todo.word + " from English to Assyrian. " + dictionary_definition_obj.east + " ( " + dictionary_definition_obj.phonetic + " )";
@@ -57,6 +60,7 @@ class TodoItem extends React.Component {
     const cf = (<DefinitionHelper arr={dictionary_definition_obj.cf}/>);
     const seealso = (<DefinitionHelper arr={dictionary_definition_obj.seealso}/>);
     const source = dictionary_definition_obj.source;
+    
     
     return (
       <div className='definition-item' onClick={this.renderDetail.bind(this)} id={idxEntry}>
@@ -81,7 +85,7 @@ class TodoItem extends React.Component {
         Definition: {dictionary_definition_obj.definition_arr.join("\n").replace(/^ : /,"")}
         <p>Category: {dictionary_definition_obj.partofspeech}</p>
           <p className='definition'>
-          East: <span className="east">{dictionary_definition_obj.east}</span>
+          East: <span className={this.props.eastfont}>{dictionary_definition_obj.east}</span>
           <span className="phonetic">({PhoneticEastHelper(dictionary_definition_obj.phonetic)})</span>
         </p>
         <p className='definition'>
@@ -122,6 +126,7 @@ class TodoItem extends React.Component {
      <div className="tagcloudmodal">
     <RelatedTerms searchkeynum={todo.searchkeynum}/>
     </div>
+    <br/>
         <div className="pos">
         <Button onClick={this.handleCloseModal} bsStyle="primary">Close</Button>
         </div>
@@ -178,8 +183,9 @@ class TodoItem extends React.Component {
   }
 
   handleOpenModal () {
+    
     this.setState({ showModal: true });
-    ReactGA.modalview('/word/'+this.props.todo.word+'/searchkey/'+this.props.dictionary_definition_obj.searchkeynum);
+    ReactGA.modalview('/word/'+this.props.todo.word+'/searchkey/'+this.props.todo.searchkeynum);
   }
   
   handleCloseModal () {
@@ -207,7 +213,7 @@ class EastDefinitionRow extends React.Component {
       return (
         <div data-key={dictionary_definition_obj.searchkeynum}  data-id={dictionary_definition_obj.objectId} itemprop="name">
           <span className="definition"><span className="tooltip">east <span className="tooltiptext">Eastern Dialect</span></span></span>
-          <span className="east">{dictionary_definition_obj.east}</span>
+          <span className={this.props.font}>{dictionary_definition_obj.east}</span>
           <span className="phonetic">{phonetic}</span>
           <span><ReactAudioPlayer src={audioFile}/></span>
         </div>
@@ -216,7 +222,7 @@ class EastDefinitionRow extends React.Component {
       return (
         <div data-key={dictionary_definition_obj.searchkeynum}  data-id={dictionary_definition_obj.objectId}>
         <span className="definition"><span className="tooltip">east <span className="tooltiptext">Eastern Dialect</span></span></span>
-        <span className="east">{dictionary_definition_obj.east}</span>
+        <span className={this.props.font}>{dictionary_definition_obj.east}</span>
         <span className="phonetic">{phonetic}</span>
         </div>
       );

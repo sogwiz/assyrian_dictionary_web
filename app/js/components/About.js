@@ -18,7 +18,6 @@ class About extends React.Component {
     this.state = {
         key: defaultKey
     };
-    ReactGA.initialize('UA-6312595-17'); 
   }
 
   handleSelect(eventkey) {
