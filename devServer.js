@@ -103,6 +103,10 @@ app.get('/robots.txt', (req, res) => (
   res.status(200).sendFile('robots.txt', options)
 ));
 
+app.get('/ads.txt', (req, res) => (
+  res.status(200).sendFile('ads.txt', options)
+));
+
 app.get('/sitemap.xml', (req, res) => (
   res.status(200).sendFile('sitemap.xml', options)
 ));
