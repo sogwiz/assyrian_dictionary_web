@@ -234,6 +234,55 @@ app.get('/api/phrases', function(req, res) {
   })
 })
 
+app.get('/api/stats/dictionarydefinition', function(req, res) {
+  res.setHeader('Content-Type', 'application/json');
+  const redisKey = 'stats/dictionarydefinition'
+  redisClient.get(redisKey, (err, result) => {
+    if(result) {
+      return res.status(200).send(result)
+    }else {
+      logger.info('reading stats/dictionarydefinition from db')
+      app.locals.db.collection('DictionaryDefinition').count().then(result => { 
+        redisClient.set(redisKey, JSON.stringify(result), 'EX',DURATION_SECONDS_REDIS_DEFAULT)
+                res.send(result)
+      }).catch((err) => {
+        logger.info("error fetching stats/dictionarydefinition from db")
+        logger.info(err)
+      })
+    }
+  })
+})
+
+app.get('/api/stats/queries', function(req, res) {
+  res.setHeader('Content-Type', 'application/json');
+  const redisKey = 'stats/queries'
+  redisClient.get(redisKey, (err, result) => {
+    if(result) {
+      return res.status(200).send(result)
+    }else {
+      logger.info('reading stats/queries from db')
+      app.locals.db.collection('SearchStat').aggregate([
+        {
+          $group:
+            {
+              _id : 1,
+              count: { $sum: "$queries" }
+            }}]).toArray(function (err, result) { 
+              if(err){
+                logger.info("error fetching stats/queries from db")
+                logger.info(err)
+              }else {
+                redisClient.set(redisKey, JSON.stringify(result), 'EX',10800)
+                res.send(result)
+              }
+            })
+    }
+
+  })
+
+}
+)
+
 app.get('/api/searchstats', function(req, res) {
   res.setHeader('Content-Type', 'application/json');
   const redisKey = 'searchstats'

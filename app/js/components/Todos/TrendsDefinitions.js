@@ -1,14 +1,11 @@
 import React from 'react'
-mixins: [ParseReact.Mixin]
-import Parse from 'parse'
-import ParseReact from 'parse-react'
 
 class TrendsDefinitions extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            rows: 0,
+            rows: 36000,
             isSearching: false
         };
 
@@ -21,27 +18,24 @@ class TrendsDefinitions extends React.Component {
             searchTime: new Date().getTime(),
         });
 
-        const query = new Parse.Query('DictionaryDefinition')
-
         const that = this;
 
-        
-        query.count({
-            success: function (number) {
+        fetch('/api/stats/dictionarydefinition')
+            .then((response) => response.json())
+            .then (data => {
                 that.setState({
                     isSearching: false,
-                    rows: number
+                    rows: data
                 })
-            },
-            error: function (error) {
+            })
+            .catch((error) => {
                 that.setState({
                     isSearching: false,
                     error: true,
-                    errorObj: error,
-                    rows: 0
+                    errorObj: error
                 })
-            }
-        })
+              })
+
         /*
         this.setState({
             rows: query.count()
@@ -51,7 +45,7 @@ class TrendsDefinitions extends React.Component {
     render() {
         return(
             <div>
-              {this.state.rows}
+              {this.state.rows.toLocaleString()}
             </div>
         );
 

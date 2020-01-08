@@ -6,6 +6,7 @@ import ReactDataGrid from 'react-data-grid'
 import _ from 'lodash'
 import { slide as Menu } from 'react-burger-menu'
 import TrendsDefinitions from './TrendsDefinitions'
+import TrendsQueriesCount from './TrendsQueriesCount'
 import { Button, ButtonGroup, ButtonToolbar, Col, Grid, Jumbotron, PageHeader, Panel, Popover, Row, Tab, Tabs, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import { TagCloud } from 'react-tagcloud';
 import ReactTooltip from 'react-tooltip'
@@ -261,7 +262,7 @@ class Trends extends React.Component {
 
     render() {
         const tooltip1 = (
-            <Tooltip id="tooltip1"><strong>Holy dolma!</strong> This # represents the aggregate number of searches. This is the total number of searches, non-unique. This isn't a live ticker yet</Tooltip>
+            <Tooltip id="tooltip1"><strong>Holy dolma!</strong> This live ticker represents the aggregate number of searches. This is the total number of searches, non-unique.</Tooltip>
         );
 
         const tooltip2 = (
@@ -298,7 +299,7 @@ class Trends extends React.Component {
                             <Row>
                                 <Col xs={6} md={4}>
                                     <Jumbotron>
-                                        <h1>283,000+</h1>
+                                        <h1><TrendsQueriesCount /></h1>
                                         <p>Searches</p>
                                         <p>
                                             <OverlayTrigger placement="bottom" overlay={tooltip1}>

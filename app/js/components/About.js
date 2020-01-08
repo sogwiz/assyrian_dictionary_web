@@ -98,7 +98,7 @@ class About extends React.Component {
             Testimonials
           </NavItem>
           <NavItem eventKey={3}>
-            Cost Structure
+            Mission Values
           </NavItem>
           <NavDropdown eventKey="3" title="How to Help">
             <MenuItem eventKey="3.1">Use It. Share it</MenuItem>
