@@ -23,6 +23,8 @@ import TodoDetail from './components/Todos/TodoDetail'
 import DefinitionHelper from './components/Todos/DefinitionHelper'
 import Phrases from './components/Todos/Phrases'
 import Proverbs from './components/Todos/Proverbs'
+import RootWords from './components/Todos/RootWords'
+import Tools from './components/Todos/Tools'
 
 // Style
 require('./../assets/styles/main.less')
@@ -48,6 +50,8 @@ ReactDOM.render((
       <Route path='/proverbs' component={Proverbs}/>
       <Route path="/support" component={About}/>
       <Route path="/updates" component={Trends}/>
+      <Route path="/roots" component={Tools}/>
+      <Route path="/tools" component={Tools}/>
     </Route>
     <Route component={App} path='/admin/:searchTerm'>
       <Route path='/login' component={Login}/>

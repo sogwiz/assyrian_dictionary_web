@@ -30,10 +30,10 @@ var winston = require('winston');
 
   var transport = new (winston.transports.DailyRotateFile)({
     filename: 'logs/application-%DATE%.log',
-    datePattern: 'YYYY-MM-DD-HH',
+    datePattern: 'YYYY-MM-DD',
     zippedArchive: true,
-    maxSize: '20m',
-    maxFiles: '90d'
+    maxSize: '60m',
+    maxFiles: '180d'
   });
 
   /*
@@ -213,6 +213,28 @@ app.get('/api/proverb', function(req, res) {
   })
   
 });
+
+app.get('/api/roots', function(req, res) {
+  const redisKey = 'roots'
+  res.setHeader('Content-Type', 'application/json');
+  redisClient.get(redisKey, (err, result) => {
+    if (result) {
+      return res.status(200).send(result);
+    } else {
+      logger.info('reading roots from db')
+      app.locals.db.collection('DictionaryDefinition').find({"partofspeech":{ $eq :"root"}}).sort( { "east": 1 } ).toArray(function (err, result) {
+        if (err || !result || !result[0]) {
+          logger.info("error fetching roots" + err)
+        } else {
+          redisClient.set(redisKey, JSON.stringify(result),'EX',1)
+          res.send(result);
+        }
+      })
+    }
+
+  })
+})
+
 
 app.get('/api/phrases', function(req, res) {
   res.setHeader('Content-Type', 'application/json');

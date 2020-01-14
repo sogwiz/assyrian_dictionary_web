@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router'
 import ReactModal from 'react-modal'
-import {Button, Col, Grid, Row} from 'react-bootstrap'
+import {Button, Col, Grid, Row, OverlayTrigger, Popover} from 'react-bootstrap'
 import DefinitionHelper from './DefinitionHelper'
 import PhoneticWestHelper from '../util/PhoneticWestHelper.js'
 import PhoneticEastHelper from '../util/PhoneticEastHelper.js'
@@ -38,6 +38,20 @@ class TodoDetail extends React.Component {
 
   render() {
     console.log('in render of TodoDetail')
+
+    const popoverBottom = (
+      <Popover id="popover-positioned-bottom" title="Root words">
+        <strong>Root Words</strong> can be found <a href="/roots">here</a>
+      </Popover>
+    );
+
+    const overlay = (
+      
+      <OverlayTrigger trigger="click" placement="bottom" overlay={popoverBottom}>
+      <Button bsSize="small">root</Button>
+      </OverlayTrigger>
+      
+    )
     
     if(this.state.searchResults){
       const dictionary_definition_obj = this.state.searchResults[0]
@@ -47,6 +61,11 @@ class TodoDetail extends React.Component {
         return(<div><br/><br/><br/>Oooooops. Really sorry! Something went wrong here. 
         Find out more about the <a href={"http://assyrianlanguages.org/sureth/dosearch.php?searchkey="+this.props.params.searchkeynum+"&language=id"} target="_blank">term</a> you clicked on.
           </div>)
+      }
+
+      let partOfSpeech = dictionary_definition_obj['partofspeech']
+      if (partOfSpeech == "root"){
+         partOfSpeech = overlay
       }
       //const cf = this.getCleanArrWithHtml(dictionary_definition_obj['cf'));
       //const seealso = this.getCleanArrWithHtml(dictionary_definition_obj['seealso'));
@@ -64,10 +83,14 @@ class TodoDetail extends React.Component {
 
       return (
         <div className="todos">
+          <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="https://bootswatch.com/3/cosmo/bootstrap.min.css" />
+      
+      
 <ul itemscope itemtype="http://schema.org/BreadcrumbList">
 
      Definition: {dictionary_definition_obj['definition_arr'].join("\n").replace(/^ : /,"")}
-     <p>Category: {dictionary_definition_obj['partofspeech']}</p>
+     <p>Category: {partOfSpeech}</p>
        <p className='definition'>
        East: <span className="east">{dictionary_definition_obj['east']}</span>
        <span className="phonetic">({phonetic})</span>
