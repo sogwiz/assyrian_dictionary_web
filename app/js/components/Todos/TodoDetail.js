@@ -8,7 +8,7 @@ import PhoneticEastHelper from '../util/PhoneticEastHelper.js'
 import AudioHelper from '../util/AudioHelper.js'
 import ReactAudioPlayer from 'react-audio-player'
 import RelatedTerms from './RelatedTerms'
-import DerivedWords from './components/DerivedWords'
+import DerivedWords from './widgets/DerivedWords'
 
 class TodoDetail extends React.Component {
 
