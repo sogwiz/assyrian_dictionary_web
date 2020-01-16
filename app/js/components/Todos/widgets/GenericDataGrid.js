@@ -1,26 +1,10 @@
 import React, { useState } from 'react'
 import ReactDataGrid from 'react-data-grid'
 
-
-const rootLetters = ['ܐ', 'ܒ', 'ܓ', 'ܕ', 'ܗ', 'ܘ', 'ܙ', 'ܚ', 'ܛ', 'ܝ', 'ܟ', 'ܠ', 'ܡ', 'ܢ', 'ܣ', 'ܥ', 'ܦ', 'ܨ', 'ܩ', 'ܪ', 'ܫ', 'ܬ']
-
 const defaultColumnProperties = {
     resizable: true,
     width: 180
 };
-
-
-/*
-const RootTextFormatter = ({ value }, { row }) => {
-    console.log("row is")
-    console.log(value)
-    return (
-        <div>
-            <span>{row}</span>
-            <span className="east-syriac-qasha">{value}</span>
-        </div>
-    )
-}*/
 
 const RootTextFormatter = React.createClass({
     /*
@@ -39,13 +23,12 @@ const RootTextFormatter = React.createClass({
     }
 });
 
-class RootWords extends React.Component {
-
+class GenericDataGrid extends React.Component {
     constructor(props) {
-        super(props);
+        super(props)
 
-        let originalRows = new Array();
-        let rows = originalRows.slice(0);
+        let originalRows = this.props.rows
+        let rows = originalRows.slice(0)
 
         this.state = { originalRows, rows};
 
@@ -69,19 +52,17 @@ class RootWords extends React.Component {
                 editable: false
             },
         ].map(c => ({ ...c, ...defaultColumnProperties }));
-
-        this.queryRoots()
     }
 
     rowGetter(i) {
 
-        if (this.state == null) {
-            console.log('state is null')
+        if (this.props == null) {
+            console.log('props is null')
             return;
         }
 
-        if (this.state.rows != null && this.state.rows.length > 0) {
-            var listitem = this.state.rows[i];
+        if (this.props.rows != null && this.props.rows.length > 0) {
+            var listitem = this.props.rows[i];
             //var definition = {objectId: listitem.objectId, boost : listitem.get('boost'), searchkeynum : listitem.get('searchkeynum'), 
             //word: listitem.get('word'), phonetic : listitem.get('dictionary_definition_obj').get('phonetic'), 
             //east: listitem.get('dictionary_definition_obj').get('east')}
@@ -90,19 +71,6 @@ class RootWords extends React.Component {
         }
         return null;
 
-    }
-
-    queryRoots() {
-
-        const that = this;
-        fetch('/api/roots')
-            .then((response) => response.json())
-            .then(data => {
-                that.setState({
-                    originalRows: data,
-                    rows: data
-                })
-            })
     }
 
     handleGridSort = (sortColumn: string, sortDirection: SortDirection) => {
@@ -114,13 +82,15 @@ class RootWords extends React.Component {
           }
         };
     
-        const rows = sortDirection === 'NONE' ? this.state.originalRows.slice(0) : this.state.rows.sort(comparer);
+        const rows = sortDirection === 'NONE' ? this.state.originalRows.slice(0) : this.props.rows.sort(comparer);
     
         this.setState({ rows });
       }
 
     render() {
-        if (this.state == null || this.state.rows == null || this.state.rows.length < 1) { return (<div />); }
+        console.log("in render of genericdata grid")
+        console.log(this.props.rows)
+        if (this.props == null || this.props.rows == null || this.props.rows.length < 1) { return (<div />); }
         
         return (
             <div>
@@ -130,13 +100,14 @@ class RootWords extends React.Component {
                     enableCellSelect={true}
                     columns={this._columns}
                     rowGetter={this.rowGetter.bind(this)}
-                    rowsCount={this.state.rows.length}
+                    rowsCount={this.props.rows.length}
                     minHeight={600}
                     onGridSort={this.handleGridSort}
                 />
             </div>
         );
     }
+
 }
 
-export default RootWords
+export default GenericDataGrid

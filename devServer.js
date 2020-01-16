@@ -226,7 +226,28 @@ app.get('/api/roots', function(req, res) {
         if (err || !result || !result[0]) {
           logger.info("error fetching roots" + err)
         } else {
-          redisClient.set(redisKey, JSON.stringify(result),'EX',1)
+          redisClient.set(redisKey, JSON.stringify(result),'EX',DURATION_SECONDS_REDIS_DEFAULT)
+          res.send(result);
+        }
+      })
+    }
+
+  })
+})
+
+app.get('/api/derived/:root', function(req, res) {
+  const redisKey = 'derived/' + req.params.root
+  res.setHeader('Content-Type', 'application/json');
+  redisClient.get(redisKey, (err, result) => {
+    if (result) {
+      return res.status(200).send(result);
+    } else {
+      logger.info('reading derived from db')
+      app.locals.db.collection('DictionaryDefinition').find({"root":req.params.root}).sort( { "east": 1 } ).toArray(function (err, result) {
+        if (err || !result || !result[0]) {
+          logger.info("error fetching derived words" + err)
+        } else {
+          redisClient.set(redisKey, JSON.stringify(result),'EX',DURATION_SECONDS_REDIS_DEFAULT)
           res.send(result);
         }
       })
@@ -325,6 +346,8 @@ app.get('/api/searchstats', function(req, res) {
     }
   })
 })
+
+
 
 app.get('/api/verified', function(req, res) {
   res.setHeader('Content-Type', 'application/json')

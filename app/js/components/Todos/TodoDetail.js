@@ -1,13 +1,14 @@
 import React from 'react'
 import { Link } from 'react-router'
 import ReactModal from 'react-modal'
-import {Button, Col, Grid, Row, OverlayTrigger, Popover} from 'react-bootstrap'
+import {Button, Col, Grid, Row, OverlayTrigger, Panel, Popover} from 'react-bootstrap'
 import DefinitionHelper from './DefinitionHelper'
 import PhoneticWestHelper from '../util/PhoneticWestHelper.js'
 import PhoneticEastHelper from '../util/PhoneticEastHelper.js'
 import AudioHelper from '../util/AudioHelper.js'
 import ReactAudioPlayer from 'react-audio-player'
 import RelatedTerms from './RelatedTerms'
+import DerivedWords from './components/DerivedWords'
 
 class TodoDetail extends React.Component {
 
@@ -17,7 +18,11 @@ class TodoDetail extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      searchResults:null
+      searchResults:null,
+      partOfSpeech:null,
+      derivedWords: new Array(),
+      eastfont: localStorage.getItem('eastfont') || 'east',
+      westfont: localStorage.getItem('westfont') || 'west'
     }
 
     this.queryKey();
@@ -31,13 +36,28 @@ class TodoDetail extends React.Component {
                     .then((response) => response.json())
                     .then (data => {
                         that.setState({
-                          searchResults: data
+                          searchResults: data,
+                          partOfSpeech: data[0]['partofspeech']
                         })
                     })
+                    .then(function(data) {   
+                      // do stuff with `data`, call second `fetch`
+                      return that.state.partOfSpeech != "root" ? null : fetch('/api/derived/'+that.state.searchResults[0]['east'])
+                    })
+                    .then((response) => response.json())
+                    .then (data => {
+                      that.setState({
+                        derivedWords: data
+                      })
+                  })
+
+                    
 }
 
   render() {
     console.log('in render of TodoDetail')
+    console.log('derived words')
+    console.log(this.state.derivedWords)
 
     const popoverBottom = (
       <Popover id="popover-positioned-bottom" title="Root words">
@@ -49,9 +69,13 @@ class TodoDetail extends React.Component {
       
       <OverlayTrigger trigger="click" placement="bottom" overlay={popoverBottom}>
       <Button bsSize="small">root</Button>
-      </OverlayTrigger>
-      
+      </OverlayTrigger> 
     )
+    
+    const derivedWords = this.state.partOfSpeech != "root" ? (<div/> ) : (
+        <DerivedWords root={this.state.searchResults[0]} derivations={this.state.derivedWords}/>
+    )
+    
     
     if(this.state.searchResults){
       const dictionary_definition_obj = this.state.searchResults[0]
@@ -92,7 +116,7 @@ class TodoDetail extends React.Component {
      Definition: {dictionary_definition_obj['definition_arr'].join("\n").replace(/^ : /,"")}
      <p>Category: {partOfSpeech}</p>
        <p className='definition'>
-       East: <span className="east">{dictionary_definition_obj['east']}</span>
+       East: <span className={this.state.eastfont}>{dictionary_definition_obj['east']}</span>
        <span className="phonetic">({phonetic})</span>
        <ReactAudioPlayer src={audioEast}/>
      </p>
@@ -102,8 +126,10 @@ class TodoDetail extends React.Component {
        <ReactAudioPlayer src={audioWest}/>
      </p>
 
+    <Grid>
+    <Panel id="collapsible-panel-details" collapsible defaultExpanded header="Details">
      <p className='definition'>
-       Cross References: {cf}
+       Cross References: <span className={this.state.eastfont}>{cf}</span>
      </p>
      <p>
      <li itemprop="itemListElement" itemscope
@@ -114,14 +140,19 @@ class TodoDetail extends React.Component {
       itemtype="http://schema.org/ListItem" itemprop="name">
        Origins : {dictionary_definition_obj['origins']}</li>
        <li itemprop="itemListElement" itemscope
-      itemtype="http://schema.org/ListItem" itemprop="name">See Also : {seealso}</li>
+      itemtype="http://schema.org/ListItem" itemprop="name">See Also : <span className={this.state.eastfont}>{seealso}</span></li>
       <li itemprop="itemListElement" itemscope
-      itemtype="http://schema.org/ListItem" itemprop="name">Root : {dictionary_definition_obj['root']}</li>
+      itemtype="http://schema.org/ListItem" itemprop="name">Root : <span className={this.state.eastfont}><a href={"/word/" + dictionary_definition_obj['root']}>{dictionary_definition_obj['root']}</a></span></li>
       <li itemprop="itemListElement" itemscope
       itemtype="http://schema.org/ListItem" itemprop="name">Semantics : {dictionary_definition_obj['semantics']}</li>
        
      </p>
-     </ul>
+     </Panel>
+     
+              {derivedWords}
+      </Grid>
+      </ul>
+     
      <div className="posnormal">
      Related Searches
      </div>
