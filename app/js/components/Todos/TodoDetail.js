@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router'
 import ReactModal from 'react-modal'
-import {Button, Col, Grid, Row, OverlayTrigger, Panel, Popover} from 'react-bootstrap'
+import { Button, Col, Grid, Row, OverlayTrigger, Panel, Popover } from 'react-bootstrap'
 import DefinitionHelper from './DefinitionHelper'
 import PhoneticWestHelper from '../util/PhoneticWestHelper.js'
 import PhoneticEastHelper from '../util/PhoneticEastHelper.js'
@@ -18,8 +18,8 @@ class TodoDetail extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      searchResults:null,
-      partOfSpeech:null,
+      searchResults: null,
+      partOfSpeech: null,
       derivedWords: new Array(),
       eastfont: localStorage.getItem('eastfont') || 'east',
       westfont: localStorage.getItem('westfont') || 'west'
@@ -33,26 +33,26 @@ class TodoDetail extends React.Component {
     const that = this;
 
     fetch('/api/searchkeynum/' + this.props.params.searchkeynum)
-                    .then((response) => response.json())
-                    .then (data => {
-                        that.setState({
-                          searchResults: data,
-                          partOfSpeech: data[0]['partofspeech']
-                        })
-                    })
-                    .then(function(data) {   
-                      // do stuff with `data`, call second `fetch`
-                      return that.state.partOfSpeech != "root" ? null : fetch('/api/derived/'+that.state.searchResults[0]['east'])
-                    })
-                    .then((response) => response.json())
-                    .then (data => {
-                      that.setState({
-                        derivedWords: data
-                      })
-                  })
+      .then((response) => response.json())
+      .then(data => {
+        that.setState({
+          searchResults: data,
+          partOfSpeech: data[0]['partofspeech']
+        })
+      })
+      .then(function (data) {
+        // do stuff with `data`, call second `fetch`
+        return that.state.partOfSpeech != "root" ? null : fetch('/api/derived/' + that.state.searchResults[0]['east'])
+      })
+      .then((response) => response.json())
+      .then(data => {
+        that.setState({
+          derivedWords: data
+        })
+      })
 
-                    
-}
+
+  }
 
   render() {
     console.log('in render of TodoDetail')
@@ -66,38 +66,38 @@ class TodoDetail extends React.Component {
     );
 
     const overlay = (
-      
+
       <OverlayTrigger trigger="click" placement="bottom" overlay={popoverBottom}>
-      <Button bsSize="small">root</Button>
-      </OverlayTrigger> 
+        <Button bsSize="small">root</Button>
+      </OverlayTrigger>
     )
-    
-    const derivedWords = this.state.partOfSpeech != "root" ? (<div/> ) : (
-        <DerivedWords root={this.state.searchResults[0]} derivations={this.state.derivedWords}/>
+
+    const derivedWords = this.state.partOfSpeech != "root" ? (<div />) : (
+      <DerivedWords root={this.state.searchResults[0]} derivations={this.state.derivedWords} />
     )
-    
-    
-    if(this.state.searchResults){
+
+
+    if (this.state.searchResults) {
       const dictionary_definition_obj = this.state.searchResults[0]
-      console.log("dictionary_definition_obj " )
+      console.log("dictionary_definition_obj ")
       console.log(dictionary_definition_obj)
-      if(!dictionary_definition_obj){
-        return(<div><br/><br/><br/>Oooooops. Really sorry! Something went wrong here. 
-        Find out more about the <a href={"http://assyrianlanguages.org/sureth/dosearch.php?searchkey="+this.props.params.searchkeynum+"&language=id"} target="_blank">term</a> you clicked on.
+      if (!dictionary_definition_obj) {
+        return (<div><br /><br /><br />Oooooops. Really sorry! Something went wrong here.
+        Find out more about the <a href={"http://assyrianlanguages.org/sureth/dosearch.php?searchkey=" + this.props.params.searchkeynum + "&language=id"} target="_blank">term</a> you clicked on.
           </div>)
       }
 
       let partOfSpeech = dictionary_definition_obj['partofspeech']
-      if (partOfSpeech == "root"){
-         partOfSpeech = overlay
+      if (partOfSpeech == "root") {
+        partOfSpeech = overlay
       }
       //const cf = this.getCleanArrWithHtml(dictionary_definition_obj['cf'));
       //const seealso = this.getCleanArrWithHtml(dictionary_definition_obj['seealso'));
 
       //var rows = [];
-      const cf = (<DefinitionHelper arr={dictionary_definition_obj['cf']}/>);
-      const seealso = (<DefinitionHelper arr={dictionary_definition_obj['seealso']}/>);
-      
+      const cf = (<DefinitionHelper arr={dictionary_definition_obj['cf']} />);
+      const seealso = (<DefinitionHelper arr={dictionary_definition_obj['seealso']} />);
+
       const phonetic = PhoneticEastHelper(dictionary_definition_obj['phonetic']);
 
       const phonetic_west = PhoneticWestHelper(dictionary_definition_obj['phonetic_west']);
@@ -108,63 +108,63 @@ class TodoDetail extends React.Component {
       return (
         <div className="todos">
           <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css" />
-        <link rel="stylesheet" href="https://bootswatch.com/3/cosmo/bootstrap.min.css" />
-      
-      
-<ul itemscope itemtype="http://schema.org/BreadcrumbList">
+          <link rel="stylesheet" href="https://bootswatch.com/3/cosmo/bootstrap.min.css" />
 
-     Definition: {dictionary_definition_obj['definition_arr'].join("\n").replace(/^ : /,"")}
-     <p>Category: {partOfSpeech}</p>
-       <p className='definition'>
-       East: <span className={this.state.eastfont}>{dictionary_definition_obj['east']}</span>
-       <span className="phonetic">({phonetic})</span>
-       <ReactAudioPlayer src={audioEast}/>
-     </p>
-     <p className='definition'>
-       West: <span className="west">{dictionary_definition_obj['west']}</span>
-       <span className="phonetic">({phonetic_west})</span>
-       <ReactAudioPlayer src={audioWest}/>
-     </p>
 
-    <Grid>
-    <Panel id="collapsible-panel-details" collapsible defaultExpanded header="Details">
-     <p className='definition'>
-       Cross References: <span className={this.state.eastfont}>{cf}</span>
-     </p>
-     <p>
-     <li itemprop="itemListElement" itemscope
-      itemtype="http://schema.org/ListItem" itemprop="name">Source : {dictionary_definition_obj['source']}</li>
-      <li itemprop="itemListElement" itemscope
-      itemtype="http://schema.org/ListItem" itemprop="name">Dialect : {dictionary_definition_obj['dialect']}</li>
-      <li itemprop="itemListElement" itemscope
-      itemtype="http://schema.org/ListItem" itemprop="name">
-       Origins : {dictionary_definition_obj['origins']}</li>
-       <li itemprop="itemListElement" itemscope
-      itemtype="http://schema.org/ListItem" itemprop="name">See Also : <span className={this.state.eastfont}>{seealso}</span></li>
-      <li itemprop="itemListElement" itemscope
-      itemtype="http://schema.org/ListItem" itemprop="name">Root : <span className={this.state.eastfont}><a href={"/word/" + dictionary_definition_obj['root']}>{dictionary_definition_obj['root']}</a></span></li>
-      <li itemprop="itemListElement" itemscope
-      itemtype="http://schema.org/ListItem" itemprop="name">Semantics : {dictionary_definition_obj['semantics']}</li>
-       
-     </p>
-     </Panel>
-     
+          <ul itemscope itemtype="http://schema.org/BreadcrumbList">
+
+            Definition: {dictionary_definition_obj['definition_arr'].join("\n").replace(/^ : /, "")}
+            <p>Category: {partOfSpeech}</p>
+            <p className='definition'>
+              East: <span className={this.state.eastfont}>{dictionary_definition_obj['east']}</span>
+              <span className="phonetic">({phonetic})</span>
+              <ReactAudioPlayer src={audioEast} />
+            </p>
+            <p className='definition'>
+              West: <span className="west">{dictionary_definition_obj['west']}</span>
+              <span className="phonetic">({phonetic_west})</span>
+              <ReactAudioPlayer src={audioWest} />
+            </p>
+
+            <Grid>
+              <Panel id="collapsible-panel-details" collapsible defaultExpanded header="Details">
+                <p className='definition'>
+                  Cross References: <span className={this.state.eastfont}>{cf}</span>
+                </p>
+                <p>
+                  <li itemprop="itemListElement" itemscope
+                    itemtype="http://schema.org/ListItem" itemprop="name">Source : {dictionary_definition_obj['source']}</li>
+                  <li itemprop="itemListElement" itemscope
+                    itemtype="http://schema.org/ListItem" itemprop="name">Dialect : {dictionary_definition_obj['dialect']}</li>
+                  <li itemprop="itemListElement" itemscope
+                    itemtype="http://schema.org/ListItem" itemprop="name">
+                    Origins : {dictionary_definition_obj['origins']}</li>
+                  <li itemprop="itemListElement" itemscope
+                    itemtype="http://schema.org/ListItem" itemprop="name">See Also : <span className={this.state.eastfont}>{seealso}</span></li>
+                  <li itemprop="itemListElement" itemscope
+                    itemtype="http://schema.org/ListItem" itemprop="name">Root : <span className={this.state.eastfont}><a href={"/word/" + dictionary_definition_obj['root']}>{dictionary_definition_obj['root']}</a></span></li>
+                  <li itemprop="itemListElement" itemscope
+                    itemtype="http://schema.org/ListItem" itemprop="name">Semantics : {dictionary_definition_obj['semantics']}</li>
+
+                </p>
+              </Panel>
+
               {derivedWords}
-      </Grid>
-      </ul>
-     
-     <div className="posnormal">
-     Related Searches
+            </Grid>
+          </ul>
+
+          <div className="posnormal">
+            Related Searches
      </div>
-     <RelatedTerms searchkeynum={this.props.params.searchkeynum}/>
-     <p>
-     <span><a href={"http://assyrianlanguages.org/sureth/dosearch.php?searchkey="+this.props.params.searchkeynum+"&language=id"} target="_blank">More Details</a></span>
-     </p>
-     </div>
+          <RelatedTerms searchkeynum={this.props.params.searchkeynum} />
+          <p>
+            <span><a href={"http://assyrianlanguages.org/sureth/dosearch.php?searchkey=" + this.props.params.searchkeynum + "&language=id"} target="_blank">More Details</a></span>
+          </p>
+        </div>
 
       )
     }
-    if(!this.state.searchResults){
+    if (!this.state.searchResults) {
       return (<p>Loading</p>)
     }
   }

@@ -110,6 +110,7 @@ class About extends React.Component {
           <NavDropdown eventKey="4" title="Features">
             <MenuItem eventKey="4.1" href="/phrases">Phrases</MenuItem>
             <MenuItem eventKey="4.2" href="/proverbs">Proverbs</MenuItem>
+            <MenuItem eventKey="4.23" href="/tools">More Tools</MenuItem>
             <MenuItem eventKey="4.21" href="/trends">Trends</MenuItem>
             <MenuItem eventKey="4.22" href="/updates">Updates</MenuItem>
             <MenuItem divider />

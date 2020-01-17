@@ -13,10 +13,11 @@ import PhoneticEastHelper from '../util/PhoneticEastHelper.js'
 import GoogleAd from './GoogleAd.js';
 import RelatedTerms from './RelatedTerms'
 import ReactGA from 'react-ga';
+import DerivedWords from './widgets/DerivedWords'
 
 //search results items
 class TodoItem extends React.Component {
-
+  partOfSpeech = null
   static propTypes = {
     todo: React.PropTypes.object.isRequired,
   }
@@ -24,13 +25,43 @@ class TodoItem extends React.Component {
   constructor () {
     super();
     this.state = {
+      derivedWords: null,
       showModal: false
     };
     
     this.handleOpenModal = this.handleOpenModal.bind(this);
     this.handleCloseModal = this.handleCloseModal.bind(this);
     ReactGA.initialize('UA-6312595-17');
+    
   }
+
+  /*
+  componentDidMount(){
+    console.log("before this.part of speech")
+    console.log(this.props.todo)
+    this.partOfSpeech = this.props.todo['definition']['partofspeech']
+    console.log("after this.part of speech")
+
+    if(this.partOfSpeech == "root"){
+
+      this.queryKey()
+    }
+  }
+
+  queryKey(){
+    console.log("in query key")
+    const that = this
+    
+    fetch('/api/derived/'+this.props.todo['definition']['east'])
+      .then((response) => response.json())
+      .then (data => {
+        that.setState({
+          derivedWords: data
+        })
+    })
+  
+  }
+  */
 
 
   render() {
@@ -61,6 +92,10 @@ class TodoItem extends React.Component {
     const seealso = (<DefinitionHelper arr={dictionary_definition_obj.seealso}/>);
     const source = dictionary_definition_obj.source;
     
+    /*
+    const derivedWords = this.state.derivedWords == null ? (<div></div>) : (
+      <DerivedWords root={dictionary_definition_obj} derivations={this.state.derivedWords}/>
+    )*/
     
     return (
       <div className='definition-item' onClick={this.renderDetail.bind(this)} id={idxEntry}>
@@ -107,7 +142,7 @@ class TodoItem extends React.Component {
       <li itemprop="itemListElement" itemscope
       itemtype="http://schema.org/ListItem">See Also : {seealso}</li>
       <li itemprop="itemListElement" itemscope
-      itemtype="http://schema.org/ListItem">Root : {dictionary_definition_obj.root}</li>
+      itemtype="http://schema.org/ListItem">Root : <span className={this.props.eastfont}><a href={'/word/' + dictionary_definition_obj.root}>{dictionary_definition_obj.root}</a></span></li>
       <li itemprop="itemListElement" itemscope
       itemtype="http://schema.org/ListItem">Semantics : {dictionary_definition_obj.semantics}</li>
       </ul>

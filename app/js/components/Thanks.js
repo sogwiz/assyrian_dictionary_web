@@ -9,9 +9,7 @@ class Thanks extends React.Component {
 
     constructor(props) {
         super(props);
-
-        console.log(this.props.location.query) //TODO: query is deprecated in router v4
-        if(this.props.location.query){
+        if(this.props.location && this.props.location.query){
           this.state = {
             value: this.props.location.query.q,
             email: ''

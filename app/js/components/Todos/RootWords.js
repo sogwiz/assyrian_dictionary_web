@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import ReactDataGrid from 'react-data-grid'
+import {OverlayTrigger, Tooltip} from 'react-bootstrap'
 
 
 const rootLetters = ['ܐ', 'ܒ', 'ܓ', 'ܕ', 'ܗ', 'ܘ', 'ܙ', 'ܚ', 'ܛ', 'ܝ', 'ܟ', 'ܠ', 'ܡ', 'ܢ', 'ܣ', 'ܥ', 'ܦ', 'ܨ', 'ܩ', 'ܪ', 'ܫ', 'ܬ']
@@ -9,7 +10,13 @@ const defaultColumnProperties = {
     width: 180
 };
 
+const tooltip = (
+    <Tooltip id="tooltip">
+      <strong>Derived words graph</strong> can be viewed by clicking the tree icon
+    </Tooltip>
+  );
 
+let handleToUpdateFunction = null
 /*
 const RootTextFormatter = ({ value }, { row }) => {
     console.log("row is")
@@ -31,10 +38,14 @@ const RootTextFormatter = React.createClass({
     render() {
         //const term = this.props.value;
         //const urlTerm = "/word/" + term;
+        var handleToUpdate  =   handleToUpdateFunction;
         const urlRoot = "/searchkey/" + this.props.dependentValues['searchkeynum']
         return (
             <div>
-            <a href={urlRoot} target="_blank"><span className="east-syriac-qasha">{this.props.value}</span></a>
+                <OverlayTrigger placement="top" overlay={tooltip}>
+                <button onClick={() => handleToUpdate(this.props.dependentValues)}>&#127807;</button>
+                </OverlayTrigger>
+                <a href={urlRoot} target="_blank"><span className="east-syriac-qasha">{this.props.value}</span></a>
         </div>)
     }
 });
@@ -47,7 +58,10 @@ class RootWords extends React.Component {
         let originalRows = new Array();
         let rows = originalRows.slice(0);
 
-        this.state = { originalRows, rows};
+        this.state = { originalRows, 
+            rows
+        };
+        handleToUpdateFunction = this.props.handleToUpdate
 
         this._columns = [
             {
