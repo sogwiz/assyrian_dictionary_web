@@ -16,6 +16,17 @@ class Tools extends React.Component {
       root: null,
       derivedWords: null
     }
+
+    this.getInitialRoot()
+  }
+
+  getInitialRoot(){
+    const that = this
+    fetch('/api/roots')
+    .then((response) => response.json())
+      .then(data => {
+        that.handleToUpdate(data[0])
+      })
   }
 
   handleToUpdate(rootWord) {

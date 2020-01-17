@@ -2,6 +2,7 @@ import React from 'react'
 import { Graph } from "react-d3-graph";
 import { ToastContainer, toast } from 'react-toastify';
 import ReactGA from 'react-ga';
+import { Label, OverlayTrigger, Tooltip } from 'react-bootstrap'
 
 const myConfig = {
     nodeHighlightBehavior: true,
@@ -41,7 +42,7 @@ const data = {
 
 
 class DerivedWordsGraph extends React.Component {
-    
+
     static propTypes = {
         derivations: React.PropTypes.array,
         root: React.PropTypes.object
@@ -54,8 +55,8 @@ class DerivedWordsGraph extends React.Component {
     linksArr = new Array()
     nodesArr = new Array()
     graphData = null
-    
-    constructor(props){
+
+    constructor(props) {
         super(props)
 
         this.state = {
@@ -63,7 +64,7 @@ class DerivedWordsGraph extends React.Component {
             westfont: localStorage.getItem('westfont') || 'west',
             show: false
         }
-        if(this.props.root){
+        if (this.props.root) {
             this.props.root['symbolType'] = "square"
         }
 
@@ -73,15 +74,15 @@ class DerivedWordsGraph extends React.Component {
         window.location = '/searchkey/' + searchkeynum
     }
 
-    showToast(searchkeynum){
+    showToast(searchkeynum) {
 
         ReactGA.event({
             category: 'User',
             action: 'graphNodeClick',
             label: searchkeynum.toString()
-          });
-        
-        var filteredNodes = this.props.derivations.filter(function(nodeEntry){
+        });
+
+        var filteredNodes = this.props.derivations.filter(function (nodeEntry) {
             return nodeEntry['searchkeynum'] == searchkeynum
         })
         var node = filteredNodes == null || filteredNodes.length == 0 ? this.props.root : filteredNodes[0]
@@ -89,7 +90,7 @@ class DerivedWordsGraph extends React.Component {
         toast(node['east'] + " [" + node['phonetic'] + "] \n" + node['english'], { autoClose: false, onClick: () => this.handleModalClick(node['searchkeynum']) })
     }
 
-    setupData(){
+    setupData() {
 
         this.linksArr = [...this.props.derivations]
         this.linksArr.forEach(element => {
@@ -101,7 +102,7 @@ class DerivedWordsGraph extends React.Component {
         });
 
         this.nodesArr = [...this.props.derivations]
-        
+
 
         this.nodesArr.unshift(this.props.root)
         this.nodesArr.forEach(element => {
@@ -114,19 +115,32 @@ class DerivedWordsGraph extends React.Component {
         }
     }
 
-    render(){
+    render() {
         this.setupData()
-        const graphToShow = this.linksArr == null || this.linksArr.length == 0 ? (<div/>) : (
-           
-            <Graph
-          id="graph-id" // id is mandatory, if no id is defined rd3g will throw an error
-          data={this.graphData}
-          config={myConfig}
-          onClickNode={this.showToast.bind(this)}
-          /> 
-            )
 
-            return (<div>{graphToShow}</div>)
+        const that = this;
+
+        /*
+        const tooltipOneTime = (
+            <Tooltip id="tooltipOneTimes" className="in">{that.props.root['phonetic']}</Tooltip>
+        );
+        */
+
+        const graphToShow = this.linksArr == null || this.linksArr.length == 0 ? (<div />) : (
+            <div>
+                {/*<OverlayTrigger placement="bottom" overlay={tooltipOneTime}>*/}
+                    <h3 style={{ textAlign: "center" }}>Interactive root graph for term <span className={this.state.eastfont}>{this.props.root['east']}</span></h3>
+                    {/*</OverlayTrigger>*/}
+                <Graph
+                    id="graph-id" // id is mandatory, if no id is defined rd3g will throw an error
+                    data={this.graphData}
+                    config={myConfig}
+                    onClickNode={this.showToast.bind(this)}
+                />
+            </div>
+        )
+
+        return (<div>{graphToShow}</div>)
 
 
     }
