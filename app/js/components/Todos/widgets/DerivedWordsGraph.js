@@ -8,6 +8,7 @@ const myConfig = {
     nodeHighlightBehavior: true,
     directed: true,
     focusAnimationDuration: 0.75,
+    width: 500,
     node: {
         color: "lightgreen",
         size: 400,
@@ -65,7 +66,9 @@ class DerivedWordsGraph extends React.Component {
             show: false
         }
         if (this.props.root) {
-            this.props.root['symbolType'] = "square"
+            this.props.root['symbolType'] = "star"
+            this.props.root['size'] = 800
+            this.props.root['strokeColor'] = "red"
         }
 
     }

@@ -11,7 +11,10 @@ class App extends React.Component {
   render() {
     // Call it once in your app. At the root of your app is the best place
   toast.configure()
-  ReactGA.initialize('UA-6312595-17'); 
+  if(location.hostname != "localhost"){
+    ReactGA.initialize('UA-6312595-17');
+  }
+   
     return (
       <div>
       <Helmet

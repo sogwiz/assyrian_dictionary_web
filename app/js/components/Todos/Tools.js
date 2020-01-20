@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Col, Grid, Nav, NavItem, Row, Tab } from 'react-bootstrap';
+import { Col, Grid, Row, Tab, Tabs} from 'react-bootstrap';
 import RootWords from './RootWords'
 import Thanks from '../Thanks'
 import DerivedWordsGraph from './widgets/DerivedWordsGraph';
@@ -85,36 +85,23 @@ class Tools extends React.Component {
       <div>
         <br/>
         <Grid>
-          <Tab.Container id="tabs-with-dropdown" activeKey={this.state.key} onSelect={this.handleSelect.bind(this)}>
-            <Row className="clearfix">
-              <Col sm={12}>
-                <Nav bsStyle="tabs">
-                  <NavItem eventKey={1}>
-                    Root Words
-          </NavItem>
-                  <NavItem eventKey={2}>
-                    Suggest Changes
-          </NavItem>
-                </Nav>
-              </Col>
-              <Col sm={12}>
-                <Tab.Content animation>
-                  <Tab.Pane eventKey={1}>
-                    <Col>
+          <Tabs id="tabs-tools" animation={true} activeKey={this.state.key} onSelect={this.handleSelect.bind(this)}>     
+                
+                  <Tab eventKey={1} title="Root Words">
+                    <Row>
+                    <Col md={6} mdPush={6}>
                     {derivedWordsGraph}
-                   </Col>
-                    <Col>
+                    </Col>
+                    <Col md={6} mdPull={6}>
                     <RootWords handleToUpdate = {this.handleToUpdate.bind(this)}/>
-                   </Col>
-                  </Tab.Pane>
-                  <Tab.Pane eventKey={2}>
+                    </Col>
+                    </Row>
+                  </Tab>
+                  <Tab eventKey={2} title="Suggest Changes">
                     <Thanks />
-                  </Tab.Pane>
-                </Tab.Content>
-              </Col>
+                  </Tab>
 
-            </Row>
-          </Tab.Container>
+          </Tabs>
         </Grid>
       </div>
     )
