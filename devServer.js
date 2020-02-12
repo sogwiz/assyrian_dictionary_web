@@ -18,7 +18,7 @@ var mailgun = new Mailgun({apiKey: emailAPIKey, domain: emailDomain});
 
 var queueRequestedWords = [];//queue of requested words to add to dictionary
 
-const  morgan = require('morgan');
+//const  morgan = require('morgan');
 
 // redis-client.js
 const redis = require('redis');
