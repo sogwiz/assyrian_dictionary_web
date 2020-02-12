@@ -402,7 +402,7 @@ app.get('/api/word/search/:searchTerm', function(req, res) {
   var isEnglish = /^[a-zA-Z0-9]/.test(req.params.searchTerm)
   if(!isEnglish){
     console.log("Assyrian search")
-    logger.info(appendMessage + ':' + req.params.searchTerm)
+    logger.info(req.params.searchTerm + appendMessage)
     app.locals.db.collection('DictionaryDefinition').find({"$text": {"$search": req.params.searchTerm}}, {score: {"$meta": 'textScore'}}).limit(300).sort({score: {"$meta": 'textScore'}}).toArray(function (err, result) {
       if (err || !result || !result[0]) {
         logger.info("error fetching Assyrian search results " + err)
@@ -432,10 +432,10 @@ app.get('/api/word/search/:searchTerm', function(req, res) {
   else{
     redisClient.get(redisKey, (err, result) => {
       if (result) {
-        if(isWebRequest)logger.info(appendMessage + ':CACHE:SearchResult:'+req.params.searchTerm)
+        if(isWebRequest)logger.info(':CACHE:SearchResult:'+req.params.searchTerm + appendMessage)
         return res.status(200).send(result);
       }else {
-        if(isWebRequest)logger.info(appendMessage + ':DB:SearchResult:'+req.params.searchTerm)
+        if(isWebRequest)logger.info(':DB:SearchResult:'+req.params.searchTerm + appendMessage)
           app.locals.db.collection('DictionaryWordDefinitionList').aggregate([
             { $match: { word: { $eq: req.params.searchTerm }}},
             { $limit : 50},
