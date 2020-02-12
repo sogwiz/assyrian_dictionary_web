@@ -18,6 +18,7 @@ var mailgun = new Mailgun({apiKey: emailAPIKey, domain: emailDomain});
 
 var queueRequestedWords = [];//queue of requested words to add to dictionary
 
+const  morgan = require('morgan');
 
 // redis-client.js
 const redis = require('redis');
@@ -50,18 +51,24 @@ const { combine, timestamp, label, printf } = format;
 
   var logger = winston.createLogger({
     format: combine(
-      label({ label: 'sargonsays_'+hostname }),
+      label({ label: 'sargonsays_'+hostname}),
       timestamp(),
       format.json()
     ),
     transports: [
       transport
     ]
-  });
+  })
+  logger.stream = {
+    write: function(message, encoding){
+        logger.info(message);
+    }
+  }
 
 var app = express();
 //compress all responses
 app.use(compression())
+//app.use(morgan('combined', { stream: logger.stream }));
 var compiler = webpack(config);
 require('dotenv').config();
 
@@ -383,9 +390,19 @@ app.get('/api/word/search/:searchTerm', function(req, res) {
     isWebRequest = false;
   }
 
+  
+  var ip = (req.headers['x-forwarded-for'] || '').split(',').pop() || 
+         req.connection.remoteAddress || 
+         req.socket.remoteAddress || 
+         req.connection.socket.remoteAddress
+
+  var appendMessage = ":remoteIp:" + ip + ":userAgent:" + useragent
+  
+
   var isEnglish = /^[a-zA-Z0-9]/.test(req.params.searchTerm)
   if(!isEnglish){
     console.log("Assyrian search")
+    logger.info(appendMessage + ':' + req.params.searchTerm)
     app.locals.db.collection('DictionaryDefinition').find({"$text": {"$search": req.params.searchTerm}}, {score: {"$meta": 'textScore'}}).limit(300).sort({score: {"$meta": 'textScore'}}).toArray(function (err, result) {
       if (err || !result || !result[0]) {
         logger.info("error fetching Assyrian search results " + err)
@@ -415,10 +432,10 @@ app.get('/api/word/search/:searchTerm', function(req, res) {
   else{
     redisClient.get(redisKey, (err, result) => {
       if (result) {
-        if(isWebRequest)logger.info('CACHE:SearchResult:'+req.params.searchTerm)
+        if(isWebRequest)logger.info(appendMessage + ':CACHE:SearchResult:'+req.params.searchTerm)
         return res.status(200).send(result);
       }else {
-        if(isWebRequest)logger.info('DB:SearchResult:'+req.params.searchTerm)
+        if(isWebRequest)logger.info(appendMessage + ':DB:SearchResult:'+req.params.searchTerm)
           app.locals.db.collection('DictionaryWordDefinitionList').aggregate([
             { $match: { word: { $eq: req.params.searchTerm }}},
             { $limit : 50},
