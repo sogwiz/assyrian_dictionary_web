@@ -36,7 +36,7 @@ class DefinitionsList extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {accordion: false,
+    this.state = {accordion: true,
       activeKey: ['1']};
   }
 
@@ -66,7 +66,7 @@ class DefinitionsList extends React.Component {
   }
 
   render() {
-const accordion = accordion;
+const accordion = this.state.accordion;
 const btn = accordion ? 'accordion' : 'collapse';
     const activeKey = this.state.activeKey;
 

@@ -10,7 +10,7 @@ class CollapseResults extends React.Component {
     render() {
             //console.log("redraw")
         return (
-            <Collapse accordion={this.props.accordion} onChange={this.props.toggle} >
+            <Collapse accordion={this.props.accordion} onChange={this.props.toggle} defaultActiveKey="1">
             <Panel header={this.props.headerText} key='1'>
               {this.props.items.slice(1,this.props.items.length)}
             </Panel>
