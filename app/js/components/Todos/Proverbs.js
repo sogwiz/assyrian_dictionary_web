@@ -1,6 +1,7 @@
 import React from 'react'
-import {Button, OverlayTrigger, Panel, PanelGroup, Popover, Tooltip} from 'react-bootstrap';
+import {Button, OverlayTrigger, Panel, PanelGroup, Popover, Tooltip, Collapse} from 'react-bootstrap';
 import GoogleAd from './GoogleAd.js';
+import {CopyToClipboard} from 'react-copy-to-clipboard';
 
 class Proverbs extends React.Component {
     constructor(props) {
@@ -51,6 +52,9 @@ class Proverbs extends React.Component {
     }
 
     render(){
+        const tooltipCopy = (
+            <Tooltip><strong>Click</strong> to copy full details for this proverb to your clipboard</Tooltip>
+        );
         if (this.state == null || this.state.rows == null || this.state.rows.length < 1) { return (<div><h1>Proverbs</h1></div>); }
 
         var entries = [];
@@ -83,7 +87,12 @@ class Proverbs extends React.Component {
             <OverlayTrigger placement="bottom" overlay={tooltip}>
             <p>{entry['subtext']}</p>
                 </OverlayTrigger>
-            
+            <CopyToClipboard text = {"Assyrian Proverb: " + entry['text'] + " \n Assyrian phonetic: [" + entry['title'] + "] " +  entry['subtext'] + "\n http://sargonsays.com/proverbs"}
+                onCopy={() => toast("Copied proverb to clipboard")} >
+                    <OverlayTrigger placement="bottom" overlay={tooltipCopy}>
+                    <Button bsStyle="link" bsSize="large">📋</Button>
+                    </OverlayTrigger>
+            </CopyToClipboard>
             {donate}
             <br/>
             </Panel>
@@ -109,7 +118,7 @@ class Proverbs extends React.Component {
                 <h1>Proverbs + Quotes</h1>
     </OverlayTrigger>
                 
-                <PanelGroup activeKey={this.state.activeKey} onSelect={this.handleSelect.bind(this)} accordion>
+                <PanelGroup activeKey={this.state.activeKey} onSelect={this.handleSelect.bind(this)}>
                 {entries}
                 </PanelGroup>
             </div>

@@ -60,15 +60,15 @@ class TodoDetail extends React.Component {
     console.log(this.state.derivedWords)
 
     const popoverBottom = (
-      <Popover id="popover-positioned-bottom" title="Root words">
-        <strong>Root Words</strong> can be found <a href="/roots">here</a>
+      <Popover id="popover-positioned-bottom" title={"Type: " + this.state.partOfSpeech}>
+        <strong>{this.state.partOfSpeech == "root" ? "Root Words" : "Phrases"}</strong> can be found <a href={"/" + this.state.partOfSpeech + "s"}>here</a>
       </Popover>
     );
 
     const overlay = (
 
       <OverlayTrigger trigger="click" placement="bottom" overlay={popoverBottom}>
-        <Button bsSize="small">root</Button>
+        <Button bsSize="small">{this.state.partOfSpeech}</Button>
       </OverlayTrigger>
     )
 
@@ -88,7 +88,7 @@ class TodoDetail extends React.Component {
       }
 
       let partOfSpeech = dictionary_definition_obj['partofspeech']
-      if (partOfSpeech == "root") {
+      if (partOfSpeech == "root" || partOfSpeech == "phrase") {
         partOfSpeech = overlay
       }
       //const cf = this.getCleanArrWithHtml(dictionary_definition_obj['cf'));

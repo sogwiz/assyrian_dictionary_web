@@ -1,9 +1,11 @@
 import React from 'react'
 import ReactDataGrid from 'react-data-grid'
-import { Button, OverlayTrigger, Panel, PanelGroup, Popover, Table, Tooltip } from 'react-bootstrap';
+import { Button,ButtonToolbar, Col, OverlayTrigger, Panel, PanelGroup, Popover, Row, Table, Tooltip, Grid } from 'react-bootstrap';
 import GoogleAd from './GoogleAd.js';
 import ReactAudioPlayer from 'react-audio-player'
 import AudioHelperString from '../util/AudioHelper.js'
+import {CopyToClipboard} from 'react-copy-to-clipboard';
+import { toast } from 'react-toastify';
 
 const LinkCellFormatter = React.createClass({
     propTypes: {
@@ -26,7 +28,9 @@ class Phrases extends React.Component {
 
         this.state = {
             rows: new Array(),
-            activeKey: -1
+            activeKey: -1,
+            value: '',
+            copied: false,
         };
         this._columns = [
             {
@@ -96,6 +100,9 @@ class Phrases extends React.Component {
             const tooltip = (
                 <Tooltip id={entry['searchkeynum']}><strong>Click</strong> to see details about the spelling, audio, origin, and more about this phrase</Tooltip>
             );
+            const tooltipCopy = (
+                <Tooltip><strong>Click</strong> to copy full details for this phrase to your clipboard</Tooltip>
+            );
 
             if (i % 4 == 0) {
                 donate = (<GoogleAd
@@ -121,10 +128,20 @@ class Phrases extends React.Component {
                         </tbody>
                     </Table>
                     <p>
-                        <OverlayTrigger placement="bottom" overlay={tooltip}>
-                            <a href={"/searchkey/" + entry['searchkeynum']}>
-                                <Button bsStyle="primary">Learn more</Button>
-                            </a></OverlayTrigger>
+                        <ButtonToolbar>
+                        <CopyToClipboard text = { entry['english'] + " \n Assyrian phonetic: " + entry['phonetic'] + " \n http://sargonsays.com/phrases"}
+                                    onCopy={() => toast("Copied phrase details for " + entry['english'])} >
+                                        <OverlayTrigger placement="bottom" overlay={tooltipCopy}>
+                                    <Button bsStyle="link" bsSize="large">📋</Button>
+                                    </OverlayTrigger>
+                                </CopyToClipboard>
+                                <OverlayTrigger placement="bottom" overlay={tooltip}>
+                                    <a href={"/searchkey/" + entry['searchkeynum']}>
+                                        <Button bsStyle="primary">Learn more</Button>
+                                    </a>
+                                </OverlayTrigger>
+                            </ButtonToolbar>
+                                
                     </p>
                     {donate}
                 </Panel>
