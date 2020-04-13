@@ -2,6 +2,7 @@ import React from 'react'
 import {Button, OverlayTrigger, Panel, PanelGroup, Popover, Tooltip, Collapse} from 'react-bootstrap';
 import GoogleAd from './GoogleAd.js';
 import {CopyToClipboard} from 'react-copy-to-clipboard';
+import { toast } from 'react-toastify';
 
 class Proverbs extends React.Component {
     constructor(props) {
