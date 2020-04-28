@@ -116,10 +116,10 @@ class Phrases extends React.Component {
                 <Panel header={entry['english']} eventKey={entry['searchkeynum']}>
                     <Table responsive>
                         <tbody>
+                            <tr><td align='center' colSpan='2'><h4> <span className="east-syriac-qasha">{entry['east']}</span></h4></td></tr>
                             <tr>
                                 <td>Phonetic - East<h4>{entry['phonetic']}</h4></td>
                                 <td><ReactAudioPlayer src={AudioHelperString(entry['audio'], 'e', entry['searchkeynum'])} /></td>
-
                             </tr>
                             <tr>
                                 <td>Phonetic - West<h4>{entry['phonetic_west']}</h4></td>

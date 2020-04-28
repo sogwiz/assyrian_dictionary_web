@@ -25,6 +25,7 @@ import Phrases from './components/Todos/Phrases'
 import Proverbs from './components/Todos/Proverbs'
 import RootWords from './components/Todos/RootWords'
 import Tools from './components/Todos/Tools'
+import Names from './components/Todos/Names'
 
 // Style
 require('./../assets/styles/main.less')
@@ -42,6 +43,7 @@ ReactDOM.render((
       <Route path='/word/:searchTerm' component={Search}/>
       <Route path='/word/:searchTerm/:indexEntry' component={Search}/>
       <Route path='/searchkey/:searchkeynum' component ={TodoDetail} />
+      <Route path='/names' component={Names}/>
       <Route path='/about' component={About}/>
       <Route path='/trends' component={Trends}/>
       <Route path='/thanks' component={Thanks}/>

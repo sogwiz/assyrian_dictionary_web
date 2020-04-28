@@ -6,7 +6,7 @@ import Badge from 'react-uikit-badge';
 import Helmet from "react-helmet";
 import TodoDetail from './TodoDetail'
 import ReactModal from 'react-modal'
-import {Button, ProgressBar} from 'react-bootstrap';
+import {Button, Label, ProgressBar, OverlayTrigger, Popover, Tooltip} from 'react-bootstrap';
 import DefinitionHelper from './DefinitionHelper'
 import PhoneticWestHelper from '../util/PhoneticWestHelper.js'
 import PhoneticEastHelper from '../util/PhoneticEastHelper.js'
@@ -96,9 +96,29 @@ class TodoItem extends React.Component {
     const derivedWords = this.state.derivedWords == null ? (<div></div>) : (
       <DerivedWords root={dictionary_definition_obj} derivations={this.state.derivedWords}/>
     )*/
+    const popoverBottom = (
+      <Popover id="popover-positioned-bottom" title={"Type: " + dictionary_definition_obj.partofspeech}>
+        more <strong>{dictionary_definition_obj.partofspeech == "root" ? "Root Words" : dictionary_definition_obj.partofspeech + 's'}</strong> can be found <a href={"/" + dictionary_definition_obj.partofspeech + "s"}>here</a>
+      </Popover>
+    );
+
+    const overlay = (
+
+      <OverlayTrigger trigger="click" placement="bottom" overlay={popoverBottom}>
+        <Button bsSize="small">{dictionary_definition_obj.partofspeech}</Button>
+      </OverlayTrigger>
+    )
+
+    let partOfSpeech = dictionary_definition_obj.partofspeech
+      if (partOfSpeech == "root" || partOfSpeech == "phrase" || partOfSpeech == "name" ) {
+        partOfSpeech = overlay
+      }
+
+    
     
     return (
       <div className='definition-item' onClick={this.renderDetail.bind(this)} id={idxEntry}>
+        
       <li itemprop="itemListElement" itemscope
       itemtype="http://schema.org/ListItem">
       <meta itemprop="position" content={idxEntry} />
@@ -118,7 +138,7 @@ class TodoItem extends React.Component {
         >
         <p>Search term : {todo.word}</p>
         Definition: {dictionary_definition_obj.definition_arr.join("\n").replace(/^ : /,"")}
-        <p>Category: {dictionary_definition_obj.partofspeech}</p>
+        <p>Category: {partOfSpeech}</p>
           <p className='definition'>
           East: <span className={this.props.eastfont}>{dictionary_definition_obj.east}</span>
           <span className="phonetic">({PhoneticEastHelper(dictionary_definition_obj.phonetic)})</span>
@@ -128,8 +148,8 @@ class TodoItem extends React.Component {
           <span className="phonetic">({PhoneticWestHelper(dictionary_definition_obj.phonetic_west)})</span>
         </p>
         
-        <p className='definition'>
-          Cross References: {cf}
+        <p>
+          Cross References: <span className={this.props.font}>{cf}</span>
         </p>
         <p>
           <ul>
@@ -173,11 +193,16 @@ class TodoItem extends React.Component {
   }
 
   getBadgeRenderer(boostValue){
+    const tooltip = (
+      <Tooltip placement="top" className="in" id="tooltip-top">
+    This definition was verified by a language expert
+  </Tooltip>
+    )
     if(boostValue == 100){
      return (
-     <div className='verifyBadge'>
-      {/*<link rel="stylesheet" type="text/css" href='https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.2/css/uikit.min.css' />*/}
-      <span className="tooltip"><Badge notification context='success'>Verified definition</Badge><span className="tooltiptext">This definition was verified by a language expert</span></span></div>
+      <OverlayTrigger placement="top" overlay={tooltip}>
+      <Label bsStyle="success">Verified Definition</Label>
+      </OverlayTrigger>
      )
     }
   }

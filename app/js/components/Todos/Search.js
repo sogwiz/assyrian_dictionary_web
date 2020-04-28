@@ -9,6 +9,7 @@ import _ from 'lodash'
 import DefinitionsList from './DefinitionsList'
 import TodoDetail from './TodoDetail'
 import SearchTerm from './SearchTerm'
+import Doodle from './widgets/Doodle'
 import GoogleAd from './GoogleAd'
 import Badge from 'react-uikit-badge';
 import ReactTooltip from 'react-tooltip'
@@ -27,7 +28,7 @@ const languages = [
     name: 'Elm',
     year: 2012
   },
-];
+]
 
 // Teach Autosuggest how to calculate suggestions for any given input value.
 /*
@@ -228,6 +229,8 @@ class Search extends React.Component {
       return (
 
         <div className='todos'>
+          <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css" />
+          <link rel="stylesheet" href="https://bootswatch.com/3/cosmo/bootstrap.min.css" />
 
           <h1 className='title'>English to Assyrian Dictionary</h1>
           <div id='search'>
@@ -257,6 +260,8 @@ class Search extends React.Component {
     } else {
       return (
         <div className='todos'>
+          <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css" />
+          <link rel="stylesheet" href="https://bootswatch.com/3/cosmo/bootstrap.min.css" />
           <h1 className='title'>English to Assyrian Dictionary</h1>
           <div id='search'>
 

@@ -200,6 +200,27 @@ function removeDuplicatesBy(keyFn, array) {
   });
 }
 
+app.get('/api/names', function(req, res) {
+  const redisKey = 'names'
+  res.setHeader('Content-Type', 'application/json');
+  redisClient.get(redisKey, (err, result) => {
+    if (result) {
+      return res.status(200).send(result);
+    } else {
+      logger.info('reading names from db')
+      app.locals.db.collection('DictionaryDefinition').find({'partofspeech': 'name'}, {'english_short': 1, 'east': 1, 'wordform': 1, 'definition_arr': 1, 'arabic': 1, 'searchkeynum': 1}).sort( {'english_short': 1 } ).toArray(function(err, result) {
+        if (err || !result || !result[0]) {
+          logger.info("error fetching names" + err)
+        } else {
+          //TODO: set this back to DURATION_SECONDS_REDIS_DEFAULT
+          redisClient.set(redisKey, JSON.stringify(result),'EX',5)
+          res.send(result);
+        }
+      })
+    }
+  })
+})
+
 app.get('/api/proverb', function(req, res) {
   res.setHeader('Content-Type', 'application/json');
   redisClient.get('proverbs', (err, result) => {
@@ -238,7 +259,6 @@ app.get('/api/roots', function(req, res) {
         }
       })
     }
-
   })
 })
 
