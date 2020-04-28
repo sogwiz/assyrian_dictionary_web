@@ -9,7 +9,7 @@ English to Assyrian dictionary [*sargonsays.com*](http://sargonsays.com) , front
 This will stand up a local development environment with a seeded database and frontend code. App will be running on localhost:80
 
 ```
-docker-compose -f docker-compose-dev.yaml up --build
+docker-compose -f docker-compose-dev.yaml up --build --scale web=2
 ```
 
 ### Docker
@@ -68,3 +68,18 @@ This code will bundle both `javascript` and `styles` to `dist/` folder, generati
 - Sass or Less
 - [Eslint](http://eslint.org/)
 - [React Router](https://github.com/rackt/react-router)
+
+# data
+we need to reference the objectid by creating a new field that only has the id string and then doing dblookup
+this will need us to modify many scripts
+- data gen script (or maybe we just have a cloud function do this?)
+- the seeded db data also needs this change
+
+CID=`docker ps | grep node | awk '{ print $1 }'` && docker exec -it $CID /bin/bash
+
+# fluentd
+docker build -f Dockerfile_fluentd -t sogwiz/sargonsays-custom-fluentd ./
+docker push sogwiz/sargonsays-custom-fluentd
+
+# redis
+docker exec -it container-name redis-cli FLUSHALL
