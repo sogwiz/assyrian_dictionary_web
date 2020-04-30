@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react'
 import { Graph } from "react-d3-graph";
 import { ToastContainer, toast } from 'react-toastify';
@@ -45,8 +46,8 @@ const data = {
 class DerivedWordsGraph extends React.Component {
 
     static propTypes = {
-        derivations: React.PropTypes.array,
-        root: React.PropTypes.object
+        derivations: PropTypes.array,
+        root: PropTypes.object
     }
 
     static defaultProps = {

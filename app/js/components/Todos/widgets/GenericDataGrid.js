@@ -6,12 +6,12 @@ const defaultColumnProperties = {
     width: 180
 };
 
-const RootTextFormatter = React.createClass({
+class RootTextFormatter extends React.Component {
     /*
     propTypes: {
         //value: React.PropTypes.number.isRequired
     },*/
-    
+
     render() {
         //const term = this.props.value;
         //const urlTerm = "/word/" + term;
@@ -21,7 +21,7 @@ const RootTextFormatter = React.createClass({
             <a href={urlRoot} target="_blank"><span className="east-syriac-qasha">{this.props.value}</span></a>
         </div>)
     }
-});
+}
 
 class GenericDataGrid extends React.Component {
     constructor(props) {

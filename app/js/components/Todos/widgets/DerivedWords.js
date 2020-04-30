@@ -1,5 +1,6 @@
+import PropTypes from 'prop-types';
 import React from 'react'
-import { Overlay, OverlayTrigger, Panel, Popover, Tab, Tabs } from 'react-bootstrap'
+import { Accordion, Card, Overlay, OverlayTrigger, Popover, Tab, Tabs } from 'react-bootstrap'
 import { Graph } from "react-d3-graph";
 import { ToastContainer, toast } from 'react-toastify';
 import GenericDataGrid from './GenericDataGrid'
@@ -17,15 +18,23 @@ import DerivedWordsGraph from './DerivedWordsGraph'
 
 class DerivedWords extends React.Component {
     static propTypes = {
-        derivations: React.PropTypes.array,
-        root: React.PropTypes.object
+        derivations: PropTypes.array,
+        root: PropTypes.object
     }
 
     render() {
 
         return (
-            <Panel id="collapsible-panel-derived" collapsible defaultExpanded header="Derived Words">
-                <Tabs defaultActiveKey={1} id="uncontrolled-tab-example">
+            <Accordion>
+                <Card>
+                    <Card.Header>
+                        <Accordion.Toggle as={Card.Header}>
+                        Derived Words
+                        </Accordion.Toggle>
+                    </Card.Header>
+                    <Accordion.Collapse>
+                        <Card.Body>
+                        <Tabs defaultActiveKey={1} id="uncontrolled-tab-example">
                     <Tab eventKey={1} title="Graph">
 
                         <DerivedWordsGraph derivations={this.props.derivations} root={this.props.root} />
@@ -37,10 +46,11 @@ class DerivedWords extends React.Component {
                     </Tab>
 
                 </Tabs>
+                        </Card.Body>
 
-
-
-            </Panel>
+                    </Accordion.Collapse>
+                </Card>
+            </Accordion>
 
 
         )

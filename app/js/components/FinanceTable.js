@@ -1,20 +1,31 @@
 import React from 'react'
-import { ListGroup, ListGroupItem, Panel, PanelGroup } from 'react-bootstrap';
+import { Accordion, Button, Card, ListGroup} from 'react-bootstrap';
 
 class FinanceTable extends React.Component {
     render() {
         return (
-            <PanelGroup accordion>
-                <Panel header="Cost and Revenue Streams" eventKey="1">
+            <Accordion>
+                <Card>
+                <Card.Header>
+                    <Accordion.Toggle as={Card.Header} variant="link">
+                        Cost and Revenue Streams
+                    </Accordion.Toggle>
+                </Card.Header>
+                <Accordion.Collapse >
+                    <Card.Body>
                     <ListGroup>
-                        <ListGroupItem bsStyle="success" header="$25.00 per month">Advertising Revenue on Google Adsense (I want to remove ads to make it a clean site)</ListGroupItem>
-                        <ListGroupItem header="Volunteer">Linguistic Researchers and community members who keep the language data pristine and correct (30 hours a month)</ListGroupItem>
-                        <ListGroupItem header="Volunteer">Software Development Time and Energy (20 hours a month)</ListGroupItem>
-                        <ListGroupItem bsStyle="danger" header="$25.00 per month">Cloud Hosting for web app on Microsoft Azure and domain on DreamHost</ListGroupItem>
-                        <ListGroupItem bsStyle="danger" header="$10.00 per month">Cloud Hosting on Nodechef for App Container ($4) and Database Server ($5)</ListGroupItem>
+                        <ListGroup.Item variant="success"><h4>$25.00 per month</h4>Advertising Revenue on Google Adsense (I want to remove ads to make it a clean site)</ListGroup.Item>
+                        <ListGroup.Item><h4>Volunteer</h4>Linguistic Researchers and community members who keep the language data pristine and correct (30 hours a month)</ListGroup.Item>
+                        <ListGroup.Item><h4>Volunteer</h4>Software Development Time and Energy (20 hours a month)</ListGroup.Item>
+                        <ListGroup.Item variant="danger"><h4>$25.00 per month</h4>Cloud Hosting for web app on Microsoft Azure and domain on DreamHost</ListGroup.Item>
+                        <ListGroup.Item variant="danger"><h4>$10.00 per month</h4>Cloud Hosting on Nodechef for App Container ($4) and Database Server ($5)</ListGroup.Item>
                     </ListGroup>
-                </Panel>
-            </PanelGroup>
+                    </Card.Body>
+                </Accordion.Collapse>
+
+                </Card>
+                </Accordion>
+                
         )
     }
 }

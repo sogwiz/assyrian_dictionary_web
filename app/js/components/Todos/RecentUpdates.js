@@ -6,10 +6,10 @@ import Parse from 'parse'
 import ParseReact from 'parse-react'
 import ReactDataGrid from 'react-data-grid'
 
-const LinkCellFormatter = React.createClass({
-    propTypes: {
+class LinkCellFormatter extends React.Component {
+    static propTypes = {
         //value: React.PropTypes.number.isRequired
-    },
+    };
 
     render() {
         const term = this.props.value;
@@ -19,12 +19,12 @@ const LinkCellFormatter = React.createClass({
                 <a href={urlTerm}>{term.toString().split(":")[0]}</a>
             </div>)
     }
-});
+}
 
-const DateCellFormatter = React.createClass({
-    propTypes: {
+class DateCellFormatter extends React.Component {
+    static propTypes = {
         //value: React.PropTypes.number.isRequired
-    },
+    };
 
     render() {
         var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
@@ -35,7 +35,7 @@ const DateCellFormatter = React.createClass({
                 {dateString}
             </div>)
     }
-})
+}
 
 class RecentUpdates extends React.Component {
     constructor(props) {
@@ -101,7 +101,7 @@ class RecentUpdates extends React.Component {
             return
         }
 
-        if(this.state.rows != null && this.state.rows.length > 0) {
+        if(this.state.rows != null && this.state.rows.length > 0 && i>=0) {
             var listitem = this.state.rows[i]
             var result = {word: listitem.get('word') + ":" + listitem.get("searchkeynum"), _updated_at: listitem.updatedAt.toString(), _created_at: listitem.createdAt.toString(), searchkeynum: listitem.get('searchkeynum')}
             return result

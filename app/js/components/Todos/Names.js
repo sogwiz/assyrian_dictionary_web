@@ -12,10 +12,10 @@ const defaultColumnProperties = {
 
 const selectors = Data.Selectors
 
-const DefinitionCellFormatter = React.createClass({
-    propTypes: {
+class DefinitionCellFormatter extends React.Component {
+    static propTypes = {
         //value: React.PropTypes.number.isRequired
-    },
+    };
 
     render() {
         const definition_arr = this.props.value.slice(1)
@@ -29,12 +29,12 @@ const DefinitionCellFormatter = React.createClass({
                 {definition_arr.join(" ")}
             </div>)
     }
-})
+}
 
-const AssyrianCellFormatter = React.createClass({
-    propTypes: {
+class AssyrianCellFormatter extends React.Component {
+    static propTypes = {
         //value: React.PropTypes.number.isRequired
-    },
+    };
 
     render() {
         return (
@@ -42,12 +42,12 @@ const AssyrianCellFormatter = React.createClass({
                 {this.props.value}
             </span>)
     }
-})
+}
 
-const LinkCellFormatter = React.createClass({
-    propTypes: {
+class LinkCellFormatter extends React.Component {
+    static propTypes = {
         //value: React.PropTypes.number.isRequired
-    },
+    };
 
     render() {
         const urlTerm = "/searchkey/" + this.props.value
@@ -56,7 +56,7 @@ const LinkCellFormatter = React.createClass({
                 <a href={urlTerm}>Link</a>
             </div>)
     }
-})
+}
 
 const columns = [
     {
@@ -83,12 +83,12 @@ const columns = [
 
 
 
-    //getRows(rows, filters) {
-    function getRows(rows, filters) {
-            //const rows = this.state.rows
-            //const filters = this.state.filters
-            return selectors.getRows({ rows, filters });
-        }  
+//getRows(rows, filters) {
+function getRows(rows, filters) {
+        //const rows = this.state.rows
+        //const filters = this.state.filters
+        return selectors.getRows({ rows, filters });
+    }
 
 class Names extends React.Component {
     constructor(props) {

@@ -1,7 +1,8 @@
+import PropTypes from 'prop-types';
 import React from 'react'
 import { Link } from 'react-router'
 import ReactModal from 'react-modal'
-import { Button, Col, Grid, Row, OverlayTrigger, Panel, Popover } from 'react-bootstrap'
+import { Accordion, Button, Card, Col, Container, Row, OverlayTrigger, Popover } from 'react-bootstrap'
 import DefinitionHelper from './DefinitionHelper'
 import PhoneticWestHelper from '../util/PhoneticWestHelper.js'
 import PhoneticEastHelper from '../util/PhoneticEastHelper.js'
@@ -13,7 +14,7 @@ import DerivedWords from './widgets/DerivedWords'
 class TodoDetail extends React.Component {
 
   static propTypes = {
-    todo: React.PropTypes.object.isRequired,
+    todo: PropTypes.object.isRequired,
   }
   constructor(props) {
     super(props);
@@ -25,7 +26,10 @@ class TodoDetail extends React.Component {
       westfont: localStorage.getItem('westfont') || 'west'
     }
 
-    this.queryKey();
+  }
+
+  componentDidMount(){
+    this.queryKey()
   }
 
   queryKey() {
@@ -58,15 +62,18 @@ class TodoDetail extends React.Component {
     console.log(this.state.derivedWords)
 
     const popoverBottom = (
-      <Popover id="popover-positioned-bottom" title={"Type: " + this.state.partOfSpeech}>
-        <strong>{this.state.partOfSpeech == "root" ? "Root Words" : this.state.partOfSpeech + 's'}</strong> can be found <a href={"/" + this.state.partOfSpeech + "s"}>here</a>
-      </Popover>
+      <Popover>
+      <Popover.Title as="h3">{'Type: ' + this.state.partOfSpeech}</Popover.Title>
+        <Popover.Content>
+        more <strong>{this.state.partOfSpeech == "root" ? "Root Words" : this.state.partOfSpeech + 's'}</strong> can be found <a href={"/" + this.state.partOfSpeech + "s"}>here</a>
+        </Popover.Content>
+    </Popover>
     );
 
     const overlay = (
 
       <OverlayTrigger trigger="click" placement="bottom" overlay={popoverBottom}>
-        <Button bsSize="small">{this.state.partOfSpeech}</Button>
+        <Button size="sm">{this.state.partOfSpeech}</Button>
       </OverlayTrigger>
     )
 
@@ -116,17 +123,26 @@ class TodoDetail extends React.Component {
             <p className='definition'>
               East: <span className={this.state.eastfont}>{dictionary_definition_obj['east']}</span>
               <span className="phonetic">({phonetic})</span>
-              <ReactAudioPlayer src={audioEast} />
+              <ReactAudioPlayer src={audioEast} controls/>
             </p>
             <p className='definition'>
               West: <span className="west">{dictionary_definition_obj['west']}</span>
               <span className="phonetic">({phonetic_west})</span>
-              <ReactAudioPlayer src={audioWest} />
+              <ReactAudioPlayer src={audioWest} controls/>
             </p>
 
-            <Grid>
-              <Panel id="collapsible-panel-details" collapsible defaultExpanded header="Details">
-                <p className='definition'>
+            <Container>
+            <Accordion defaultActiveKey="0">
+              <Card>
+                <Card.Header>
+                  <Accordion.Toggle as={Card.Header} eventKey="0">
+                    Details
+                  </Accordion.Toggle>
+                </Card.Header>
+                <Accordion.Collapse eventKey="0">
+                  <Card.Body>
+                                  {/*<Panel id="collapsible-panel-details" collapsible defaultExpanded header="Details">*/}
+                  <p className='definition'>
                   Cross References: <span className={this.state.eastfont}>{cf}</span>
                 </p>
                 <p>
@@ -145,10 +161,16 @@ class TodoDetail extends React.Component {
                     itemtype="http://schema.org/ListItem" itemprop="name">Semantics : {dictionary_definition_obj['semantics']}</li>
 
                 </p>
-              </Panel>
+                  </Card.Body>
+
+                </Accordion.Collapse>
+              </Card>
+            
+
+              </Accordion>
 
               {derivedWords}
-            </Grid>
+            </Container>
           </ul>
 
           <div className="posnormal">

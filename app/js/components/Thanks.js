@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, ButtonGroup, ButtonToolbar, Carousel, Col, ControlLabel, Form, FormControl, FormGroup, Grid, Jumbotron, ListGroup, ListGroupItem, MenuItem, Nav, NavItem, NavDropdown, PageHeader, Panel, Row, Tab, Tabs, Tooltip, OverlayTrigger } from 'react-bootstrap'; 
+import { Button, ButtonGroup, ButtonToolbar, Carousel, Col, ControlLabel, Form, FormControl, FormGroup, Container, Jumbotron, ListGroup, ListGroupItem, MenuItem, Nav, NavItem, NavDropdown, PageHeader, Panel, Row, Tab, Tabs, Tooltip, OverlayTrigger } from 'react-bootstrap'; 
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import FinanceTable from './FinanceTable.js';
@@ -80,10 +80,10 @@ class Thanks extends React.Component {
 
         return (
             <div>
-                {<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />}
+                {<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css" />}
                 {<link rel="stylesheet" href="https://bootswatch.com/3/cosmo/bootstrap.min.css"/>}
                 <br/>
-                <Grid>
+                <Container>
                 <h1 className='title'>Thank you!</h1>
                 <br/><br/>
                 <h3>Your contribution will go towards the health and integrity of the dictionary so that others can use it for generations to come.</h3>
@@ -121,13 +121,13 @@ class Thanks extends React.Component {
   <FormGroup>
     <Col smOffset={2} sm={10}>
     <OverlayTrigger placement="top" overlay={tooltipRequest}>
-           <Button type="submit">Submit</Button>
+           <Button variant="secondary" type="submit">Submit</Button>
            </OverlayTrigger>
            </Col>
   </FormGroup>
             </Form>
             
-            </Grid>
+            </Container>
             <br/>
             <FinanceTable/>
             </div>

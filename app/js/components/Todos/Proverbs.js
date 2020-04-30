@@ -1,5 +1,5 @@
 import React from 'react'
-import {Button, OverlayTrigger, Panel, PanelGroup, Popover, Tooltip, Collapse} from 'react-bootstrap';
+import {Accordion, Button, Card, OverlayTrigger, Popover, Tooltip, Collapse} from 'react-bootstrap';
 import GoogleAd from './GoogleAd.js';
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import { toast } from 'react-toastify';
@@ -12,7 +12,6 @@ class Proverbs extends React.Component {
             rows: new Array(),
             activeKey: -1
         };
-        this.queryProverbs();
     }
 
     handleSelect(activeKey) {
@@ -52,6 +51,10 @@ class Proverbs extends React.Component {
         */
     }
 
+    componentDidMount(){
+        this.queryProverbs();
+    }
+
     render(){
         const tooltipCopy = (
             <Tooltip><strong>Click</strong> to copy full details for this proverb to your clipboard</Tooltip>
@@ -71,7 +74,7 @@ class Proverbs extends React.Component {
 
             if(i%3==0){
                 donate = (
-                    <a href="https://sargonsays.memberful.com/checkout?plan=23192"><Button bsStyle="info">Support sargonsays for $2/month.</Button></a>
+                    <a href="https://sargonsays.memberful.com/checkout?plan=23192"><Button variant="info">Support sargonsays for $2/month.</Button></a>
                 )
             }else if(i%4==0){
                 donate = (<GoogleAd 
@@ -82,8 +85,15 @@ class Proverbs extends React.Component {
             }
 
             entries.push(
-            <Panel header={entry['text']} eventKey={entry['b2dynamicentityid']}>
-            <h2>{entry['title']}</h2>
+                <Card>
+                        <Card.Header>
+                            <Accordion.Toggle as={Card.Header} eventKey={entry['b2dynamicentityid']}>
+                            {entry['text']}
+                            </Accordion.Toggle>
+                        </Card.Header>
+                        <Accordion.Collapse eventKey={entry['b2dynamicentityid']}>
+                        <Card.Body>
+<h2>{entry['title']}</h2>
             <br/>
             <OverlayTrigger placement="bottom" overlay={tooltip}>
             <p>{entry['subtext']}</p>
@@ -91,12 +101,15 @@ class Proverbs extends React.Component {
             <CopyToClipboard text = {"Assyrian Proverb: " + entry['text'] + " \n Assyrian phonetic: [" + entry['title'] + "] " +  entry['subtext'] + "\n http://sargonsays.com/proverbs"}
                 onCopy={() => toast("Copied proverb to clipboard")} >
                     <OverlayTrigger placement="bottom" overlay={tooltipCopy}>
-                    <Button bsStyle="link" bsSize="large">📋</Button>
+                    <Button variant="link" size="lg">📋</Button>
                     </OverlayTrigger>
             </CopyToClipboard>
             {donate}
             <br/>
-            </Panel>
+                        </Card.Body>
+                        </Accordion.Collapse>
+            
+            </Card>
             );
         }
         
@@ -119,9 +132,10 @@ class Proverbs extends React.Component {
                 <h1>Proverbs + Quotes</h1>
     </OverlayTrigger>
                 
-                <PanelGroup activeKey={this.state.activeKey} onSelect={this.handleSelect.bind(this)}>
+        {/*<PanelGroup activeKey={this.state.activeKey} onSelect={this.handleSelect.bind(this)}>*/}
+        <Accordion>
                 {entries}
-                </PanelGroup>
+                </Accordion>
             </div>
         );
     }

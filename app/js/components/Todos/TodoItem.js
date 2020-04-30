@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react'
 import ParseReact from 'parse-react'
 import { Link } from 'react-router'
@@ -19,7 +20,7 @@ import DerivedWords from './widgets/DerivedWords'
 class TodoItem extends React.Component {
   partOfSpeech = null
   static propTypes = {
-    todo: React.PropTypes.object.isRequired,
+    todo: PropTypes.object.isRequired,
   }
 
   constructor () {
@@ -65,6 +66,7 @@ class TodoItem extends React.Component {
 
 
   render() {
+    console.log("Render")
   
     const todo = this.props.todo
     
@@ -97,8 +99,11 @@ class TodoItem extends React.Component {
       <DerivedWords root={dictionary_definition_obj} derivations={this.state.derivedWords}/>
     )*/
     const popoverBottom = (
-      <Popover id="popover-positioned-bottom" title={"Type: " + dictionary_definition_obj.partofspeech}>
-        more <strong>{dictionary_definition_obj.partofspeech == "root" ? "Root Words" : dictionary_definition_obj.partofspeech + 's'}</strong> can be found <a href={"/" + dictionary_definition_obj.partofspeech + "s"}>here</a>
+      <Popover id="popover-positioned-bottom">
+        <Popover.Title as="h3">{'Type: ' + dictionary_definition_obj.partofspeech}</Popover.Title>
+          <Popover.Content>
+          more <strong>{dictionary_definition_obj.partofspeech == "root" ? "Root Words" : dictionary_definition_obj.partofspeech + 's'}</strong> can be found <a href={"/" + dictionary_definition_obj.partofspeech + "s"}>here</a>
+          </Popover.Content>
       </Popover>
     );
 
@@ -117,12 +122,13 @@ class TodoItem extends React.Component {
     
     
     return (
-      <div className='definition-item' onClick={this.renderDetail.bind(this)} id={idxEntry}>
+     
+      <div className='definition-item' id={idxEntry} onClick={this.renderDetail.bind(this)}>
         
       <li itemprop="itemListElement" itemscope
       itemtype="http://schema.org/ListItem">
       <meta itemprop="position" content={idxEntry} />
-      <p className='definition'>{dictionary_definition_obj.definition_arr.join("\n").replace(/^ : /,"")}</p>
+      <p className='definition' >{dictionary_definition_obj.definition_arr.join("\n").replace(/^ : /,"")}</p>
       <span>{rows}</span>
 
      {this.getSEORenderer(this.props.idxEntry, contentDesc)}
@@ -183,7 +189,7 @@ class TodoItem extends React.Component {
     </div>
     <br/>
         <div className="pos">
-        <Button onClick={this.handleCloseModal} bsStyle="primary">Close</Button>
+        <Button onClick={this.handleCloseModal} variant="primary">Close</Button>
         </div>
         </ReactModal>
         </li>
@@ -230,11 +236,14 @@ class TodoItem extends React.Component {
   }
 
   renderDetail() {
-    //console.log('in render detail')
     const todo = this.props.todo
     if (!todo) { 
       //console.log('empty search result')
-      return false 
+      return 
+    }
+
+    if(this.state.showModal == true){
+      return
     }
     
     //console.log('about to call return for TodoDetail')
@@ -242,13 +251,13 @@ class TodoItem extends React.Component {
     this.handleOpenModal();
   }
 
-  handleOpenModal () {
-    
+  handleOpenModal() {
     this.setState({ showModal: true });
     ReactGA.modalview('/word/'+this.props.todo.word+'/searchkey/'+this.props.todo.searchkeynum);
   }
   
-  handleCloseModal () {
+  handleCloseModal() {
+    console.log("handleCloseModal")
     this.setState({ showModal: false });
   }
 }
@@ -275,7 +284,7 @@ class EastDefinitionRow extends React.Component {
           <span className="definition"><span className="tooltip">east <span className="tooltiptext">Eastern Dialect</span></span></span>
           <span className={this.props.font}>{dictionary_definition_obj.east}</span>
           <span className="phonetic">{phonetic}</span>
-          <span><ReactAudioPlayer src={audioFile}/></span>
+          <span><ReactAudioPlayer src={audioFile} controls/></span>
         </div>
       );
     }else {
@@ -315,6 +324,7 @@ class WestDefinitionRow extends React.Component {
           <span className="phonetic">{phonetic}</span>
           <span><ReactAudioPlayer
           src={audioFile}
+          controls
         /></span>
         </div>
       );

@@ -7,7 +7,7 @@ const AudioHelper = (originalString) => {
             audioFile = 'http://assyrianlanguages.org/sureth/' +  todo.dictionary_definition_obj.audio;
           }
           return (
-              <span><ReactAudioPlayer src={audioFile}/></span>
+              <span><ReactAudioPlayer src={audioFile} controls/></span>
           );
     }else {
         return audioFile;

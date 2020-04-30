@@ -8,9 +8,11 @@ class TrendsQueriesCount extends React.Component {
             rows: [],
             isSearching: false
         };
-
-        this.queryCount();
     }
+
+  componentDidMount() {
+      this.queryCount()
+  }
 
     queryCount() {
         this.setState({
@@ -62,8 +64,6 @@ class TrendsQueriesCount extends React.Component {
     }
 
     render() {
-        console.log("this.state.rows")
-        console.log(this.state.rows)
         const value = this.state.rows.length == 0 ? 558000 : this.state.rows[0]['count']
         
         return(

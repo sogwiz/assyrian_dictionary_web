@@ -1,16 +1,15 @@
 import React from 'react'
-import ReactDataGrid from 'react-data-grid'
-import { Button,ButtonToolbar, Col, OverlayTrigger, Panel, PanelGroup, Popover, Row, Table, Tooltip, Grid } from 'react-bootstrap';
+import { Accordion, Button,ButtonToolbar, Col, OverlayTrigger, Card, Popover, Table, Tooltip } from 'react-bootstrap';
 import GoogleAd from './GoogleAd.js';
 import ReactAudioPlayer from 'react-audio-player'
 import AudioHelperString from '../util/AudioHelper.js'
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import { toast } from 'react-toastify';
 
-const LinkCellFormatter = React.createClass({
-    propTypes: {
+class LinkCellFormatter extends React.Component {
+    static propTypes = {
         //value: React.PropTypes.number.isRequired
-    },
+    };
 
     render() {
         const term = this.props.value;
@@ -20,7 +19,7 @@ const LinkCellFormatter = React.createClass({
                 <a href={urlTerm}>{term}</a>
             </div>);
     }
-});
+}
 
 class Phrases extends React.Component {
     constructor(props) {
@@ -113,26 +112,34 @@ class Phrases extends React.Component {
             }
 
             entries.push(
-                <Panel header={entry['english']} eventKey={entry['searchkeynum']}>
-                    <Table responsive>
+                
+                    <Card>
+                        <Card.Header>
+                            <Accordion.Toggle as={Card.Header} eventKey={entry['searchkeynum']}>
+                                {entry['english']}
+                            </Accordion.Toggle>
+                        </Card.Header>
+                        <Accordion.Collapse eventKey={entry['searchkeynum']}>
+                            <Card.Body>
+                            <Table responsive>
                         <tbody>
                             <tr><td align='center' colSpan='2'><h4> <span className="east-syriac-qasha">{entry['east']}</span></h4></td></tr>
                             <tr>
                                 <td>Phonetic - East<h4>{entry['phonetic']}</h4></td>
-                                <td><ReactAudioPlayer src={AudioHelperString(entry['audio'], 'e', entry['searchkeynum'])} /></td>
+                                <td><ReactAudioPlayer src={AudioHelperString(entry['audio'], 'e', entry['searchkeynum'])} controls /></td>
                             </tr>
                             <tr>
                                 <td>Phonetic - West<h4>{entry['phonetic_west']}</h4></td>
-                                <td><ReactAudioPlayer src={AudioHelperString(entry['audio_west'], 'w', entry['searchkeynum'])} /></td>
+                                <td><ReactAudioPlayer src={AudioHelperString(entry['audio_west'], 'w', entry['searchkeynum'])} controls /></td>
                             </tr>
                         </tbody>
                     </Table>
-                    <p>
+                    
                         <ButtonToolbar>
                         <CopyToClipboard text = { entry['english'] + " \n Assyrian phonetic: " + entry['phonetic'] + " \n http://sargonsays.com/phrases"}
                                     onCopy={() => toast("Copied phrase details for " + entry['english'])} >
                                         <OverlayTrigger placement="bottom" overlay={tooltipCopy}>
-                                    <Button bsStyle="link" bsSize="large">📋</Button>
+                                    <Button variant="link" size="lg">📋</Button>
                                     </OverlayTrigger>
                                 </CopyToClipboard>
                                 <OverlayTrigger placement="bottom" overlay={tooltip}>
@@ -142,9 +149,13 @@ class Phrases extends React.Component {
                                 </OverlayTrigger>
                             </ButtonToolbar>
                                 
-                    </p>
+                    
                     {donate}
-                </Panel>
+
+                            </Card.Body>
+                        </Accordion.Collapse>
+                    </Card>
+               
             );
         }
 
@@ -154,9 +165,9 @@ class Phrases extends React.Component {
                 {<link rel="stylesheet" href="https://bootswatch.com/3/cosmo/bootstrap.min.css" />}
                 <br /><br /><br />
                 <h1>Phrases</h1>
-                <PanelGroup activeKey={this.state.activeKey} onSelect={this.handleSelect.bind(this)} accordion>
+                <Accordion>
                     {entries}
-                </PanelGroup>
+                </Accordion>
             </div>
         );
     }

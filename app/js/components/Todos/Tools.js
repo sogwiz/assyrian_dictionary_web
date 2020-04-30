@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Col, Grid, Row, Tab, Tabs} from 'react-bootstrap';
+import { Col, Container, Row, Tab, Tabs} from 'react-bootstrap';
 import RootWords from './RootWords'
 import Thanks from '../Thanks'
 import DerivedWordsGraph from './widgets/DerivedWordsGraph';
@@ -84,7 +84,7 @@ class Tools extends React.Component {
     return (
       <div>
         <br/>
-        <Grid>
+        <Container>
           <Tabs id="tabs-tools" animation={true} activeKey={this.state.key} onSelect={this.handleSelect.bind(this)}>     
                 
                   <Tab eventKey={1} title="Root Words">
@@ -102,7 +102,7 @@ class Tools extends React.Component {
                   </Tab>
 
           </Tabs>
-        </Grid>
+        </Container>
       </div>
     )
   }

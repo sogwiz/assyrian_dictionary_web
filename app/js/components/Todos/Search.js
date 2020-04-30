@@ -261,7 +261,7 @@ class Search extends React.Component {
       return (
         <div className='todos'>
           <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css" />
-          <link rel="stylesheet" href="https://bootswatch.com/3/cosmo/bootstrap.min.css" />
+          <link rel="stylesheet" href="https://bootswatch.com/4/cosmo/bootstrap.min.css" />
           <h1 className='title'>English to Assyrian Dictionary</h1>
           <div id='search'>
 

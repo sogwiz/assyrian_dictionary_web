@@ -1,6 +1,6 @@
 import React from 'react'
 import { browserHistory } from 'react-router';
-import { Button, ButtonGroup, ButtonToolbar, Carousel, Col, Grid, Image, Jumbotron, ListGroup, ListGroupItem, MenuItem, Nav, NavItem, NavDropdown, PageHeader, Panel, Popover, Row, Tab, Table, Tabs, Tooltip, OverlayTrigger, Thumbnail, PanelGroup } from 'react-bootstrap'; 
+import { Button, ButtonGroup, ButtonToolbar, Carousel, Col, Container, Image, Jumbotron, Nav, NavItem, NavDropdown, PageHeader, Panel, Popover, Row, Tab, Table, Tabs, Tooltip, OverlayTrigger, Thumbnail, PanelGroup } from 'react-bootstrap'; 
 import ReactGA from 'react-ga';
 import FinanceTable from './FinanceTable.js';
 import Roadmap from './Roadmap.js';
@@ -64,15 +64,21 @@ class About extends React.Component {
     const wellStyles = { maxWidth: 500, margin: '0 auto 10px' };
 
     const popoverBottom = (
-      <Popover id="popover-positioned-bottom" title="Thank you">
+      <Popover id="popover-positioned-bottom">
+        <Popover.Title as="h3">Thank you</Popover.Title>
+        <Popover.Content>
         <strong>Holy dolma!</strong> Thank you for considering the Maybe Later option. Here's how to say <a href="/word/maybe">maybe</a> and <a href="/word/later">later</a> and <a href="/word/birthday">birthday</a> in Assyrian
+        </Popover.Content>
       </Popover>
     );
 
     const popoverLamassu = (
-      <Popover id="popover-lamassu" title="Lamassu #superhero">
+      <Popover id="popover-lamassu">
+        <Popover.Title as="h3">Lamassu #superhero</Popover.Title>
+        <Popover.Content>
         The lamassu, or shedu, encompasses all life within it. They first appeared in the Sumerian epic of Gilgamesh as physical entities in the lands. 
         The eventual evolution of the lamassu across the Assyrian and Akkadian empires led to its widespread use in entrances as a protective deity, often two lamassu would flank an entrance to a city or state building. Here's how to say <a href="/word/lamassu">lamassu</a> and <a href="/word/shedu">shedu</a> in Assyrian
+        </Popover.Content>        
       </Popover>
     );
 
@@ -81,7 +87,8 @@ class About extends React.Component {
       <div>
         {<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css" />}
         {<link rel="stylesheet" href="https://bootswatch.com/3/cosmo/bootstrap.min.css"/>}
-        <Grid>
+        
+        <Container>
           <br/>
         <h1 className='title'>About SargonSays</h1>
         <h4>Hello, I'm Sargon.</h4> 
@@ -90,31 +97,31 @@ class About extends React.Component {
         <Tab.Container id="tabs-with-dropdown" activeKey={this.state.key} onSelect={this.handleSelect.bind(this)}>
     <Row className="clearfix">
       <Col sm={12}>
-        <Nav bsStyle="tabs">
-          <NavItem eventKey={1}>
-            About
-          </NavItem>
-          <NavItem eventKey={2}>
-            Testimonials
-          </NavItem>
-          <NavItem eventKey={3}>
-            Mission Values
-          </NavItem>
+        <Nav variant="tabs">
+          <Nav.Item>
+            <Nav.Link eventKey={1}>About</Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link eventKey={2}>Testimonials</Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link eventKey={3}>Mission Values</Nav.Link>
+          </Nav.Item>
           <NavDropdown eventKey="3" title="How to Help">
-            <MenuItem eventKey="3.1">Use It. Share it</MenuItem>
-            <MenuItem eventKey="3.2" href="/suggest">Request / Suggest a translation</MenuItem>
-            <MenuItem eventKey="3.3">Feedback</MenuItem>
-            <MenuItem divider />
-            <MenuItem eventKey={3}>Donate</MenuItem>
+            <NavDropdown.Item eventKey="3.1">Use It. Share it</NavDropdown.Item>
+            <NavDropdown.Item eventKey="3.2" href="/suggest">Request / Suggest a translation</NavDropdown.Item>
+            <NavDropdown.Item eventKey="3.3">Feedback</NavDropdown.Item>
+            <NavDropdown.Item divider />
+            <NavDropdown.Item eventKey={3}>Donate</NavDropdown.Item>
           </NavDropdown>
           <NavDropdown eventKey="4" title="Features">
-            <MenuItem eventKey="4.1" href="/phrases">Phrases</MenuItem>
-            <MenuItem eventKey="4.2" href="/proverbs">Proverbs</MenuItem>
-            <MenuItem eventKey="4.23" href="/tools">More Tools</MenuItem>
-            <MenuItem eventKey="4.21" href="/trends">Trends</MenuItem>
-            <MenuItem eventKey="4.22" href="/updates">Updates</MenuItem>
-            <MenuItem divider />
-            <MenuItem eventKey="4.3" href="/">Search</MenuItem>
+            <NavDropdown.Item eventKey="4.1" href="/phrases">Phrases</NavDropdown.Item>
+            <NavDropdown.Item eventKey="4.2" href="/proverbs">Proverbs</NavDropdown.Item>
+            <NavDropdown.Item eventKey="4.23" href="/tools">More Tools</NavDropdown.Item>
+            <NavDropdown.Item eventKey="4.21" href="/trends">Trends</NavDropdown.Item>
+            <NavDropdown.Item eventKey="4.22" href="/updates">Updates</NavDropdown.Item>
+            <NavDropdown.Item divider />
+            <NavDropdown.Item eventKey="4.3" href="/">Search</NavDropdown.Item>
           </NavDropdown>
         </Nav>
       </Col>
@@ -152,7 +159,7 @@ class About extends React.Component {
         <h1 className='title'>Open Source Codebase</h1>
         That's right. In the spirit of transparency, the codebase for sargonsays is opensource and available on <a href="https://github.com/sogwiz/assyrian_dictionary_web" target='_blank'>github</a>. Currently, the web frontend logic is open sourced. Soon, the backend logic that performs the data heuristics to optimize search results will also be available on github as open source.
         <br/><br/>
-        <Grid>
+        <Container>
         <Row className="show-grid">
       <Col xs={12} md={8}><a href="/support"><Button bsStyle="success">Support sargonsays</Button></a></Col>
       <Col xs={6} md={4}></Col>
@@ -162,7 +169,7 @@ class About extends React.Component {
       <Col xs={6} md={4}>Powered by <a href="http://www.assyrianapp.com" target="_blank">assyrianapp.com</a></Col>
       </Row>
         
-        </Grid>
+        </Container>
         </p>
           </Tab.Pane>
           <Tab.Pane eventKey={2}>
@@ -170,7 +177,7 @@ class About extends React.Component {
     <Carousel.Item>
       <img width={900} height={500} alt="900x500" src={require("images/carousel.png")}/>
       <Carousel.Caption>
-        <h3>Maryam : ANB Satellite</h3>
+        <h3>Maryam : Shamiram Media</h3>
         <p>Hi my friend...I wanted to share this moment captured by our camera operator. I am looking up a word on sargonsays.com right before a recording! Thank you for the Assyrian invention of the year, has made my life so much easier..🙏🏼</p>
       </Carousel.Caption>
     </Carousel.Item>
@@ -200,31 +207,31 @@ class About extends React.Component {
           <Tab.Pane eventKey={3}>
           <Jumbotron>
     <h1>Be a part of a solution...</h1>
-    <Grid>
+    <Container>
     <Row>
       <p>...<strong>keep the Assyrian language alive</strong>. The Assyrian language is at a crucial juncture in history, struggling to survive. Support a digital footprint that empowers people to fall in love with the Assyrian language</p>
       </Row>
-      </Grid>
+      </Container>
       <br/>
           
       <Roadmap/>
       <div className="well" style={wellStyles}>
-    <a href="https://sargonsays.memberful.com/checkout?plan=23192"><OverlayTrigger placement="top" overlay={tooltipRepeat}><Button bsStyle="primary" bsSize="large" onClick={this.handleSuperHeroButtonClick.bind(this)} block>Superhero - Support $2/month.</Button></OverlayTrigger></a>
+    <a href="https://sargonsays.memberful.com/checkout?plan=23192"><OverlayTrigger placement="top" overlay={tooltipRepeat}><Button variant="primary" size="lg" onClick={this.handleSuperHeroButtonClick.bind(this)} block>Superhero - Support $2/month.</Button></OverlayTrigger></a>
     <br/>
     {<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
 <input type="hidden" name="cmd" value="_s-xclick"/>
 <input type="hidden" name="hosted_button_id" value="DUURLYD3DP3XU"/>
 <OverlayTrigger placement="bottom" overlay={tooltipOneTime}>
-<Button type="submit" bsStyle="success" bsSize="large" onClick={this.handleHeroButtonClick.bind(this)} block>One Time Hero Donation</Button></OverlayTrigger>
+<Button type="submit" variant="success" size="lg" onClick={this.handleHeroButtonClick.bind(this)} block>One Time Hero Donation</Button></OverlayTrigger>
 <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1"/>
 </form>}
 <OverlayTrigger trigger="click" placement="bottom" overlay={popoverBottom}>
-<Button bsSize="large" onClick={this.handleMaybeButtonClick.bind(this)} block>Maybe Later on my Birthday</Button>
+<Button size="lg" variant="secondary" onClick={this.handleMaybeButtonClick.bind(this)} block>Maybe Later on my Birthday</Button>
 </OverlayTrigger>
     </div>
  
 
-    <Grid>
+    <Container>
     <Row>
       <Image src={require("images/language_alive.jpeg")} thumbnail/>
       </Row>
@@ -233,18 +240,18 @@ class About extends React.Component {
         "When we lose a language, we lose the worldview, culture and knowledge of the people who spoke it, constituting a loss to all humanity"
         </Col>
         </Row>
-    </Grid>
+    </Container>
 
   </Jumbotron>
             <br/>
             <FinanceTable/>
-  <Grid>
+  <Container>
     <Row>
     <OverlayTrigger trigger="hover" placement="top" delayHide={2000} overlay={popoverLamassu}>
         <Image src={require("images/hero.png")} circle />
         </OverlayTrigger>
     </Row>
-  </Grid>
+  </Container>
           </Tab.Pane>
           
 
@@ -266,7 +273,7 @@ class About extends React.Component {
     </Row>
   </Tab.Container>
         
-        </Grid>
+        </Container>
       </div>
     )
   }

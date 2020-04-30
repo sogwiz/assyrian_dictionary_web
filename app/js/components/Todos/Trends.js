@@ -7,18 +7,19 @@ import _ from 'lodash'
 import { slide as Menu } from 'react-burger-menu'
 import TrendsDefinitions from './TrendsDefinitions'
 import TrendsQueriesCount from './TrendsQueriesCount'
-import { Button, ButtonGroup, ButtonToolbar, Col, Grid, Jumbotron, PageHeader, Panel, Popover, Row, Tab, Tabs, Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { Accordion, Button, Card, Col, Container, Jumbotron, Popover, Row, Tab, Tabs, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import { TagCloud } from 'react-tagcloud';
 import ReactTooltip from 'react-tooltip'
 import RecentUpdates from './RecentUpdates';
+
 //require('./../../../assets/bootstrap/css/bootstrap-iso.css')
 //import './../../../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 //require('./../../../assets/styles/main.less')
 
-const LinkCellFormatter = React.createClass({
-    propTypes: {
+class LinkCellFormatter extends React.Component {
+    static propTypes = {
         //value: React.PropTypes.number.isRequired
-    },
+    };
 
     render() {
         const term = this.props.value;
@@ -28,7 +29,7 @@ const LinkCellFormatter = React.createClass({
                 <a href={urlTerm}>{term}</a>
             </div>);
     }
-});
+}
 
 class Trends extends React.Component {
     constructor(props) {
@@ -85,7 +86,9 @@ class Trends extends React.Component {
                 name: 'Western Dialect'
             }
         ];
+    }
 
+    componentDidMount() {
         this.queryTrends();
         this.queryLastSearch();
         this.queryVerified();
@@ -162,17 +165,18 @@ class Trends extends React.Component {
     }
 
     rowGetter(i) {
-        //console.log('in rowgetter ' + i)
 
         if (this.state == null) {
             console.log('state is null')
             return;
         }
 
-        if (this.state.rows != null && this.state.rows.length > 0) {
+        if (i >= 0 && this.state.rows != null && this.state.rows.length > 0) {
             var listitem = this.state.rowsCopy[i];
             //listitem.set("prank", i.toString());
+            
             listitem["prank"] = i.toString()
+
 
             //listitem.set('rank') = i.toString();
             //console.log("listitemrank is " + listitem.get('prank'));
@@ -198,7 +202,7 @@ class Trends extends React.Component {
             return;
         }
 
-        if (this.state.rowsVerified != null && this.state.rowsVerified.length > 0) {
+        if (this.state.rowsVerified != null && this.state.rowsVerified.length > 0 && i>=0) {
             var listitem = this.state.rowsVerified[i];
 
             if(listitem.get('dictionary_definition_obj').get('phonetic')){
@@ -290,12 +294,13 @@ class Trends extends React.Component {
         return (
 
             <div>
-                {<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css" />}
-                {<link rel="stylesheet" href="https://bootswatch.com/3/cosmo/bootstrap.min.css"/>}
+                <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css" />
+                <link rel="stylesheet" href="https://bootswatch.com/4/cosmo/bootstrap.min.css" />
+                
                 <br /><br /><br />
                 <Tabs defaultActiveKey={this.state.key} id="uncontrolled-tab-example">
                     <Tab eventKey={1} title="Statistics">
-                        <Grid>
+                        <Container>
                             <Row>
                                 <Col xs={6} md={4}>
                                     <Jumbotron>
@@ -362,18 +367,34 @@ class Trends extends React.Component {
                                     </Jumbotron>
                                 </Col>
                             </Row>
-                            </Grid>
+                            </Container>
 
                     </Tab>
                     <Tab eventKey={2} title="Popular Searches">
-                        <Grid>
+                        <br/>
+                        <Container>
                             <Row>
-                                <h3>Trends Cloud and Most Popular Searches</h3>
-                                <Panel collapsible defaultExpanded header="Trends Cloud">
-                                <div className="tagcloudbg">
+                                <h2>Trends Cloud and Most Popular Searches</h2>
+                            </Row>
+                            <Row>
+                                <Accordion defaultActiveKey="1">
+                                    <Card>
+                                        <Card.Header>
+                                            <Accordion.Toggle as={Card.Header} variant="link" eventKey="1">
+                                                Trends Cloud
+                                            </Accordion.Toggle>
+                                        </Card.Header>
+                                        <Accordion.Collapse eventKey="1">
+                                            <Card.Body>
+                                            <div className="tagcloudbg">
                                 <TrendsCloud terms={this.state.rows}/>
                                 </div>
-                                </Panel>
+
+                                            </Card.Body>
+                                        </Accordion.Collapse>
+                                    </Card>
+                                </Accordion>
+                                
                                 <br/>
                                 <ReactDataGrid
                                     onGridSort={this.handleGridSort.bind(this)}
@@ -384,10 +405,10 @@ class Trends extends React.Component {
                                     minHeight={500}
                                 />
                             </Row>
-                        </Grid>
+                        </Container>
                     </Tab>
                     <Tab eventKey={3} title="Verified Words">
-                        <Grid>
+                        <Container>
                             <Row>
                                 <h3>Terms with accurate translations</h3>
                                 <ReactDataGrid
@@ -398,17 +419,17 @@ class Trends extends React.Component {
                                     minHeight={500}
                                 />
                             </Row>
-                        </Grid>
+                        </Container>
                     </Tab>
                     <Tab eventKey={4} title="Recent Updates">
-                        <Grid>
+                        <Container>
                             <Row>
                             <OverlayTrigger trigger={['hover', 'focus']} placement="bottom" overlay={popoverHoverFocus}>
                                 <h3>Terms and Definitions added recently</h3>
                             </OverlayTrigger>
                                 <RecentUpdates />
                             </Row>
-                        </Grid>
+                        </Container>
 
                     </Tab>
                 </Tabs>

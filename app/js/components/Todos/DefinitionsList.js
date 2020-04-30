@@ -1,5 +1,6 @@
 import React from 'react'
 import TodoItem from './TodoItem.js'
+import PropTypes from 'prop-types';
 import Collapse, { Panel } from 'rc-collapse';
 import 'rc-collapse/assets/index.css';
 import Helmet from "react-helmet";
@@ -41,7 +42,7 @@ class DefinitionsList extends React.Component {
   }
 
   static propTypes = {
-    todos: React.PropTypes.array,
+    todos: PropTypes.array,
   }
 
   static defaultProps = {
