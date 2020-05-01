@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import ReactDataGrid from "react-data-grid";
 import { Toolbar, Data } from "react-data-grid-addons";
-import {Grid} from 'react-bootstrap';
+import {Container} from 'react-bootstrap';
 
 const defaultColumnProperties = {
     filterable: true,
@@ -136,9 +136,6 @@ class Names extends React.Component {
     } 
 
     handleGridSort = (sortColumn: string, sortDirection: SortDirection) => {
-        console.log("in the handleGridSort")
-        console.log(sortDirection)
-        console.log(sortColumn)
         const comparer = (a: object, b: object) => {
           if (sortDirection === 'ASC') {
             return (a[sortColumn] > b[sortColumn]) ? 1 : -1;
@@ -153,23 +150,23 @@ class Names extends React.Component {
       }
 
     render(){
-        console.log("in render")
+        
         if (this.state == null || this.state.rows == null || this.state.rows.length < 1) { return (<div />); }
 
         const filters = this.state.filters;
-        console.log("filters")
-        console.log(filters)
+        //console.log("filters")
+        //console.log(filters)
         const filteredRows = getRows(this.state.rows, filters);
         //const filteredRows = this.getRows.bind(this);
 
-        console.log("filterRows")
-        console.log(filteredRows.slice(0,10))
-        console.log(this.state.rows.slice(0,10))
+        //console.log("filterRows")
+        //console.log(filteredRows.slice(0,10))
+        //console.log(this.state.rows.slice(0,10))
 
         return (
             <div>
                 <br /><br /><br />
-                <Grid>
+                <Container>
                 {<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css" />}
                 {<link rel="stylesheet" href="https://bootswatch.com/3/cosmo/bootstrap.min.css"/>}
             <ReactDataGrid
@@ -192,7 +189,7 @@ class Names extends React.Component {
             )}
             
             />
-            </Grid>
+            </Container>
             </div>
         )
     }

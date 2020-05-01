@@ -52,7 +52,7 @@ ReactDOM.render((
       <Route path='/proverbs' component={Proverbs}/>
       <Route path="/support" component={About}/>
       <Route path="/updates" component={Trends}/>
-      <Route path="/roots" component={Tools}/>
+      <Route path="/roots" component={Tools} />
       <Route path="/tools" component={Tools}/>
     </Route>
     <Route component={App} path='/admin/:searchTerm'>

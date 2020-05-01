@@ -4,12 +4,14 @@ import RootWords from './RootWords'
 import Thanks from '../Thanks'
 import DerivedWordsGraph from './widgets/DerivedWordsGraph';
 import ReactGA from 'react-ga';
+import Features from './widgets/Features'
 
 class Tools extends React.Component {
   constructor(props) {
     super(props)
     var handleToUpdate  = this.handleToUpdate.bind(this);
-    var defaultKey = this.props.eventKey == null || this.props.eventKey == 0 ? 1 : this.props.eventKey
+    var defaultKey = window.location.pathname == '/roots' ? 1 : 0
+    //this.props.eventKey == null || this.props.eventKey == 0 ? 0 : this.props.eventKey
 
     this.state = {
       key: defaultKey,
@@ -86,7 +88,9 @@ class Tools extends React.Component {
         <br/>
         <Container>
           <Tabs id="tabs-tools" animation={true} activeKey={this.state.key} onSelect={this.handleSelect.bind(this)}>     
-                
+                <Tab eventKey={0} title="Features">
+                  <Features/>
+                </Tab>
                   <Tab eventKey={1} title="Root Words">
                     <Row>
                     <Col md={6} mdPush={6}>
