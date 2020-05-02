@@ -73,7 +73,7 @@ class TodoDetail extends React.Component {
     const overlay = (
 
       <OverlayTrigger trigger="click" placement="bottom" overlay={popoverBottom}>
-        <Button size="sm">{this.state.partOfSpeech}</Button>
+        <Button size="sm" variant="secondary">{this.state.partOfSpeech}</Button>
       </OverlayTrigger>
     )
 

@@ -3,11 +3,11 @@ import React from 'react'
 import ParseReact from 'parse-react'
 import { Link } from 'react-router'
 import ReactAudioPlayer from 'react-audio-player'
-import Badge from 'react-uikit-badge';
+//import Badge from 'react-uikit-badge';
 import Helmet from "react-helmet";
 import TodoDetail from './TodoDetail'
 import ReactModal from 'react-modal'
-import { Button, Label, ProgressBar, OverlayTrigger, Popover, Tooltip } from 'react-bootstrap';
+import { Badge, Button, OverlayTrigger, Popover, Tooltip } from 'react-bootstrap';
 import DefinitionHelper from './DefinitionHelper'
 import PhoneticWestHelper from '../util/PhoneticWestHelper.js'
 import PhoneticEastHelper from '../util/PhoneticEastHelper.js'
@@ -111,7 +111,7 @@ class TodoItem extends React.Component {
     const overlay = (
 
       <OverlayTrigger trigger="click" placement="bottom" overlay={popoverBottom}>
-        <Button size="sm">{dictionary_definition_obj.partofspeech}</Button>
+        <Button size="sm" variant="secondary">{dictionary_definition_obj.partofspeech}</Button>
       </OverlayTrigger>
     )
 
@@ -121,7 +121,6 @@ class TodoItem extends React.Component {
     }
 
     return (
-
       <div className='definition-item' id={idxEntry} onClick={this.renderDetail.bind(this)}>
 
         <li itemprop="itemListElement" itemscope
@@ -131,7 +130,7 @@ class TodoItem extends React.Component {
           <span>{rows}</span>
 
           {this.getSEORenderer(this.props.idxEntry, contentDesc)}
-    {/* this.getBadgeRenderer(todo.boost) */}
+    { this.getBadgeRenderer(todo.boost) }
 
           <div className="definition"><span className="infoicon"><span className="tooltip">&#9432;<span className="tooltiptext">Sources :<br /> {source}</span></span></span></div>
           <div className="pos">{dictionary_definition_obj.partofspeech}</div>
@@ -141,7 +140,14 @@ class TodoItem extends React.Component {
             contentLabel="onRequestClose Example"
             onRequestClose={this.handleCloseModal}
           >
-            <p>Search term : {todo.word}</p>
+            
+            <div className="pos">
+              Search Term : 
+              <a href={"/searchkey/" + this.props.todo.searchkeynum}><Button variant="primary">
+            {todo.word} <Badge variant="light">ℹ</Badge>
+  <span className="sr-only">unread messages</span>
+</Button></a>
+            </div>
         Definition: {dictionary_definition_obj.definition_arr.join("\n").replace(/^ : /, "")}
             <p>Category: {partOfSpeech}</p>
             <p className='definition'>
@@ -171,9 +177,6 @@ class TodoItem extends React.Component {
                 <li itemprop="itemListElement" itemscope
                   itemtype="http://schema.org/ListItem">Semantics : {dictionary_definition_obj.semantics}</li>
               </ul>
-            </p>
-            <p>
-              <span><a href={"/searchkey/" + this.props.todo.searchkeynum}>More Info</a></span>
             </p>
             <GoogleAd
               client="ca-pub-4439019971526085"
@@ -209,13 +212,16 @@ class TodoItem extends React.Component {
     
     if (boostValue == 100) {
       return (
-        <OverlayTrigger placement="top" overlay={
-          <Tooltip placement="top" className="in" id="tooltip-top">
-        This definition was verified by a language expert
+        
+        <OverlayTrigger placement="bottom" overlay={
+          <Tooltip placement="bottom" className="in" id="tooltip-top">
+          
       </Tooltip>
         }>
-          <Label variant="success">Verified Definition</Label>
-        </OverlayTrigger>
+          <Badge variant="success">Verified Definition</Badge>
+      </OverlayTrigger>
+        
+        
       )
     }
   }

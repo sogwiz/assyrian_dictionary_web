@@ -285,7 +285,7 @@ class Search extends React.Component {
             <br/>
             <div className='verifyBadge'>
       <Badge notification context='success' data-tip="" data-for="test"><div className="todo-quote">keep the Assyrian language alive</div></Badge>
-      <ReactTooltip place="bottom" class='extraClass' delayHide={250} id='test' html={true} getContent={() => { return this.getQuote() }}/>
+      <ReactTooltip place="bottom" class='extraClass' delayHide={500} id='test' html={true} getContent={() => { return this.getQuote() }}/>
       </div>
           
           </div>

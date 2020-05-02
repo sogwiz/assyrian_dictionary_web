@@ -71,16 +71,17 @@ class Proverbs extends React.Component {
             );
 
             var donate = "";
+            var gad = ""
 
-            if(i%3==0){
+            if(i%5==0){
                 donate = (
                     <a href="https://sargonsays.memberful.com/checkout?plan=23192"><Button variant="info">Support sargonsays for $2/month.</Button></a>
                 )
-            }else if(i%4==0){
-                donate = (<GoogleAd 
+            }else if(i%6==0){
+                gad = (<GoogleAd 
                     client="ca-pub-4439019971526085" 
-                    slot="9718385117" 
-                    format="auto" 
+                    slot="8013892948" 
+                    format="fluid" 
                   />)
             }
 
@@ -107,8 +108,9 @@ class Proverbs extends React.Component {
             {donate}
             <br/>
                         </Card.Body>
+                        
                         </Accordion.Collapse>
-            
+                        {gad}
             </Card>
             );
         }

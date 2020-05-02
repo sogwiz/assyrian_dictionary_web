@@ -103,16 +103,16 @@ class Phrases extends React.Component {
                 <Tooltip><strong>Click</strong> to copy full details for this phrase to your clipboard</Tooltip>
             );
 
-            if (i % 4 == 0) {
+            if (i % 6 == 0) {
                 donate = (<GoogleAd
                     client="ca-pub-4439019971526085"
-                    slot="9718385117"
-                    format="auto"
+                    slot="8013892948"
+                    format="fluid"
                 />)
             }
 
             entries.push(
-                
+                    <div>
                     <Card>
                         <Card.Header>
                             <Accordion.Toggle as={Card.Header} eventKey={entry['searchkeynum']}>
@@ -144,17 +144,16 @@ class Phrases extends React.Component {
                                 </CopyToClipboard>
                                 <OverlayTrigger placement="bottom" overlay={tooltip}>
                                     <a href={"/searchkey/" + entry['searchkeynum']}>
-                                        <Button bsStyle="primary">Learn more</Button>
+                                        <Button variant="primary">Learn more</Button>
                                     </a>
                                 </OverlayTrigger>
                             </ButtonToolbar>
-                                
-                    
-                    {donate}
-
+                    {/*donate*/}
                             </Card.Body>
                         </Accordion.Collapse>
                     </Card>
+                    {donate}
+                    </div>
                
             );
         }
