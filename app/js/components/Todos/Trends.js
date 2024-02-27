@@ -358,7 +358,7 @@ class Trends extends React.Component {
                                 </Col>
                                 <Col xs={6} md={4}>
                                     <Jumbotron>
-                                        <h1>6</h1>
+                                        <h1>9</h1>
                                         <p>Hero Subscribers</p>
                                         <p><OverlayTrigger placement="bottom" overlay={tooltipSubscribe}>
                                         <a href="https://sargonsays.memberful.com/checkout?plan=23192"><Button bsStyle="success">Support sargonsays for $2/month.</Button></a>

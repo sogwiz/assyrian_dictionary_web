@@ -82,6 +82,10 @@ class About extends React.Component {
       </Popover>
     );
 
+    const divStyleOpacity = {
+      opacity: '100',    
+    };
+
     return (
       
       <div>
@@ -127,8 +131,8 @@ class About extends React.Component {
       </Col>
       <Col sm={12}>
         <Tab.Content animation>
-          <Tab.Pane eventKey={1}>
-            <h1 className='title'>Where does the data come from?</h1>
+          <Tab.Pane eventKey={1} style={divStyleOpacity}>
+           <h1 className='title'>Where does the data come from?</h1> 
         Great question! It comes from 3 main sources
         <ol>
           <li><a href="http://assyrianlanguages.org" target='_blank'>assyrianlanguages.org</a></li>
@@ -172,7 +176,7 @@ class About extends React.Component {
         </Container>
         </p>
           </Tab.Pane>
-          <Tab.Pane eventKey={2}>
+          <Tab.Pane eventKey={2} style={divStyleOpacity}>
             <Carousel>
     <Carousel.Item>
       <img width={900} height={500} alt="900x500" src={require("images/carousel.png")}/>
@@ -204,7 +208,7 @@ class About extends React.Component {
     </Carousel.Item>
   </Carousel>
           </Tab.Pane>
-          <Tab.Pane eventKey={3}>
+          <Tab.Pane eventKey={3} style={divStyleOpacity}>
           <Jumbotron>
     <h1>Be a part of a solution...</h1>
     <Container>
@@ -255,14 +259,14 @@ class About extends React.Component {
           </Tab.Pane>
           
 
-          <Tab.Pane eventKey="3.1">
+          <Tab.Pane eventKey="3.1" style={divStyleOpacity}>
             Thanks for clicking! Use the dictionary and search. It will make you a better person (heehee). The reason I created the dictionary was so that people would use it. It's truly an honor for me each and every time someone takes time out of their day to use this dictionary.
             <br/>
             Tell your friends and social circles about it
           </Tab.Pane>
-          <Tab.Pane eventKey="3.2">
+          <Tab.Pane eventKey="3.2" style={divStyleOpacity}>
           </Tab.Pane>
-          <Tab.Pane eventKey="3.3">
+          <Tab.Pane eventKey="3.3" style={divStyleOpacity}>
             If some words look incorrect, then they just may be. We don't have a bug bounty program yet but you can submit your feedback and findings to our <a href="https://groups.google.com/forum/#!forum/assyrian-app-dictionary" target="_blank">Google Group Page</a>
           </Tab.Pane>
           <Tab.Pane eventKey="3.4">

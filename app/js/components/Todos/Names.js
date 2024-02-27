@@ -1,12 +1,19 @@
 import React, { useState } from 'react'
 import ReactDataGrid from "react-data-grid";
 import { Toolbar, Data } from "react-data-grid-addons";
-import {Container} from 'react-bootstrap';
+import {Container, Row, Col} from 'react-bootstrap';
+import styled from 'styled-components'
+
+const StyledDiv = styled.div`
+    p {
+        font-size: 11px;
+    }
+`
 
 const defaultColumnProperties = {
     filterable: true,
     sortable: true,
-    width: 100,
+    width: 150,
     resizable: true
 };
 
@@ -25,9 +32,9 @@ class DefinitionCellFormatter extends React.Component {
           })
         //const urlTerm = "/searchkey/" + term.toString().split(":")[1];
         return (
-            <div>
-                {definition_arr.join(" ")}
-            </div>)
+            <StyledDiv>
+                <p>{definition_arr.join(" ")}</p>
+            </StyledDiv>)
     }
 }
 
@@ -61,25 +68,39 @@ class LinkCellFormatter extends React.Component {
 const columns = [
     {
         key: "english_short",
-        name: "Name"
+        name: "Name",
+        filterable: true,
+        sortable: true,
+        width: 140,
+        resizable: true
     },
     {
         key: "east",
         name: "Assyrian",
+        filterable: true,
+        sortable: true,
+        width: 180,
+        resizable: true,
         formatter: AssyrianCellFormatter
     },
     {
         key: "definition_arr",
         name: "Meaning",
+        width: 250,
+        filterable: true,
+        sortable: true,
+        resizable: true,
         formatter: DefinitionCellFormatter
     },
     {
         key: "searchkeynum",
         name: "Info",
+        filterable: false,
         width: 50,
         formatter: LinkCellFormatter
     }
-].map(c => ({ ...c, ...defaultColumnProperties }));
+]
+//.map(c => ({ ...c, ...defaultColumnProperties }));
 
 
 
@@ -166,14 +187,22 @@ class Names extends React.Component {
         return (
             <div>
                 <br /><br /><br />
-                <Container>
                 {<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css" />}
                 {<link rel="stylesheet" href="https://bootswatch.com/3/cosmo/bootstrap.min.css"/>}
-            <ReactDataGrid
+                <Container fluid>
+                <Row>
+    <Col></Col>
+    <Col xs={6}>Assyrian Names</Col>
+    <Col></Col>
+  </Row>
+                    <Row>
+                        <Col>
+                        <ReactDataGrid
             columns={columns}
             rowGetter={i => filteredRows[i]}
             rowsCount={filteredRows.length}
             minHeight={600}
+            enableCellSelect={true}
             toolbar={<Toolbar enableFilter={true} />}
             onGridSort={this.handleGridSort}
             onAddFilter={filter => this.setState(
@@ -189,6 +218,10 @@ class Names extends React.Component {
             )}
             
             />
+                        </Col>
+                    </Row>
+                
+            
             </Container>
             </div>
         )

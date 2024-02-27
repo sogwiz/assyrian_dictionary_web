@@ -83,15 +83,19 @@ class Tools extends React.Component {
     const derivedWordsGraph = this.state.derivedWords == null ? (<div />) : (
       <DerivedWordsGraph root={this.state.root} derivations={this.state.derivedWords} />
     )
+
+    const divStyleOpacity = {
+      opacity: '100',    
+    };
     return (
       <div>
         <br/>
         <Container>
           <Tabs id="tabs-tools" animation={true} activeKey={this.state.key} onSelect={this.handleSelect.bind(this)}>     
-                <Tab eventKey={0} title="Features">
+                <Tab eventKey={0} title="Features" style={divStyleOpacity}>
                   <Features/>
                 </Tab>
-                  <Tab eventKey={1} title="Root Words">
+                  <Tab eventKey={1} title="Root Words" style={divStyleOpacity}>
                     <Row>
                     <Col md={6} mdPush={6}>
                     {derivedWordsGraph}
@@ -101,7 +105,7 @@ class Tools extends React.Component {
                     </Col>
                     </Row>
                   </Tab>
-                  <Tab eventKey={2} title="Suggest Changes">
+                  <Tab eventKey={2} title="Suggest Changes" style={divStyleOpacity}>
                     <Thanks />
                   </Tab>
 

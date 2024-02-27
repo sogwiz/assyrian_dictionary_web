@@ -5,7 +5,9 @@
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
-
+logs/
+logs/*.gz
+logs/*.log
 dist/
 
 node_modules/

@@ -78,8 +78,17 @@ this will need us to modify many scripts
 CID=`docker ps | grep node | awk '{ print $1 }'` && docker exec -it $CID /bin/bash
 
 # fluentd
+- to build the fluentd container that sends logs to elasticsearch
+```
 docker build -f Dockerfile_fluentd -t sogwiz/sargonsays-custom-fluentd ./
 docker push sogwiz/sargonsays-custom-fluentd
+```
+
+- to run the fluentd container, run the following command:
+```
+docker run --rm -d --name custom-docker-fluent-logger -v $(pwd):/fluentd/log sogwiz/sargonsays-custom-fluentd -c /fluentd/log/fluentd.conf
+```
+
 
 # redis
 docker exec -it container-name redis-cli FLUSHALL
