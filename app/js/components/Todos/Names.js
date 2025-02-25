@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import ReactDataGrid from "react-data-grid";
-import { Toolbar, Data } from "react-data-grid-addons";
+import { Toolbar, Data, Filters } from "react-data-grid-addons";
 import {Container, Row, Col} from 'react-bootstrap';
 import styled from 'styled-components'
 
@@ -60,8 +60,19 @@ class LinkCellFormatter extends React.Component {
         const urlTerm = "/searchkey/" + this.props.value
         return (
             <div>
-                <a href={urlTerm}>Link</a>
+                <a href={urlTerm}>Info</a>
             </div>)
+    }
+}
+
+class GenderCellFormatter extends React.Component {
+    static propTypes = {
+        //value: React.PropTypes.number.isRequired
+    };
+
+    render() {
+        let gender = this.props.value
+        return (<div>{gender}</div>)
     }
 }
 
@@ -91,6 +102,13 @@ const columns = [
         sortable: true,
         resizable: true,
         formatter: DefinitionCellFormatter
+    },
+    {
+        key: "wordform",
+        name: "Gender",
+        filterable: true,
+        width: 70,
+        formatter: GenderCellFormatter
     },
     {
         key: "searchkeynum",
@@ -144,7 +162,6 @@ class Names extends React.Component {
     }
 
     handleFilterChange(filter){
-        
             const newFilters = { ...this.state.filters };
             if (filter.filterTerm) {
               newFilters[filter.column.key] = filter;
@@ -152,8 +169,6 @@ class Names extends React.Component {
               delete newFilters[filter.column.key];
             }
             return newFilters;
-          
-
     } 
 
     handleGridSort = (sortColumn: string, sortDirection: SortDirection) => {

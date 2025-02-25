@@ -9,7 +9,7 @@ English to Assyrian dictionary [*sargonsays.com*](http://sargonsays.com) , front
 This will stand up a local development environment with a seeded database and frontend code. App will be running on localhost:80
 
 ```
-docker-compose -f docker-compose-dev.yaml up --build --scale web=2
+docker-compose -f docker-compose-dev.yaml up --build --scale web=1
 ```
 
 ### Docker
