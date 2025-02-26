@@ -204,10 +204,10 @@ class Names extends React.Component {
                 <br /><br /><br />
                 {<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css" />}
                 {<link rel="stylesheet" href="https://bootswatch.com/3/cosmo/bootstrap.min.css"/>}
+                <h1>Assyrian Names</h1>
                 <Container fluid>
                 <Row>
     <Col></Col>
-    <Col xs={6}>Assyrian Names</Col>
     <Col></Col>
   </Row>
                     <Row>

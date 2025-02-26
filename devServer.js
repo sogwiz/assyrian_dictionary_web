@@ -191,6 +191,10 @@ app.get('/searchkey/*', function(req, res) {
   res.render('index', {title: "definition"});
 });
 
+app.get('/names', function(req, res) {
+  res.render('index', {title: "names and meanings"});
+});
+
 function removeDuplicatesBy(keyFn, array) {
   var mySet = new Set();
   return array.filter(function(x) {
