@@ -25,7 +25,7 @@ services:
 
   web:
     restart: "no"
-    image: node:8
+    image: node:12
     volumes:
         - ./:/usr/src/app
     working_dir: /usr/src/app
