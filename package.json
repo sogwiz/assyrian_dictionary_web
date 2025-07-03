@@ -9,6 +9,11 @@
   "license": "MIT",
   "browser": {},
   "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.0.10",
+    "@types/parse": "^3.0.9",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
     "babel-core": "^6.7.7",
     "babel-eslint": "^6.0.4",
     "babel-loader": "^6.2.4",
@@ -31,6 +36,7 @@
     "redbox-react": "^1.2.10",
     "redis-mock": "^0.44.0",
     "style-loader": "^0.13.1",
+    "typescript": "^5.8.3",
     "webpack": "^1.13.1",
     "webpack-dev-middleware": "^1.6.1",
     "webpack-hot-middleware": "^2.12.2"
@@ -101,12 +107,12 @@
     "winston-daily-rotate-file": "^3.10.0"
   },
   "engines": {
-    "node": "12.22.12"
+    "node": "14.20.0"
   },
   "scripts": {
     "clean": "rimraf dist",
     "build:webpack": "NODE_ENV=production webpack --config webpack.config.prod.js",
-    "build": "npm run clean && npm run build:webpack",
+    "build": "tsc && npm run clean && npm run build:webpack",
     "start": "node devServer.js",
     "lint": "eslint app",
     "validate": "npm ls"

@@ -1,4 +1,4 @@
-FROM node:12
+FROM node:14
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -16,5 +16,8 @@ COPY . .
 RUN rm -f .env
 
 EXPOSE 3001
+
+RUN npm install -g typescript
+RUN npm run build
 
 CMD [ "npm", "run","start" ]
