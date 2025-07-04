@@ -1,7 +1,7 @@
 import React from 'react'
 import NavBar from './NavBar'
 import MenuBurger from './MenuBurger'
-import Footer from './Footer.js'
+import Footer from './Footer'
 import Helmet from "react-helmet";
 import { toast } from 'react-toastify';
 import ReactGA from 'react-ga';
