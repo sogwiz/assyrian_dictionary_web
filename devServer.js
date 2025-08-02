@@ -1,12 +1,13 @@
-var path = require('path');
-var express = require('express');
-var webpack = require('webpack');
-var bodyParser = require('body-parser');
-var config = require('./webpack.config.dev');
+const path = require('path');
+const express = require('express');
+const webpack = require('webpack');
+const bodyParser = require('body-parser');
+const webpackConfig = require('./webpack.config.dev');
 var MongoClient = require('mongodb').MongoClient
-var compression = require('compression')
+const compression = require('compression')
 var Mailgun = require('mailgun-js');
-const rateLimit = require("express-rate-limit");
+const { emailRateLimiter } = require('./middleware/rateLimit');
+const logger = require('./middleware/logger'); 
 
 const os = require('os');
 const hostname = os.hostname()
@@ -26,50 +27,14 @@ const redis = require('redis');
 const redisClient = redis.createClient(process.env.REDIS_URL);
 const DURATION_SECONDS_REDIS_DEFAULT = 720000;
 
-var winston = require('winston');
-  require('winston-daily-rotate-file');
-
-  var transport = new (winston.transports.DailyRotateFile)({
-    filename: 'logs/application-%DATE%.log',
-    datePattern: 'YYYY-MM-DD',
-    zippedArchive: true,
-    maxSize: '60m',
-    maxFiles: '180d'
-  });
-
-  /*
-  transport.on('rotate', function(oldFilename, newFilename) {
-    // do something fun
-  });*/
-
-  const { createLogger, format, transports } = require('winston');
-const { combine, timestamp, label, printf } = format;
-
-  const myFormat = printf(({ level, message, label, timestamp }) => {
-    return `${timestamp} [${label}] ${level}: ${message}`;
-  });
-
-  var logger = winston.createLogger({
-    format: combine(
-      label({ label: 'sargonsays_'+hostname}),
-      timestamp(),
-      format.json()
-    ),
-    transports: [
-      transport
-    ]
-  })
-  logger.stream = {
-    write: function(message, encoding){
-        logger.info(message);
-    }
-  }
 
 var app = express();
+
 //compress all responses
 app.use(compression())
-//app.use(morgan('combined', { stream: logger.stream }));
-var compiler = webpack(config);
+//app.use(logger.morganInstance); // Morgan HTTP request logger integrated with Winston
+
+const compiler = webpack(webpackConfig);
 require('dotenv').config();
 
 var port = process.env.PORT || 3001;
@@ -77,7 +42,7 @@ var host = process.env.BIND_IP || 'localhost';
 
 app.use(require('webpack-dev-middleware')(compiler, {
   noInfo: true,
-  publicPath: config.output.publicPath
+  publicPath: webpackConfig.output.publicPath
 }));
 app.use(bodyParser.json());
 
@@ -99,13 +64,6 @@ const options = {
   }
 };
 
-
-const emailRateLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 20, // limit each IP to 10 requests per windowMs
-  message: "Too many requests. Please try again after an hour"
-});
-
 app.get('/robots.txt', (req, res) => (
   res.status(200).sendFile('robots.txt', options)
 ));
@@ -125,7 +83,7 @@ app.get('/sitemap2.xml', (req, res) => (
 //this is just for SEO server side rendering purposes
 //doesn't get called on client side search UNLESS the user views page source
 app.get('/word/:searchTerm', function(req, res) {
-  logger.info('sever invoked');
+  logger.info('server invoked');
     
     const db = app.locals.db;
     //TODO: there's no reason why this shouldn't be made into just one query.
