@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const webpackConfig = require('./webpack.config.dev');
 var MongoClient = require('mongodb').MongoClient
 const compression = require('compression')
-var Mailgun = require('mailgun-js');
+const mailgun = require('./config/mailgun');
 const { emailRateLimiter } = require('./middleware/rateLimit');
 const logger = require('./middleware/logger'); 
 
@@ -14,8 +14,6 @@ const hostname = os.hostname()
 
 var emailAPIKey = process.env.EMAIL_API_KEY;
 var emailDomain = "mg.sargonsays.com";
-var emailFrom = "info@sargonsays.com";
-var mailgun = new Mailgun({apiKey: emailAPIKey, domain: emailDomain});
 
 var queueRequestedWords = [];//queue of requested words to add to dictionary
 
@@ -497,15 +495,16 @@ app.post('/api/word/request/:searchTerm', emailRateLimiter, function(req, res) {
     }
   }
 
+  const mailgunClient = mailgun;
 
-  var data = {
-    from: emailFrom,
+  const data = {
+    from: mailgunClient.emailFrom,
     to: recipients,
     subject: "Translation Request : " + searchTerm,
     html:  "Translation Request Submitted via <a href='sargonsays.com'>sargonsays.com</a> site: " + searchTerm
   }
   
-  mailgun.messages().send(data, function (err, body) {
+  mailgunClient.messages().send(data, function (err, body) {
     //If there is an error, render the error page
     if (err) {
         //res.render('error', { error : err});
@@ -513,7 +512,6 @@ app.post('/api/word/request/:searchTerm', emailRateLimiter, function(req, res) {
     }
     //Else we can greet    and leave
     else {
-        //Here "submitted.jade" is the view file for this landing page 
         //We pass the variable "email" from the url parameter in an object rendered by Jade
         //res.render('submitted', { email : req.params.mail });
         console.log(body);
@@ -521,8 +519,6 @@ app.post('/api/word/request/:searchTerm', emailRateLimiter, function(req, res) {
   })  
   
     res.sendStatus(200)
-
-  
 })
 
 app.put('/api/cache/del/:searchTerm', function(req, res) {
