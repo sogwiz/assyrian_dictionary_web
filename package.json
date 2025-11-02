@@ -103,8 +103,8 @@
     "webpack": "^1.13.1",
     "webpack-dev-middleware": "^1.6.1",
     "webpack-hot-middleware": "^2.12.2",
-    "winston": "^3.2.1",
-    "winston-daily-rotate-file": "^3.10.0"
+    "winston": "3.2.1",
+    "winston-daily-rotate-file": "3.10.0"
   },
   "engines": {
     "node": "14.20.0"
