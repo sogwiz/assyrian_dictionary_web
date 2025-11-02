@@ -9,8 +9,6 @@ services:
     image: mongo:4.2.3
     ports:
       - "27017:27017"
-    expose:
-      - 27017
     networks:
       - proxy-tier
 
