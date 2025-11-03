@@ -32,7 +32,7 @@ function Footer({ children }: FooterProps): React.ReactElement {
     return (
         <div>
             <div style={phantom} />
-            <div style={style}>
+            <div style={style} className="footer-content">
                 { children }
             </div>
         </div>
