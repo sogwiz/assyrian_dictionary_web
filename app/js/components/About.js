@@ -121,6 +121,7 @@ class About extends React.Component {
           <NavDropdown eventKey="4" title="Features">
             <NavDropdown.Item eventKey="4.1" href="/phrases">Phrases</NavDropdown.Item>
             <NavDropdown.Item eventKey="4.2" href="/proverbs">Proverbs</NavDropdown.Item>
+            <NavDropdown.Item eventKey="4.4" href="/alphabet">Alphabet</NavDropdown.Item>
             <NavDropdown.Item eventKey="4.23" href="/tools">More Tools</NavDropdown.Item>
             <NavDropdown.Item eventKey="4.21" href="/trends">Trends</NavDropdown.Item>
             <NavDropdown.Item eventKey="4.22" href="/updates">Updates</NavDropdown.Item>
@@ -132,7 +133,16 @@ class About extends React.Component {
       <Col sm={12}>
         <Tab.Content animation>
           <Tab.Pane eventKey={1} style={divStyleOpacity}>
-           <h1 className='title'>Where does the data come from?</h1> 
+          <h1 className='title'>Phonetic Pronunciation Key</h1>
+        Check out the <a href="/alphabet">Alphabet</a> page for more information.
+        This modern dictionary replaces certain phonetic spellings that we get from AssyrianLanguages.org
+        <ul>
+        <li>ḥ => kh : Example : qam ḥa = qam kha</li>
+        <li>š => sh : Example lé ša = le sha</li>
+        <li>šla: ma: ' lu:ḥ = shla ma lookh</li>
+        </ul>
+        
+        <h1 className='title'>Where does the data come from?</h1> 
         Great question! It comes from 3 main sources
         <ol>
           <li><a href="http://assyrianlanguages.org" target='_blank'>assyrianlanguages.org</a></li>
@@ -145,17 +155,6 @@ class About extends React.Component {
           target='_blank'>
           Contact Us
         </a> - we'll add it as we add new words and phrases weekly.
-
-
-        <h1 className='title'>Phonetic Pronunciation Key</h1>
-        
-        This modern dictionary replaces certain phonetic spellings that we get from AssyrianLanguages.org
-        <ul>
-        <li>ḥ => kh : Example : qam ḥa = qam kha</li>
-        <li>š => sh : Example lé ša = le sha</li>
-        <li>šla: ma: ' lu:ḥ = shla ma lookh</li>
-        </ul>
-        <p>
         
         <h1 className='title'>Why the Advertisements?</h1>
         I'd love to make this a clean looking and academic site without advertisements. To reach that design and fiscal goal, the site needs 100 subscribers. Check out the Trends page to determine how many paying subscribers the site has.
@@ -174,7 +173,6 @@ class About extends React.Component {
       </Row>
         
         </Container>
-        </p>
           </Tab.Pane>
           <Tab.Pane eventKey={2} style={divStyleOpacity}>
             <Carousel>

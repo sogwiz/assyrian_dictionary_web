@@ -11,7 +11,8 @@ class MenuBurger extends React.Component {
             <div id="outer-container" style={{height: '100%'}}>
         <Menu>
         <a id="home" className="menu-item" href="/">Search 🔎</a>
-        <a id="about" className="menu-item" href="/names">Names 👶</a>
+        <a id="alphabet" className="menu-item" href="/alphabet">Alphabet 🔤</a>
+        <a id="names" className="menu-item" href="/names">Names 👶</a>
         <a id="phrases" className="menu-item" href="/phrases">Phrases 🗣</a>
         <a id="proverbs" className="menu-item" href="/proverbs">Proverbs 📜</a>
         <a id="about" className="menu-item" href="/about">About 📖</a>

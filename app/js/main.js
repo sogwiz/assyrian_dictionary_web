@@ -26,6 +26,7 @@ import Proverbs from './components/Todos/Proverbs'
 import RootWords from './components/Todos/RootWords'
 import Tools from './components/Todos/Tools'
 import Names from './components/Todos/Names'
+import Alphabet from './components/Alphabet'
 
 // Style
 require('./../assets/styles/main.less')
@@ -54,6 +55,7 @@ ReactDOM.render((
       <Route path="/updates" component={Trends}/>
       <Route path="/roots" component={Tools} />
       <Route path="/tools" component={Tools}/>
+      <Route path="/alphabet" component={Alphabet}/>
     </Route>
     <Route component={App} path='/admin/:searchTerm'>
       <Route path='/login' component={Login}/>
