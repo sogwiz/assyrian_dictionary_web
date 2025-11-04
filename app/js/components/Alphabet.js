@@ -439,14 +439,13 @@ class Alphabet extends React.Component {
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css" />
         <link rel="stylesheet" href="https://bootswatch.com/3/cosmo/bootstrap.min.css" />
         
-        <Container style={{ padding: '20px', maxWidth: '1400px' }}>
-          <div style={{ marginBottom: '20px', textAlign: 'center' }}>
-            <h1 className='title' style={{ marginBottom: '10px' }}>Assyrian Alphabet Explorer</h1>
-            <p style={{ fontSize: '18px', color: '@gray-600' }}>Discover the history and evolution of each letter</p>
+        <Container style={{ padding: '10px', maxWidth: '1400px' }}>
+          <div style={{ marginBottom: '5px', textAlign: 'center' }}>
+            <h1 className='title' style={{ marginBottom: '6px' }}>Assyrian Alphabet</h1>
           </div>
         </Container>
         
-        <Container style={{ padding: '0 20px 20px', maxWidth: '1400px', height: 'calc(100vh - 220px)' }}>
+        <Container style={{ padding: '0 20px 5px', maxWidth: '1400px', height: 'calc(100vh - 220px)' }}>
           {/* Mobile-only font selector above Panel A */}
           <div className="alphabet-mobile-font-switcher">
             <Dropdown
@@ -460,7 +459,6 @@ class Alphabet extends React.Component {
           <Row style={{ height: '100%' }}>
             <Col xs={12} md={3} className="alphabet-panel-left">
               <div className="alphabet-header">
-                <h2 className="alphabet-title">Assyrian Alphabet</h2>
                 <p className="alphabet-subtitle">Click a letter to explore its history</p>
               </div>
               
