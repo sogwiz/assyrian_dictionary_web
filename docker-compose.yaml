@@ -7,6 +7,8 @@ services:
     container_name: cache
     expose:
       - 6379
+    networks:
+      - proxy-tier
 
   web:
     restart: always
@@ -20,15 +22,35 @@ services:
     environment:
       # mongodb:27017 is a direct reference to the 'mongodb' mongo container
       - REDIS_URL=redis://cache
+      - VIRTUAL_HOST=assyrian.local
     links:
       - redis
+    networks:
+      - proxy-tier
 
-  lb:
-    image: dockercloud/haproxy
-    restart: always
-    links:
-      - web
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+
+#  lb:
+#    image: dockercloud/haproxy
+#    restart: always
+#    links:
+#      - web
+#    volumes:
+#      - /var/run/docker.sock:/var/run/docker.sock
+#    ports:
+#      - 80:80
+
+  nginx:
+    image: nginx:alpine
+    restart: "no"
     ports:
-      - 80:80
+      - "80:80"
+    volumes:
+      - ./deploy/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - web
+    networks:
+      - proxy-tier
+
+networks:
+  proxy-tier:
+    driver: bridge
