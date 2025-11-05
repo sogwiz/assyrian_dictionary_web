@@ -1101,6 +1101,28 @@ a.nounderline {text-decoration: none; color: #fff; }
     
     @media @mobile {
       display: block;
+      margin-bottom: 12px;
+      
+      // Make dropdown smaller on mobile
+      .Dropdown-control {
+        padding: 8px 40px 8px 12px;
+        font-size: 14px;
+        border: 1px solid @gray-200;
+      }
+      
+      .Dropdown-arrow {
+        right: 8px;
+        top: 10px;
+        border-width: 4px 4px 0;
+      }
+      
+      .Dropdown-menu {
+        font-size: 14px;
+        
+        .Dropdown-option {
+          padding: 10px 12px;
+        }
+      }
     }
   }
   
@@ -1456,11 +1478,16 @@ a.nounderline {text-decoration: none; color: #fff; }
       display: none;
     }
     
-    .alphabet-panel-left,
+    .alphabet-panel-left {
+      margin-bottom: 15px;
+      height: auto;
+      max-height: 35vh; // Reduced from 50vh to show more of Panel B
+      padding-left: 0 !important;
+    }
+    
     .alphabet-panel-right {
       margin-bottom: 20px;
       height: auto;
-      max-height: 50vh;
       padding-left: 0 !important;
     }
     
