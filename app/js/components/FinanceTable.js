@@ -9,7 +9,7 @@ class FinanceTable extends React.Component {
             { type: 'volunteer', amount: 'Volunteer', period: '', description: 'Software Development Time and Energy (20 hours a month)' },
             { type: 'expense', amount: '$25.00', period: 'per month', description: 'Cloud Hosting for web app on Microsoft Azure and domain on DreamHost' },
             { type: 'expense', amount: '$22.00', period: 'per month', description: 'Software Development tools (Cursor IDE)' },
-            { type: 'expense', amount: '$10.00', period: 'per month', description: 'Cloud Hosting on Nodechef for App Container ($4) and Database Server ($5)' }
+            { type: 'expense', amount: '$10.00', period: 'per month', description: 'Cloud Hosting App Container and Database Server' }
         ];
 
         // Calculate totals
