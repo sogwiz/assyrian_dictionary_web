@@ -1,12 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react'
-import { Link } from 'react-router'
-import ReactModal from 'react-modal'
-import { Accordion, Button, Card, Col, Container, Row, OverlayTrigger, Popover } from 'react-bootstrap'
+import { OverlayTrigger, Popover, Button } from 'react-bootstrap'
 import DefinitionHelper from './DefinitionHelper'
 import PhoneticWestHelper from '../util/PhoneticWestHelper.js'
 import PhoneticEastHelper from '../util/PhoneticEastHelper.js'
-import AudioHelper from '../util/AudioHelper.js'
 import ReactAudioPlayer from 'react-audio-player'
 import RelatedTerms from './RelatedTerms'
 import DerivedWords from './widgets/DerivedWords'
@@ -87,9 +84,27 @@ class TodoDetail extends React.Component {
       console.log("dictionary_definition_obj ")
       console.log(dictionary_definition_obj)
       if (!dictionary_definition_obj) {
-        return (<div><br /><br /><br />Oooooops. Really sorry! Something went wrong here.
-        Find out more about the <a href={"http://assyrianlanguages.org/sureth/dosearch.php?searchkey=" + this.props.params.searchkeynum + "&language=id"} target="_blank">term</a> you clicked on.
-          </div>)
+        return (
+          <div className="todos">
+            <div className="definition-detail-page">
+              <div className="definition-detail-container">
+                <div className="definition-detail-error">
+                  <h2>Oops! Something went wrong</h2>
+                  <p>We couldn't find the definition you're looking for.</p>
+                  <a 
+                    href={"http://assyrianlanguages.org/sureth/dosearch.php?searchkey=" + this.props.params.searchkeynum + "&language=id"} 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="external-link-button"
+                  >
+                    <span>Try on Assyrian Languages</span>
+                    <span className="external-link-icon">↗</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        )
       }
 
       let partOfSpeech = dictionary_definition_obj['partofspeech']
@@ -110,82 +125,176 @@ class TodoDetail extends React.Component {
       const audioEast = PhoneticWestHelper(dictionary_definition_obj['audio']);
       const audioWest = PhoneticWestHelper(dictionary_definition_obj['audio_west']);
 
+      // Format audio URLs
+      let audioEastUrl = audioEast;
+      let audioWestUrl = audioWest;
+      if (audioEast && !audioEast.includes('http')) {
+        audioEastUrl = 'http://assyrianlanguages.org/sureth/' + audioEast;
+      }
+      if (audioWest && !audioWest.includes('http')) {
+        audioWestUrl = 'http://assyrianlanguages.org/sureth/' + audioWest;
+      }
+
       return (
         <div className="todos">
-          <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css" />
-          <link rel="stylesheet" href="https://bootswatch.com/3/cosmo/bootstrap.min.css" />
+          <div className="definition-detail-page">
+            <div className="definition-detail-container">
+              <ul itemscope itemtype="http://schema.org/BreadcrumbList">
+                
+                {/* Main Definition Card */}
+                <div className="definition-detail-main">
+                  <div className="definition-detail-header">
+                    <h1 className="definition-detail-title">Definition</h1>
+                    <div className="definition-detail-category">
+                      Category: {partOfSpeech}
+                    </div>
+                  </div>
+                  
+                  <div className="definition-detail-body">
+                    <p className="definition-detail-text">
+                      {dictionary_definition_obj['definition_arr'].join("\n").replace(/^ : /, "")}
+                    </p>
+                  </div>
 
+                  {/* East/West Dialects */}
+                  <div className="definition-detail-dialects">
+                    <div className="dialect-row">
+                      <div className="dialect-label">East:</div>
+                      <div className="dialect-content">
+                        <span className={this.state.eastfont}>{dictionary_definition_obj['east']}</span>
+                        {phonetic && <span className="phonetic">({phonetic})</span>}
+                        {audioEast && (
+                          <div className="audio-player-wrapper">
+                            <ReactAudioPlayer src={audioEastUrl} controls />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    
+                    <div className="dialect-row">
+                      <div className="dialect-label">West:</div>
+                      <div className="dialect-content">
+                        <span className="west">{dictionary_definition_obj['west']}</span>
+                        {phonetic_west && <span className="phonetic">({phonetic_west})</span>}
+                        {audioWest && (
+                          <div className="audio-player-wrapper">
+                            <ReactAudioPlayer src={audioWestUrl} controls />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
-          <ul itemscope itemtype="http://schema.org/BreadcrumbList">
+                {/* Details Section */}
+                <div className="definition-detail-section">
+                  <div className="definition-detail-section-header">
+                    <h2>Details</h2>
+                  </div>
+                  
+                  <div className="definition-detail-section-content">
+                    {cf && (
+                      <div className="detail-item">
+                        <strong>Cross References:</strong>
+                        <span className={this.state.eastfont}>{cf}</span>
+                      </div>
+                    )}
+                    
+                    <div className="detail-metadata">
+                      <ul>
+                        {dictionary_definition_obj['source'] && (
+                          <li itemprop="itemListElement" itemscope
+                            itemtype="http://schema.org/ListItem">
+                            <strong>Source:</strong> {dictionary_definition_obj['source']}
+                          </li>
+                        )}
+                        {dictionary_definition_obj['dialect'] && (
+                          <li itemprop="itemListElement" itemscope
+                            itemtype="http://schema.org/ListItem">
+                            <strong>Dialect:</strong> {dictionary_definition_obj['dialect']}
+                          </li>
+                        )}
+                        {dictionary_definition_obj['origins'] && (
+                          <li itemprop="itemListElement" itemscope
+                            itemtype="http://schema.org/ListItem">
+                            <strong>Origins:</strong> {dictionary_definition_obj['origins']}
+                          </li>
+                        )}
+                        {seealso && (
+                          <li itemprop="itemListElement" itemscope
+                            itemtype="http://schema.org/ListItem">
+                            <strong>See Also:</strong> <span className={this.state.eastfont}>{seealso}</span>
+                          </li>
+                        )}
+                        {dictionary_definition_obj['root'] && (
+                          <li itemprop="itemListElement" itemscope
+                            itemtype="http://schema.org/ListItem">
+                            <strong>Root:</strong> <span className={this.state.eastfont}>
+                              <a href={"/word/" + dictionary_definition_obj['root']}>
+                                {dictionary_definition_obj['root']}
+                              </a>
+                            </span>
+                          </li>
+                        )}
+                        {dictionary_definition_obj['semantics'] && (
+                          <li itemprop="itemListElement" itemscope
+                            itemtype="http://schema.org/ListItem">
+                            <strong>Semantics:</strong> {dictionary_definition_obj['semantics']}
+                          </li>
+                        )}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
 
-            Definition: {dictionary_definition_obj['definition_arr'].join("\n").replace(/^ : /, "")}
-            <p>Category: {partOfSpeech}</p>
-            <p className='definition'>
-              East: <span className={this.state.eastfont}>{dictionary_definition_obj['east']}</span>
-              <span className="phonetic">({phonetic})</span>
-              <ReactAudioPlayer src={audioEast} controls/>
-            </p>
-            <p className='definition'>
-              West: <span className="west">{dictionary_definition_obj['west']}</span>
-              <span className="phonetic">({phonetic_west})</span>
-              <ReactAudioPlayer src={audioWest} controls/>
-            </p>
+                {/* Derived Words Section */}
+                {derivedWords && (
+                  <div className="definition-detail-section">
+                    {derivedWords}
+                  </div>
+                )}
 
-            <Container>
-            <Accordion defaultActiveKey="0">
-              <Card>
-                <Card.Header>
-                  <Accordion.Toggle as={Card.Header} eventKey="0">
-                    Details
-                  </Accordion.Toggle>
-                </Card.Header>
-                <Accordion.Collapse eventKey="0">
-                  <Card.Body>
-                                  {/*<Panel id="collapsible-panel-details" collapsible defaultExpanded header="Details">*/}
-                  <p className='definition'>
-                  Cross References: <span className={this.state.eastfont}>{cf}</span>
-                </p>
-                <p>
-                  <li itemprop="itemListElement" itemscope
-                    itemtype="http://schema.org/ListItem" itemprop="name">Source : {dictionary_definition_obj['source']}</li>
-                  <li itemprop="itemListElement" itemscope
-                    itemtype="http://schema.org/ListItem" itemprop="name">Dialect : {dictionary_definition_obj['dialect']}</li>
-                  <li itemprop="itemListElement" itemscope
-                    itemtype="http://schema.org/ListItem" itemprop="name">
-                    Origins : {dictionary_definition_obj['origins']}</li>
-                  <li itemprop="itemListElement" itemscope
-                    itemtype="http://schema.org/ListItem" itemprop="name">See Also : <span className={this.state.eastfont}>{seealso}</span></li>
-                  <li itemprop="itemListElement" itemscope
-                    itemtype="http://schema.org/ListItem" itemprop="name">Root : <span className={this.state.eastfont}><a href={"/word/" + dictionary_definition_obj['root']}>{dictionary_definition_obj['root']}</a></span></li>
-                  <li itemprop="itemListElement" itemscope
-                    itemtype="http://schema.org/ListItem" itemprop="name">Semantics : {dictionary_definition_obj['semantics']}</li>
+                {/* Related Searches */}
+                <div className="definition-detail-section">
+                  <div className="definition-detail-section-header">
+                    <h2>Related Searches</h2>
+                  </div>
+                  <div className="definition-detail-section-content">
+                    <RelatedTerms searchkeynum={this.props.params.searchkeynum} />
+                  </div>
+                </div>
 
-                </p>
-                  </Card.Body>
-
-                </Accordion.Collapse>
-              </Card>
-            
-
-              </Accordion>
-
-              {derivedWords}
-            </Container>
-          </ul>
-
-          <div className="posnormal">
-            Related Searches
-     </div>
-          <RelatedTerms searchkeynum={this.props.params.searchkeynum} />
-          <p>
-            <span><a href={"http://assyrianlanguages.org/sureth/dosearch.php?searchkey=" + this.props.params.searchkeynum + "&language=id"} target="_blank">More Details</a></span>
-          </p>
+                {/* External Link */}
+                <div className="definition-detail-external-link">
+                  <a 
+                    href={"http://assyrianlanguages.org/sureth/dosearch.php?searchkey=" + this.props.params.searchkeynum + "&language=id"} 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="external-link-button"
+                  >
+                    <span>View on Assyrian Languages</span>
+                    <span className="external-link-icon">↗</span>
+                  </a>
+                </div>
+              </ul>
+            </div>
+          </div>
         </div>
-
       )
     }
     if (!this.state.searchResults) {
-      return (<p>Loading</p>)
+      return (
+        <div className="todos">
+          <div className="definition-detail-page">
+            <div className="definition-detail-container">
+              <div className="definition-detail-loading">
+                <div className="loading-spinner"></div>
+                <p>Loading definition...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )
     }
   }
 }

@@ -27,11 +27,13 @@ class TodoItem extends React.Component {
     super();
     this.state = {
       derivedWords: null,
-      showModal: false
+      showModal: false,
+      isExpanded: false  // For expandable detail view
     };
 
     this.handleOpenModal = this.handleOpenModal.bind(this);
     this.handleCloseModal = this.handleCloseModal.bind(this);
+    this.toggleExpanded = this.toggleExpanded.bind(this);
     ReactGA.initialize('UA-6312595-17');
 
   }
@@ -120,80 +122,164 @@ class TodoItem extends React.Component {
       partOfSpeech = overlay
     }
 
-    return (
-      <div className='definition-item' id={idxEntry} onClick={this.renderDetail.bind(this)}>
+    // Use expandable view by default, but allow modal via prop
+    const useExpandable = this.props.useExpandable !== false; // default to true
 
+    return (
+      <div className={`definition-item ${this.state.isExpanded ? 'expanded' : ''}`} id={idxEntry}>
         <li itemprop="itemListElement" itemscope
           itemtype="http://schema.org/ListItem">
           <meta itemprop="position" content={idxEntry} />
-          <p className='definition' >{dictionary_definition_obj.definition_arr.join("\n").replace(/^ : /, "")}</p>
-          <span>{rows}</span>
-
-          {this.getSEORenderer(this.props.idxEntry, contentDesc)}
-    { this.getBadgeRenderer(todo.boost) }
-
-          <div className="definition"><span className="infoicon"><span className="tooltip">&#9432;<span className="tooltiptext">Sources :<br /> {source}</span></span></span></div>
-          <div className="pos">{dictionary_definition_obj.partofspeech}</div>
-
-          <ReactModal
-            isOpen={this.state.showModal}
-            contentLabel="onRequestClose Example"
-            onRequestClose={this.handleCloseModal}
+          
+          {/* Summary/Collapsed View - Always Clickable */}
+          <div 
+            className="definition-summary" 
+            onClick={useExpandable ? this.toggleExpanded : this.renderDetail.bind(this)}
+            style={{ cursor: 'pointer' }}
           >
-            
-            <div className="pos">
-              Search Term : 
-              <a href={"/searchkey/" + this.props.todo.searchkeynum}><Button variant="primary">
-            {todo.word} <Badge variant="light">ℹ</Badge>
-  <span className="sr-only">unread messages</span>
-</Button></a>
-            </div>
-        Definition: {dictionary_definition_obj.definition_arr.join("\n").replace(/^ : /, "")}
-            <p>Category: {partOfSpeech}</p>
-            <p className='definition'>
-              East: <span className={this.props.eastfont}>{dictionary_definition_obj.east}</span>
-              <span className="phonetic">({PhoneticEastHelper(dictionary_definition_obj.phonetic)})</span>
-            </p>
-            <p className='definition'>
-              West: <span className="west">{dictionary_definition_obj.west}</span>
-              <span className="phonetic">({PhoneticWestHelper(dictionary_definition_obj.phonetic_west)})</span>
-            </p>
+            <p className='definition' >{dictionary_definition_obj.definition_arr.join("\n").replace(/^ : /, "")}</p>
+            <span>{rows}</span>
 
-            <p>
-              Cross References: <span className={this.props.font}>{cf}</span>
-            </p>
-            <p>
-              <ul>
-                <li itemprop="itemListElement" itemscope
-                  itemtype="http://schema.org/ListItem">Source : {dictionary_definition_obj.source}</li>
-                <li itemprop="itemListElement" itemscope
-                  itemtype="http://schema.org/ListItem">Dialect : {dictionary_definition_obj.dialect}</li>
-                <li itemprop="itemListElement" itemscope
-                  itemtype="http://schema.org/ListItem">Origins : {dictionary_definition_obj.origins}</li>
-                <li itemprop="itemListElement" itemscope
-                  itemtype="http://schema.org/ListItem">See Also : {seealso}</li>
-                <li itemprop="itemListElement" itemscope
-                  itemtype="http://schema.org/ListItem">Root : <span className={this.props.eastfont}><a href={'/word/' + dictionary_definition_obj.root}>{dictionary_definition_obj.root}</a></span></li>
-                <li itemprop="itemListElement" itemscope
-                  itemtype="http://schema.org/ListItem">Semantics : {dictionary_definition_obj.semantics}</li>
-              </ul>
-            </p>
-            <GoogleAd
-              client="ca-pub-4439019971526085"
-              slot="9718385117"
-              format="auto"
-            />
-            <div className="posnormal">
-              Related Searches
-     </div>
-            <div className="tagcloudmodal">
-              <RelatedTerms searchkeynum={todo.searchkeynum} />
+            {this.getSEORenderer(this.props.idxEntry, contentDesc)}
+            { this.getBadgeRenderer(todo.boost) }
+
+            <div className="definition"><span className="infoicon"><span className="tooltip">&#9432;<span className="tooltiptext">Sources :<br /> {source}</span></span></span></div>
+            <div className="pos">{dictionary_definition_obj.partofspeech}</div>
+            
+            {/* Expand/Collapse Indicator */}
+            {useExpandable && (
+              <div className="expand-indicator">
+                {this.state.isExpanded ? '▼ Less' : '▶ More details'}
+              </div>
+            )}
+          </div>
+
+          {/* Expandable Detail View */}
+          {useExpandable && (
+            <div className={`definition-detail-expanded ${this.state.isExpanded ? 'expanded' : 'collapsed'}`}>
+              <div className="detail-content">
+                <p><strong>Definition:</strong> {dictionary_definition_obj.definition_arr.join("\n").replace(/^ : /, "")}</p>
+                <p><strong>Category:</strong> {partOfSpeech}</p>
+                <p className='definition'>
+                  <strong>East:</strong> <span className={this.props.eastfont}>{dictionary_definition_obj.east}</span>
+                  <span className="phonetic">({PhoneticEastHelper(dictionary_definition_obj.phonetic)})</span>
+                </p>
+                <p className='definition'>
+                  <strong>West:</strong> <span className="west">{dictionary_definition_obj.west}</span>
+                  <span className="phonetic">({PhoneticWestHelper(dictionary_definition_obj.phonetic_west)})</span>
+                </p>
+
+                <p>
+                  <strong>Cross References:</strong> <span className={this.props.eastfont}>{cf}</span>
+                </p>
+                <div className="detail-metadata">
+                  <ul>
+                    <li itemprop="itemListElement" itemscope
+                      itemtype="http://schema.org/ListItem">Source : {dictionary_definition_obj.source}</li>
+                    <li itemprop="itemListElement" itemscope
+                      itemtype="http://schema.org/ListItem">Dialect : {dictionary_definition_obj.dialect}</li>
+                    <li itemprop="itemListElement" itemscope
+                      itemtype="http://schema.org/ListItem">Origins : {dictionary_definition_obj.origins}</li>
+                    <li itemprop="itemListElement" itemscope
+                      itemtype="http://schema.org/ListItem">See Also : {seealso}</li>
+                    <li itemprop="itemListElement" itemscope
+                      itemtype="http://schema.org/ListItem">Root : <span className={this.props.eastfont}><a href={'/word/' + dictionary_definition_obj.root}>{dictionary_definition_obj.root}</a></span></li>
+                    <li itemprop="itemListElement" itemscope
+                      itemtype="http://schema.org/ListItem">Semantics : {dictionary_definition_obj.semantics}</li>
+                  </ul>
+                </div>
+                {/*<GoogleAd
+                  client="ca-pub-4439019971526085"
+                  slot="9718385117"
+                  format="auto"
+                /> */}
+                <div className="posnormal">
+                  Related Searches
+                </div>
+                <div className="tagcloudmodal">
+                  <RelatedTerms searchkeynum={todo.searchkeynum} />
+                </div>
+                
+                {/* Full Details Link - Modern Design */}
+                <div className="detail-page-link-container">
+                  <a 
+                    href={"/searchkey/" + this.props.todo.searchkeynum}
+                    className="detail-page-link"
+                  >
+                    <span className="detail-page-link-text">View Full Details</span>
+                    <span className="detail-page-link-icon">→</span>
+                  </a>
+                </div>
+              </div>
             </div>
-            <br />
-            <div className="pos">
-              <Button onClick={this.handleCloseModal} variant="primary">Close</Button>
-            </div>
-          </ReactModal>
+          )}
+
+          {/* Modal View (fallback if useExpandable is false) */}
+          {!useExpandable && (
+            <ReactModal
+              isOpen={this.state.showModal}
+              contentLabel="onRequestClose Example"
+              onRequestClose={this.handleCloseModal}
+            >
+              Definition: {dictionary_definition_obj.definition_arr.join("\n").replace(/^ : /, "")}
+              <p>Category: {partOfSpeech}</p>
+              <p className='definition'>
+                East: <span className={this.props.eastfont}>{dictionary_definition_obj.east}</span>
+                <span className="phonetic">({PhoneticEastHelper(dictionary_definition_obj.phonetic)})</span>
+              </p>
+              <p className='definition'>
+                West: <span className="west">{dictionary_definition_obj.west}</span>
+                <span className="phonetic">({PhoneticWestHelper(dictionary_definition_obj.phonetic_west)})</span>
+              </p>
+
+              <p>
+                Cross References: <span className={this.props.eastfont}>{cf}</span>
+              </p>
+              <p>
+                <ul>
+                  <li itemprop="itemListElement" itemscope
+                    itemtype="http://schema.org/ListItem">Source : {dictionary_definition_obj.source}</li>
+                  <li itemprop="itemListElement" itemscope
+                    itemtype="http://schema.org/ListItem">Dialect : {dictionary_definition_obj.dialect}</li>
+                  <li itemprop="itemListElement" itemscope
+                    itemtype="http://schema.org/ListItem">Origins : {dictionary_definition_obj.origins}</li>
+                  <li itemprop="itemListElement" itemscope
+                    itemtype="http://schema.org/ListItem">See Also : {seealso}</li>
+                  <li itemprop="itemListElement" itemscope
+                    itemtype="http://schema.org/ListItem">Root : <span className={this.props.eastfont}><a href={'/word/' + dictionary_definition_obj.root}>{dictionary_definition_obj.root}</a></span></li>
+                  <li itemprop="itemListElement" itemscope
+                    itemtype="http://schema.org/ListItem">Semantics : {dictionary_definition_obj.semantics}</li>
+                </ul>
+              </p>
+              <GoogleAd
+                client="ca-pub-4439019971526085"
+                slot="9718385117"
+                format="auto"
+              />
+              <div className="posnormal">
+                Related Searches
+              </div>
+              <div className="tagcloudmodal">
+                <RelatedTerms searchkeynum={todo.searchkeynum} />
+              </div>
+              
+              {/* Full Details Link - Modern Design */}
+              <div className="detail-page-link-container">
+                <a 
+                  href={"/searchkey/" + this.props.todo.searchkeynum}
+                  className="detail-page-link"
+                >
+                  <span className="detail-page-link-text">View Full Details</span>
+                  <span className="detail-page-link-icon">→</span>
+                </a>
+              </div>
+              
+              <br />
+              <div className="pos">
+                <Button onClick={this.handleCloseModal} variant="secondary" size="sm">Close</Button>
+              </div>
+            </ReactModal>
+          )}
         </li>
       </div>
     )
@@ -262,6 +348,20 @@ class TodoItem extends React.Component {
     //console.log('about to call return for TodoDetail')
     //return <TodoDetail todo={todo} />
     this.handleOpenModal();
+  }
+
+  toggleExpanded() {
+    const newExpandedState = !this.state.isExpanded;
+    this.setState({ isExpanded: newExpandedState });
+    
+    // Track analytics
+    if (newExpandedState) {
+      ReactGA.event({
+        category: 'User',
+        action: 'expandDefinition',
+        label: '/word/' + this.props.todo.word + '/searchkey/' + this.props.todo.searchkeynum
+      });
+    }
   }
 
   handleOpenModal() {
