@@ -68,7 +68,7 @@
     "lodash": "^4.11.1",
     "mailgun-js": "^0.22.0",
     "mongodb": "^2.2.33",
-    "npm": "^4.0.5",
+    "npm": "^6.13.4",
     "parse": "1.6.14",
     "parse-react": "^0.5.2",
     "prerender-node": "^2.7.2",
