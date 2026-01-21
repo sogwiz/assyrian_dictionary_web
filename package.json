@@ -69,7 +69,7 @@
     "mailgun-js": "^0.22.0",
     "mongodb": "^2.2.33",
     "npm": "^4.0.5",
-    "parse": "1.6.14",
+    "parse": "2.10.0",
     "parse-react": "^0.5.2",
     "prerender-node": "^2.7.2",
     "rc-collapse": "^1.11.8",
