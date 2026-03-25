@@ -27,7 +27,8 @@ module.exports = {
         'NODE_ENV': JSON.stringify('development'),
         'REACT_PARSE_APP_ID' : JSON.stringify(process.env.REACT_PARSE_APP_ID),
         'REACT_PARSE_JS_KEY' : JSON.stringify(process.env.REACT_PARSE_JS_KEY),
-        'REACT_PARSE_SERVER' : JSON.stringify(process.env.REACT_PARSE_SERVER)
+        'REACT_PARSE_SERVER' : JSON.stringify(process.env.REACT_PARSE_SERVER),
+        'SUPPORTER_CODE' : JSON.stringify(process.env.SUPPORTER_CODE)
       }
     }),
     new webpack.NoErrorsPlugin()
@@ -36,7 +37,7 @@ module.exports = {
     loaders: [{
       test: /\.js$/,
       loaders: ['babel'],
-      include: path.join(__dirname, 'app')
+      include: [path.join(__dirname, 'app'), path.join(__dirname, 'node_modules/@restart/hooks')]
     }, {
       test: /\.less$/,
       loader: "style!css!less"

@@ -3,6 +3,20 @@ import { Button, Col, Form, FormControl, FormGroup, Container, Tooltip, OverlayT
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import FinanceTable from './FinanceTable.js';
+import SupporterCode from './SupporterCode.js';
+import { forceUnlockSupporter, isSupporterUnlocked } from '../utils/supporter';
+import styled from 'styled-components';
+
+const UnlockBanner = styled.div`
+    background: #dcfce7;
+    border: 1px solid #86efac;
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    color: #15803d;
+    font-size: 14px;
+    font-weight: 500;
+`;
 
 class Thanks extends React.Component {
   
@@ -13,14 +27,16 @@ class Thanks extends React.Component {
             value: this.props.location.query.q || '',
             email: '',
             showConfetti: true,
-            submitted: false
+            submitted: false,
+            autoUnlocked: false
         }
         }else {
           this.state = {
             value: '',
             email: '',
             showConfetti: true,
-            submitted: false
+            submitted: false,
+            autoUnlocked: false
         }
         }
         
@@ -34,6 +50,13 @@ class Thanks extends React.Component {
         setTimeout(() => {
             this.setState({ showConfetti: false });
         }, 3000);
+
+        // Auto-unlock supporter mode when landing from Memberful checkout (/thanks)
+        const isThanksPath = this.props.location && this.props.location.pathname === '/thanks';
+        if (isThanksPath && !isSupporterUnlocked()) {
+            forceUnlockSupporter();
+            this.setState({ autoUnlocked: true });
+        }
     }
 
     handleChange(e) {
@@ -116,6 +139,13 @@ class Thanks extends React.Component {
               )}
 
               <Container className="thanks-container">
+                {/* Auto-unlock banner — shown on /thanks after Memberful checkout */}
+                {this.state.autoUnlocked && (
+                    <UnlockBanner>
+                        Supporter mode activated! Ads and support prompts have been removed. Welcome to the community.
+                    </UnlockBanner>
+                )}
+
                 {/* Hero Section */}
                 <div className="thanks-hero">
                   <div className="thanks-hero-icon">🎉</div>
@@ -198,6 +228,16 @@ class Thanks extends React.Component {
                   </Form>
                 </div>
                 
+                {/* Supporter code entry — shown on /suggest for existing supporters */}
+                {this.props.location && this.props.location.pathname === '/suggest' && (
+                    <div className="thanks-card" style={{marginTop: 24}}>
+                        <div className="thanks-card-header">
+                            <h2 className="thanks-card-title">Supporter Code</h2>
+                        </div>
+                        <SupporterCode />
+                    </div>
+                )}
+
                 {/* Finance Table */}
                 <div className="thanks-finance-section">
                   <FinanceTable/>

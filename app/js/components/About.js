@@ -4,6 +4,7 @@ import { Button, ButtonGroup, ButtonToolbar, Carousel, Col, Container, Image, Ju
 import ReactGA from 'react-ga';
 import FinanceTable from './FinanceTable.js';
 import Roadmap from './Roadmap.js';
+import SupporterCode from './SupporterCode.js';
 
 class About extends React.Component {
   constructor(props) {
@@ -164,7 +165,7 @@ class About extends React.Component {
         <br/><br/>
         <Container>
         <Row className="show-grid">
-      <Col xs={12} md={8}><a href="/support"><Button bsStyle="success">Support sargonsays</Button></a></Col>
+      <Col xs={12} md={8}><a href="/support"><Button bsStyle="success">&#9825; Keep Assyrian Alive</Button></a></Col>
       <Col xs={6} md={4}></Col>
       </Row>
       <Row className="show-grid">
@@ -218,7 +219,7 @@ class About extends React.Component {
           
       <Roadmap/>
       <div className="well" style={wellStyles}>
-    <a href="https://sargonsays.memberful.com/checkout?plan=23192"><OverlayTrigger placement="top" overlay={tooltipRepeat}><Button variant="primary" size="lg" onClick={this.handleSuperHeroButtonClick.bind(this)} block>Superhero - Support $2/month.</Button></OverlayTrigger></a>
+    <a href="https://sargonsays.memberful.com/checkout?plan=146420"><OverlayTrigger placement="top" overlay={tooltipRepeat}><Button variant="primary" size="lg" onClick={this.handleSuperHeroButtonClick.bind(this)} block>&#9825; Keep Assyrian Alive — $2.99/month</Button></OverlayTrigger></a>
     <br/>
     {<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
 <input type="hidden" name="cmd" value="_s-xclick"/>
@@ -227,11 +228,12 @@ class About extends React.Component {
 <Button type="submit" variant="success" size="lg" onClick={this.handleHeroButtonClick.bind(this)} block>One Time Hero Donation</Button></OverlayTrigger>
 <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1"/>
 </form>}
-<OverlayTrigger trigger="click" placement="bottom" overlay={popoverBottom}>
-<Button size="lg" variant="secondary" onClick={this.handleMaybeButtonClick.bind(this)} block>Maybe Later on my Birthday</Button>
-</OverlayTrigger>
+<Button size="lg" variant="secondary" onClick={() => { this.handleMaybeButtonClick(); window.location.href = '/word/birthday'; }} block>Maybe Later on my Birthday</Button>
     </div>
- 
+
+    <div style={{padding: '0 16px 24px'}}>
+        <SupporterCode />
+    </div>
 
     <Container>
     <Row>

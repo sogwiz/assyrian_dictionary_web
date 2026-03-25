@@ -3,6 +3,7 @@ import ReactDataGrid from "react-data-grid";
 import { Toolbar, Data, Filters } from "react-data-grid-addons";
 import {Container, Row, Col} from 'react-bootstrap';
 import styled from 'styled-components'
+import { isSupporterUnlocked } from '../../utils/supporter';
 
 const StyledDiv = styled.div`
     p {
@@ -89,6 +90,58 @@ const GenderBadge = styled.div`
     color: ${props => props.isMasculine ? '#1e40af' : '#6b7280'};
 `
 
+const SupportBanner = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin: 0 16px 12px 16px;
+    font-size: 13px;
+    color: #1e40af;
+    flex-wrap: wrap;
+`
+
+const SupportBannerText = styled.span`
+    flex: 1;
+    min-width: 200px;
+`
+
+const SupportBannerActions = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+`
+
+const SupportBannerButton = styled.a`
+    padding: 5px 14px;
+    background: #2563eb;
+    color: white !important;
+    border-radius: 6px;
+    font-size: 13px;
+    text-decoration: none !important;
+    white-space: nowrap;
+    &:hover { background: #1d4ed8; }
+`
+
+const DismissButton = styled.button`
+    background: none;
+    border: none;
+    color: #93c5fd;
+    font-size: 18px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 2px;
+    &:hover { color: #60a5fa; }
+`
+
+const BANNER_DISMISS_KEY = 'nameBannerDismissed';
+const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+
 const defaultColumnProperties = {
     filterable: true,
     sortable: true,
@@ -104,16 +157,23 @@ class DefinitionCellFormatter extends React.Component {
     };
 
     render() {
-        const definition_arr = this.props.value.slice(1)
+        const definition_arr = this.props.value.slice(1).map(p => p.replace(/&quot;/g, "'"));
+        const isNumbered = definition_arr.length > 1 && /^\d+\./.test(definition_arr[0]);
 
-        definition_arr.forEach(function(part, index, theArray) {
-            theArray[index] = theArray[index].replace(/&quot;/g,"\'")
-          })
-        //const urlTerm = "/searchkey/" + term.toString().split(":")[1];
+        if (isNumbered) {
+            return (
+                <StyledDiv>
+                    {definition_arr.map((meaning, i) => (
+                        <p key={i} style={{marginBottom: 2}}>{meaning}</p>
+                    ))}
+                </StyledDiv>
+            );
+        }
         return (
             <StyledDiv>
                 <p>{definition_arr.join(" ")}</p>
-            </StyledDiv>)
+            </StyledDiv>
+        );
     }
 }
 
@@ -136,11 +196,23 @@ class LinkCellFormatter extends React.Component {
     };
 
     render() {
-        const urlTerm = "/searchkey/" + this.props.value
+        const { value } = this.props;
+        if (Array.isArray(value)) {
+            return (
+                <div>
+                    {value.map(link => (
+                        <span key={link.key} style={{marginRight: 6}}>
+                            <a href={`/searchkey/${link.key}`}>{link.num}</a>
+                        </span>
+                    ))}
+                </div>
+            );
+        }
         return (
             <div>
-                <a href={urlTerm}>Info</a>
-            </div>)
+                <a href={`/searchkey/${value}`}>Info</a>
+            </div>
+        );
     }
 }
 
@@ -216,11 +288,15 @@ class Names extends React.Component {
         let originalRows = new Array();
         let rows = originalRows.slice(0);
 
+        const dismissedAt = localStorage.getItem(BANNER_DISMISS_KEY);
+        const bannerDismissed = dismissedAt && (Date.now() - parseInt(dismissedAt, 10)) < THIRTY_DAYS_MS;
+
         this.state = {
             rows,
             originalRows,
             filters: new Array(),
-            selectedLetter: null
+            selectedLetter: null,
+            bannerDismissed: !!bannerDismissed
         }
     }
 
@@ -234,11 +310,70 @@ class Names extends React.Component {
         fetch('/api/names')
         .then((response) => response.json())
         .then(data => {
+            const deduped = that.deduplicateRows(data);
             that.setState({
-                rows: data,
-                originalRows: data
+                rows: deduped,
+                originalRows: deduped
             })
         })
+    }
+
+    deduplicateRows(data) {
+        const getMeaningText = (row) => {
+            const def = row.definition_arr || [];
+            return def.slice(1).join(" ").replace(/&quot;/g, "'");
+        };
+
+        // Map of groupKey -> { resultIndex, meanings: [{prefix, row}] }
+        const seen = new Map();
+        const result = [];
+
+        data.forEach(row => {
+            const nameKey = (row.english_short || '').toLowerCase().trim();
+            const assyrianKey = (row.east || '').trim();
+            const groupKey = `${nameKey}|||${assyrianKey}`;
+            const meaning = getMeaningText(row);
+            const meaningPrefix = meaning.substring(0, 20);
+
+            if (!seen.has(groupKey)) {
+                seen.set(groupKey, {
+                    resultIndex: result.length,
+                    meanings: [{ prefix: meaningPrefix, row }]
+                });
+                result.push({ ...row });
+            } else {
+                const entry = seen.get(groupKey);
+                const alreadySeen = entry.meanings.some(m => m.prefix === meaningPrefix);
+
+                if (alreadySeen) {
+                    // Exact duplicate — discard
+                    return;
+                }
+
+                // Different meaning — merge into existing row
+                entry.meanings.push({ prefix: meaningPrefix, row });
+                const mergedRow = result[entry.resultIndex];
+                const allMeanings = entry.meanings;
+
+                const header = (mergedRow.definition_arr || [])[0];
+                mergedRow.definition_arr = [
+                    header,
+                    ...allMeanings.map((m, i) => `${i + 1}. ${getMeaningText(m.row)}`)
+                ];
+
+                if (!Array.isArray(mergedRow.searchkeynum)) {
+                    mergedRow.searchkeynum = [
+                        { num: 1, key: allMeanings[0].row.searchkeynum }
+                    ];
+                }
+                mergedRow.searchkeynum.push({
+                    num: allMeanings.length,
+                    key: row.searchkeynum
+                });
+            }
+        });
+
+        return result;
     }
 
     handleFilterChange(filter){
@@ -298,6 +433,30 @@ class Names extends React.Component {
         });
         
         return counts;
+    }
+
+    handleBannerDismiss = () => {
+        localStorage.setItem(BANNER_DISMISS_KEY, Date.now().toString());
+        this.setState({ bannerDismissed: true });
+    }
+
+    renderSupportBanner = () => {
+        if (isSupporterUnlocked() || this.state.bannerDismissed) return null;
+        return (
+            <SupportBanner>
+                <SupportBannerText>
+                    Enjoying Assyrian Names? sargonsays is free because of community contributions.
+                </SupportBannerText>
+                <SupportBannerActions>
+                    <SupportBannerButton href="https://sargonsays.memberful.com/checkout?plan=146420">
+                        &#9825; Keep Assyrian Alive
+                    </SupportBannerButton>
+                    <DismissButton onClick={this.handleBannerDismiss} title="Dismiss for 30 days">
+                        &times;
+                    </DismissButton>
+                </SupportBannerActions>
+            </SupportBanner>
+        );
     }
 
     renderAlphabetFilter = (filteredRows) => {
@@ -360,6 +519,7 @@ class Names extends React.Component {
                         <Col>
                             <GridContainer>
                                 {this.renderAlphabetFilter(alphabetFilteredRows)}
+                                {this.renderSupportBanner()}
                                 <ReactDataGrid
                                     columns={columns}
                                     rowGetter={i => alphabetFilteredRows[i]}

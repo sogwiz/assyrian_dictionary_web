@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { isSupporterUnlocked } from '../../utils/supporter';
 
 class GoogleAd extends Component {
   static propTypes = {
@@ -21,6 +22,7 @@ class GoogleAd extends Component {
   // changed style from string to an object
 
   render() {
+    if (isSupporterUnlocked()) return null;
     return (
       <div style={this.props.wrapperDivStyle} > 
         <ins className="adsbygoogle"  

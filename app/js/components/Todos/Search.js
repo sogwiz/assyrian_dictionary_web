@@ -16,6 +16,7 @@ import ReactTooltip from 'react-tooltip'
 import RelatedSearches from './RelatedSearches'
 import Dropdown from 'react-dropdown';
 import ReactGA from 'react-ga';
+import { isSupporterUnlocked } from '../../utils/supporter';
 // import 'react-dropdown/style.css';
 //import Select from 'react-select';
 
@@ -204,10 +205,10 @@ class Search extends React.Component {
 
     const tooltipSupport = (
       <ReactTooltip id='happyFace' type='info'>
-            <span>Support sargonsays for $2/month</span>
+            <span>Keep Assyrian Alive</span>
             <ul>
-              <li>$2/month contribution</li>
-              <li>Help keep the online dictionary alive!</li>
+              <li>$2.99/month contribution</li>
+              <li>Help preserve the Assyrian language!</li>
               <li>Cancel at any time</li>
             </ul>
           </ReactTooltip>
@@ -248,8 +249,8 @@ class Search extends React.Component {
                 ref={this.textInput}
               />
               <button className='submit search' onClick={this.onSearchFromSearchBar.bind(this)}>Search</button>
-              {tooltipSupport}
-              <a href="https://sargonsays.memberful.com/checkout?plan=23192" data-tip data-for='happyFace'><button>Support sargonsays</button></a>
+              {!isSupporterUnlocked() && tooltipSupport}
+              {!isSupporterUnlocked() && <a href="https://sargonsays.memberful.com/checkout?plan=146420" data-tip data-for='happyFace'><button>&#9825; Keep Assyrian Alive</button></a>}
               <br/><br/>
               <Dropdown options={options} onChange={this.onChangeFont.bind(this)} value={eastfont} placeholder="Select a font" />
               <div className='todos'><DefinitionsList todos={this.state.data} searchTerm={this.state.searchQuery} eastfont={eastfont} westfont={westfont}/></div>
@@ -278,14 +279,14 @@ class Search extends React.Component {
                 ref={this.textInput}
               />
               <button className='submit search' id="btnSearch" onClick={this.onSearchFromSearchBar.bind(this)}>Search</button>
-              {tooltipSupport}
-              <a href="https://sargonsays.memberful.com/checkout?plan=23192" data-tip data-for='happyFace'><button>Support sargonsays</button></a>
+              {!isSupporterUnlocked() && tooltipSupport}
+              {!isSupporterUnlocked() && <a href="https://sargonsays.memberful.com/checkout?plan=146420" data-tip data-for='happyFace'><button>&#9825; Keep Assyrian Alive</button></a>}
             </div>
             <br/>
             <br/>
             <div className='verifyBadge'>
       <Badge notification context='success' data-tip="" data-for="test"><div className="todo-quote">keep the Assyrian language alive</div></Badge>
-      <ReactTooltip place="bottom" class='extraClass' delayHide={500} id='test' html={true} getContent={() => { return this.getQuote() }}/>
+      <ReactTooltip place="bottom" className='extraClass' delayHide={500} delayShow={100} id='test' html={true} event="mouseenter" eventOff="mouseleave" getContent={() => { return this.getQuote() }}/>
       </div>
           
           </div>

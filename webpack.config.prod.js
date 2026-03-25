@@ -3,6 +3,7 @@ var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin')
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 var packager = require('./package.json');
+require('dotenv').config();
 
 module.exports = {
   devtool: 'source-map',
@@ -23,7 +24,7 @@ module.exports = {
     loaders: [{
       test: /\.js$/,
       loaders: ['babel'],
-      include: path.join(__dirname, 'app')
+      include: [path.join(__dirname, 'app'), path.join(__dirname, 'node_modules/@restart/hooks')]
     }, {
       test: /\.less$/,
       loader: ExtractTextPlugin.extract("style-loader", "css-loader!less-loader")
@@ -40,6 +41,15 @@ module.exports = {
     }]
   },
   plugins: [
+    new webpack.DefinePlugin({
+      'process.env': {
+        'NODE_ENV': JSON.stringify('production'),
+        'REACT_PARSE_APP_ID': JSON.stringify(process.env.REACT_PARSE_APP_ID),
+        'REACT_PARSE_JS_KEY': JSON.stringify(process.env.REACT_PARSE_JS_KEY),
+        'REACT_PARSE_SERVER': JSON.stringify(process.env.REACT_PARSE_SERVER),
+        'SUPPORTER_CODE': JSON.stringify(process.env.SUPPORTER_CODE)
+      }
+    }),
     new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.optimize.UglifyJsPlugin({
       compressor: {

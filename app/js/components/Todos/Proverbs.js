@@ -3,6 +3,8 @@ import {Accordion, Button, Card, OverlayTrigger, Popover, Tooltip, Collapse} fro
 import GoogleAd from './GoogleAd.js';
 import { toast } from 'react-toastify';
 import styled from 'styled-components'
+import { isSupporterUnlocked } from '../../utils/supporter';
+import ReactTooltip from 'react-tooltip';
 
 const ProverbsPageContainer = styled.div`
     padding: 40px 20px;
@@ -239,11 +241,7 @@ class Proverbs extends React.Component {
             var donate = "";
             var gad = ""
 
-            if(i%5==0){
-                donate = (
-                    <a href="https://sargonsays.memberful.com/checkout?plan=23192"><Button variant="info">Support sargonsays for $2/month.</Button></a>
-                )
-            }else if(i%6==0){
+            if(i%6==0){
                 gad = (<GoogleAd 
                     client="ca-pub-4439019971526085" 
                     slot="8013892948" 
@@ -305,6 +303,21 @@ class Proverbs extends React.Component {
                     <Accordion defaultActiveKey="">
                         {entries}
                     </Accordion>
+                    {!isSupporterUnlocked() && (
+                        <div style={{textAlign: 'center', padding: '24px 0 8px'}}>
+                            <ReactTooltip id='keepAliveProverbs' type='info'>
+                                <span>Keep Assyrian Alive</span>
+                                <ul>
+                                    <li>$2.99/month contribution</li>
+                                    <li>Help preserve the Assyrian language!</li>
+                                    <li>Cancel at any time</li>
+                                </ul>
+                            </ReactTooltip>
+                            <a href="https://sargonsays.memberful.com/checkout?plan=146420" data-tip data-for='keepAliveProverbs'>
+                                <Button variant="info">&#9825; Keep Assyrian Alive</Button>
+                            </a>
+                        </div>
+                    )}
                 </ProverbsGrid>
             </ProverbsPageContainer>
         );

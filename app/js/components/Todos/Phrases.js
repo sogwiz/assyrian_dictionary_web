@@ -6,6 +6,7 @@ import AudioHelperString from '../util/AudioHelper.js'
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import { toast } from 'react-toastify';
 import styled from 'styled-components'
+import { isSupporterUnlocked } from '../../utils/supporter';
 
 const PhrasesPageContainer = styled.div`
     padding: 40px 20px;
@@ -216,6 +217,58 @@ const CopyButton = styled(Button)`
     }
 `
 
+const SupportBanner = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin: 16px 0 4px 0;
+    font-size: 13px;
+    color: #1e40af;
+    flex-wrap: wrap;
+`
+
+const SupportBannerText = styled.span`
+    flex: 1;
+    min-width: 200px;
+`
+
+const SupportBannerActions = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+`
+
+const SupportBannerButton = styled.a`
+    padding: 5px 14px;
+    background: #2563eb;
+    color: white !important;
+    border-radius: 6px;
+    font-size: 13px;
+    text-decoration: none !important;
+    white-space: nowrap;
+    &:hover { background: #1d4ed8; }
+`
+
+const DismissButton = styled.button`
+    background: none;
+    border: none;
+    color: #93c5fd;
+    font-size: 18px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 2px;
+    &:hover { color: #60a5fa; }
+`
+
+const PHRASES_BANNER_DISMISS_KEY = 'phrasesBannerDismissed';
+const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+
 class LinkCellFormatter extends React.Component {
     static propTypes = {
         //value: React.PropTypes.number.isRequired
@@ -235,11 +288,15 @@ class Phrases extends React.Component {
     constructor(props) {
         super(props);
 
+        const dismissedAt = localStorage.getItem(PHRASES_BANNER_DISMISS_KEY);
+        const bannerDismissed = dismissedAt && (Date.now() - parseInt(dismissedAt, 10)) < THIRTY_DAYS_MS;
+
         this.state = {
             rows: new Array(),
             activeKey: -1,
             value: '',
             copied: false,
+            bannerDismissed: !!bannerDismissed
         };
         this._columns = [
             {
@@ -269,6 +326,11 @@ class Phrases extends React.Component {
     }
     handleSelect(activeKey) {
         this.setState({ activeKey });
+    }
+
+    handleBannerDismiss = () => {
+        localStorage.setItem(PHRASES_BANNER_DISMISS_KEY, Date.now().toString());
+        this.setState({ bannerDismissed: true });
     }
 
     queryPhrases() {
@@ -399,6 +461,21 @@ class Phrases extends React.Component {
                 {<link rel="stylesheet" href="https://bootswatch.com/3/cosmo/bootstrap.min.css" />}
                 <br /><br /><br />
                 <PageTitle>Phrases</PageTitle>
+                {!isSupporterUnlocked() && !this.state.bannerDismissed && (
+                    <SupportBanner>
+                        <SupportBannerText>
+                            Enjoying Phrases? <em>Basima rabba</em> (thanks a lot) for using sargonsays — free because of community contributions.
+                        </SupportBannerText>
+                        <SupportBannerActions>
+                            <a href="https://sargonsays.memberful.com/checkout?plan=146420">
+                                <Button variant="primary" size="sm">&#9825; Keep Assyrian Alive</Button>
+                            </a>
+                            <DismissButton onClick={this.handleBannerDismiss} title="Dismiss for 30 days">
+                                &times;
+                            </DismissButton>
+                        </SupportBannerActions>
+                    </SupportBanner>
+                )}
                 <PhrasesGrid>
                     <Accordion>
                         {entries}

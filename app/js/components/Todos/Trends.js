@@ -11,6 +11,7 @@ import { Accordion, Button, Card, Col, Container, Jumbotron, Popover, Row, Tab, 
 import { TagCloud } from 'react-tagcloud';
 import ReactTooltip from 'react-tooltip'
 import RecentUpdates from './RecentUpdates';
+import { isSupporterUnlocked } from '../../utils/supporter';
 
 //require('./../../../assets/bootstrap/css/bootstrap-iso.css')
 //import './../../../../node_modules/bootstrap/dist/css/bootstrap.min.css';
@@ -360,10 +361,12 @@ class Trends extends React.Component {
                                     <Jumbotron>
                                         <h1>9</h1>
                                         <p>Hero Subscribers</p>
+                                        {!isSupporterUnlocked() && (
                                         <p><OverlayTrigger placement="bottom" overlay={tooltipSubscribe}>
-                                        <a href="https://sargonsays.memberful.com/checkout?plan=23192"><Button bsStyle="success">Support sargonsays for $2/month.</Button></a>
+                                        <a href="https://sargonsays.memberful.com/checkout?plan=146420"><Button bsStyle="success">&#9825; Keep Assyrian Alive</Button></a>
                                         </OverlayTrigger>
                                         </p>
+                                        )}
                                     </Jumbotron>
                                 </Col>
                             </Row>
