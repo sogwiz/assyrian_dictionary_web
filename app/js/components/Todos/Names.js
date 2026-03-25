@@ -3,7 +3,7 @@ import ReactDataGrid from "react-data-grid";
 import { Toolbar, Data, Filters } from "react-data-grid-addons";
 import {Container, Row, Col} from 'react-bootstrap';
 import styled from 'styled-components'
-import { isSupporterUnlocked } from '../../utils/supporter';
+import { isSupporterUnlocked, setupMemberful, CHECKOUT_URL } from '../../utils/supporter';
 
 const StyledDiv = styled.div`
     p {
@@ -301,7 +301,8 @@ class Names extends React.Component {
     }
 
     componentDidMount() {
-        this.queryNames()
+        this.queryNames();
+        setupMemberful();
     }
 
     queryNames(){
@@ -314,7 +315,7 @@ class Names extends React.Component {
             that.setState({
                 rows: deduped,
                 originalRows: deduped
-            })
+            }, setupMemberful)
         })
     }
 
@@ -448,7 +449,7 @@ class Names extends React.Component {
                     Enjoying Assyrian Names? sargonsays is free because of community contributions.
                 </SupportBannerText>
                 <SupportBannerActions>
-                    <SupportBannerButton href="https://sargonsays.memberful.com/checkout?plan=146420">
+                    <SupportBannerButton href={CHECKOUT_URL}>
                         &#9825; Keep Assyrian Alive
                     </SupportBannerButton>
                     <DismissButton onClick={this.handleBannerDismiss} title="Dismiss for 30 days">

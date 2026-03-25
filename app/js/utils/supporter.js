@@ -16,3 +16,13 @@ export const forceUnlockSupporter = () =>
 
 export const resetSupporter = () =>
     localStorage.removeItem(SUPPORTER_KEY);
+
+export const CHECKOUT_URL = 'https://sargonsays.memberful.com/checkout?plan=146420';
+
+// Call in componentDidMount of any page that has a checkout link,
+// so Memberful re-scans after React Router client-side navigation.
+export const setupMemberful = () => {
+    if (window.MemberfulEmbedded) {
+        window.MemberfulEmbedded.setup();
+    }
+};

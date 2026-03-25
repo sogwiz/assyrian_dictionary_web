@@ -2,6 +2,61 @@ import React from 'react'
 import { Container, Row, Col } from 'react-bootstrap'
 import Dropdown from 'react-dropdown'
 import ReactGA from 'react-ga'
+import styled from 'styled-components'
+import { isSupporterUnlocked, setupMemberful, CHECKOUT_URL } from '../utils/supporter';
+
+const SupportBanner = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin: 0 0 16px 0;
+    font-size: 13px;
+    color: #1e40af;
+    flex-wrap: wrap;
+`
+
+const SupportBannerText = styled.span`
+    flex: 1;
+    min-width: 200px;
+`
+
+const SupportBannerActions = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+`
+
+const SupportBannerButton = styled.a`
+    padding: 5px 14px;
+    background: #2563eb;
+    color: white !important;
+    border-radius: 6px;
+    font-size: 13px;
+    text-decoration: none !important;
+    white-space: nowrap;
+    cursor: pointer;
+    &:hover { background: #1d4ed8; }
+`
+
+const DismissButton = styled.button`
+    background: none;
+    border: none;
+    color: #93c5fd;
+    font-size: 18px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 2px;
+    &:hover { color: #60a5fa; }
+`
+
+const ALPHABET_BANNER_DISMISS_KEY = 'alphabetBannerDismissed';
+const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
 
 // Placeholder data structure for Assyrian letters
 // TODO: Replace with actual letter data
@@ -386,10 +441,22 @@ const ASSYRIAN_LETTERS = [
 class Alphabet extends React.Component {
   constructor(props) {
     super(props);
+    const dismissedAt = localStorage.getItem(ALPHABET_BANNER_DISMISS_KEY);
+    const bannerDismissed = dismissedAt && (Date.now() - parseInt(dismissedAt, 10)) < THIRTY_DAYS_MS;
     this.state = {
       selectedLetter: ASSYRIAN_LETTERS[0],
-      eastfont: localStorage.getItem('eastfont') || 'east'
+      eastfont: localStorage.getItem('eastfont') || 'east',
+      bannerDismissed: !!bannerDismissed
     };
+  }
+
+  componentDidMount() {
+    setupMemberful();
+  }
+
+  handleBannerDismiss = () => {
+    localStorage.setItem(ALPHABET_BANNER_DISMISS_KEY, Date.now().toString());
+    this.setState({ bannerDismissed: true });
   }
 
   onChangeFont(option) {
@@ -440,6 +507,21 @@ class Alphabet extends React.Component {
         <link rel="stylesheet" href="https://bootswatch.com/3/cosmo/bootstrap.min.css" />
         
         <Container style={{ padding: '10px', maxWidth: '1400px' }}>
+          {!isSupporterUnlocked() && !this.state.bannerDismissed && (
+            <SupportBanner>
+              <SupportBannerText>
+                Exploring the Assyrian Alphabet? sargonsays is free because of community contributions.
+              </SupportBannerText>
+              <SupportBannerActions>
+                <SupportBannerButton href={CHECKOUT_URL}>
+                  &#9825; Keep Assyrian Alive
+                </SupportBannerButton>
+                <DismissButton onClick={this.handleBannerDismiss} title="Dismiss for 30 days">
+                  &times;
+                </DismissButton>
+              </SupportBannerActions>
+            </SupportBanner>
+          )}
           <div style={{ marginBottom: '5px', textAlign: 'center' }}>
             <h1 className='title' style={{ marginBottom: '6px' }}>Assyrian Alphabet</h1>
           </div>

@@ -92,3 +92,19 @@ docker run --rm -d --name custom-docker-fluent-logger -v $(pwd):/fluentd/log sog
 
 # redis
 docker exec -it container-name redis-cli FLUSHALL
+
+# Developer Notes
+
+## Building and pushing to Docker Hub
+
+Mac (Apple Silicon) builds `arm64` by default. Production runs `amd64`. Always use `buildx` to target the correct platform:
+
+```bash
+# amd64 only (prod)
+docker buildx build --platform linux/amd64 -t sogwiz/sargonsays --push .
+
+# both platforms
+docker buildx build --platform linux/amd64,linux/arm64 -t sogwiz/sargonsays --push .
+```
+
+Pulling a plain `docker build` image on prod will result in `no matching manifest for unknown in the manifest list entries`.

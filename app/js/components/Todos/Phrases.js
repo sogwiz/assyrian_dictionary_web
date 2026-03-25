@@ -6,7 +6,7 @@ import AudioHelperString from '../util/AudioHelper.js'
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import { toast } from 'react-toastify';
 import styled from 'styled-components'
-import { isSupporterUnlocked } from '../../utils/supporter';
+import { isSupporterUnlocked, setupMemberful, CHECKOUT_URL } from '../../utils/supporter';
 
 const PhrasesPageContainer = styled.div`
     padding: 40px 20px;
@@ -324,6 +324,10 @@ class Phrases extends React.Component {
 
         this.queryPhrases();
     }
+    componentDidMount() {
+        setupMemberful();
+    }
+
     handleSelect(activeKey) {
         this.setState({ activeKey });
     }
@@ -341,7 +345,7 @@ class Phrases extends React.Component {
             .then (data => {
                 that.setState({
                     rows: data
-                })
+                }, setupMemberful)
             })
     }
 
@@ -467,7 +471,7 @@ class Phrases extends React.Component {
                             Enjoying Phrases? <em>Basima rabba</em> (thanks a lot) for using sargonsays — free because of community contributions.
                         </SupportBannerText>
                         <SupportBannerActions>
-                            <a href="https://sargonsays.memberful.com/checkout?plan=146420">
+                            <a href={CHECKOUT_URL}>
                                 <Button variant="primary" size="sm">&#9825; Keep Assyrian Alive</Button>
                             </a>
                             <DismissButton onClick={this.handleBannerDismiss} title="Dismiss for 30 days">
