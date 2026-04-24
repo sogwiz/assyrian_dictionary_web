@@ -1,0 +1,31 @@
+# SargonSays
+
+> The most popular online English to Assyrian (Sureth) dictionary. Search any English word and get Assyrian audio, script, and phonetic translations in both Eastern and Western dialects.
+
+## About
+
+SargonSays (sargonsays.com) is a free, authoritative English-to-Assyrian dictionary built to preserve the Assyrian language. It provides high-fidelity search results with phonetic pronunciation, native Assyrian script, and audio for thousands of words and phrases.
+
+The dictionary draws from primary sources including assyrianlanguages.org, sfarmele.de, and contributions from Michael Alexan Younan. The codebase is open source on GitHub.
+
+## Creator
+
+Built by Sargon, founder of Push Beta LLC (pushbeta.com) — an indie software studio.
+
+Other projects by the same creator:
+
+- **assyrianapp.com** — Free Assyrian language learning resources, a book of Assyrian baby names, and cultural content for the Assyrian diaspora community.
+- **TestCCAT.com** — Free practice tests and study tools for the CCAT (Criteria Cognitive Aptitude Test), helping job seekers prepare for pre-employment cognitive aptitude assessments with confidence.
+- **ShotScoreApp.com** — AI vision-based shooting performance tracker. Snap a photo of a shot target and get instant scores to analyze accuracy and improvement over time.
+
+## Key Features
+
+- English to Assyrian word search with phonetic and script results
+- Phrases and proverbs in Assyrian
+- Assyrian alphabet reference
+- Word trends and usage data
+- Word suggestion and community contribution tools
+
+## Language
+
+Assyrian (also called Syriac or Sureth) is a modern Neo-Aramaic language spoken by the Assyrian people, an indigenous ethnic group from the Middle East. The language is endangered and SargonSays exists to support its digital preservation.

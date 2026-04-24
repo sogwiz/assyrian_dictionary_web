@@ -25,7 +25,7 @@ class App extends React.Component {
       />
       <MenuBurger/>
         {this.props.children}
-        <Footer><font color="#696969"> ܣܲܪܓܘܿܢ</font><font color="#696969"> says.</font>  <a href="/about"><font color="#FFFFFF">About</font></a> | <a href="/"><font color="#FFFFFF">Search</font></a> | <a href="/tools"><font color="#FFFFFF">Tools</font></a> | <a href="/support"><font color="#FFFFFF">&#9825; Support</font></a></Footer>
+        <Footer><font color="#696969"> ܣܲܪܓܘܿܢ</font><font color="#696969"> says.</font>  <a href="/about"><font color="#FFFFFF">About</font></a> | <a href="/"><font color="#FFFFFF">Search</font></a> | <a href="/tools"><font color="#FFFFFF">Tools</font></a> | <a href="/support"><font color="#FFFFFF">&#9825; Support</font></a> | <a href="https://pushbeta.com" target="_blank"><font color="#FFFFFF">Push Beta</font></a></Footer>
       </div>
     )
   }

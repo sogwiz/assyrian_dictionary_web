@@ -96,9 +96,6 @@ class About extends React.Component {
         <Container>
           <br/>
         <h1 className='title'>About SargonSays</h1>
-        <h4>Hello, I'm Sargon.</h4> 
-        I wanted an easy to use Assyrian Sureth dictionary with high fidelity search results. Quality is important. To read more about the design technology that powers this dictionary, check out my <a href="http://sogwiz.blogspot.com/2016/12/english-to-assyrian-dictionary.html" target='_blank'>blog post</a>.
-        <br/><br/>
         <Tab.Container id="tabs-with-dropdown" activeKey={this.state.key} onSelect={this.handleSelect.bind(this)}>
     <Row className="clearfix">
       <Col sm={12}>
@@ -134,12 +131,26 @@ class About extends React.Component {
       <Col sm={12}>
         <Tab.Content animation>
           <Tab.Pane eventKey={1} style={divStyleOpacity}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '8px', marginTop: '16px' }}>
+            <img src={require("images/creator.png")} alt="Sargon, creator of SargonSays" style={{ width: '150px', borderRadius: '50%', flexShrink: 0 }} />
+            <h4 style={{ margin: 0 }}>Hello, I'm Sargon.</h4>
+          </div>
+          I wanted an easy to use Assyrian Sureth dictionary with high fidelity search results. Quality is important. To read more about the design technology that powers this dictionary, check out my <a href="http://sogwiz.blogspot.com/2016/12/english-to-assyrian-dictionary.html" target='_blank'>blog post</a>.
+          <br/><br/>
+          <h4>Other projects by the creator</h4>
+          <ul>
+            <li><a href="https://assyrianapp.com" target="_blank">assyrianapp.com</a> — free Assyrian language learning resources and book of baby names.</li>
+            <li><a href="https://shotscoreapp.com" target="_blank">ShotScore</a> — Snap a photo of your shot target and get instant scores. AI vision-based tool to track and analyze shooting performance. </li>
+            <li><a href="https://testccat.com" target="_blank">TestCCAT.com</a> — free practice tests and study tools for the CCAT (Criteria Cognitive Aptitude Test), helping job seekers prepare with confidence.</li>
+          </ul>
+          All built under <a href="https://pushbeta.com" target="_blank">Push Beta LLC</a>, an indie software studio.
+          <br/><br/>
           <h1 className='title'>Phonetic Pronunciation Key</h1>
         Check out the <a href="/alphabet">Alphabet</a> page for more information.
         This modern dictionary replaces certain phonetic spellings that we get from AssyrianLanguages.org
         <ul>
-        <li>ḥ => kh : Example : qam ḥa = qam kha</li>
-        <li>š => sh : Example lé ša = le sha</li>
+        <li>ḥ =&gt; kh : Example : qam ḥa = qam kha</li>
+        <li>š =&gt; sh : Example lé ša = le sha</li>
         <li>šla: ma: ' lu:ḥ = shla ma lookh</li>
         </ul>
         
@@ -170,42 +181,49 @@ class About extends React.Component {
       </Row>
       <Row className="show-grid">
       <Col xs={12} md={8}></Col>
-      <Col xs={6} md={4}>Powered by <a href="http://www.assyrianapp.com" target="_blank">assyrianapp.com</a></Col>
+      <Col xs={6} md={4}>Powered by <a href="http://www.assyrianapp.com" target="_blank">assyrianapp.com</a> &middot; Made by <a href="https://pushbeta.com" target="_blank">Push Beta LLC</a></Col>
       </Row>
         
         </Container>
           </Tab.Pane>
           <Tab.Pane eventKey={2} style={divStyleOpacity}>
-            <Carousel>
-    <Carousel.Item>
-      <img width={900} height={500} alt="900x500" src={require("images/carousel.png")}/>
-      <Carousel.Caption>
-        <h3>Maryam : Shamiram Media</h3>
-        <p>Hi my friend...I wanted to share this moment captured by our camera operator. I am looking up a word on sargonsays.com right before a recording! Thank you for the Assyrian invention of the year, has made my life so much easier..🙏🏼</p>
-      </Carousel.Caption>
-    </Carousel.Item>
-    <Carousel.Item>
-      <img width={900} height={500} alt="900x500" src={require("images/carousel.png")}/>
-      <Carousel.Caption>
-        <h3>Timothy</h3>
-        <p>I was just searching on Google and I came across your website and I really like how you want to keep the language alive.  I am half Assyrian and half German and my wife is Assyrian.  I have been wanting to really learn the language for awhile but my wife doesn't have the greatest patience as a teacher.  I speak broken Assyrian and have been looking around for a long time for something to help me learn a bit on my own and at work.  Have a child on the way and really want our kids to speak the language.  So I stand behind you in keeping this site going to help people like me to keep the language alive.</p>
-      </Carousel.Caption>
-    </Carousel.Item>
-    <Carousel.Item>
-      <img width={900} height={500} alt="900x500" src={require("images/carousel.png")}/>
-      <Carousel.Caption>
-        <h3>Edmon</h3>
-        <p>Seaching for "cash me outside how bah da!"...It didn't work!!! How Bah Dah 😂😂😂</p>
-      </Carousel.Caption>
-    </Carousel.Item>
-    <Carousel.Item>
-      <img width={900} height={500} alt="900x500" src={require("images/carousel.png")}/>
-      <Carousel.Caption>
-        <h3>Suha</h3>
-        <p>I actually used it for my Assyrian homework the other day! Great job! Thank you! :)</p>
-      </Carousel.Caption>
-    </Carousel.Item>
-  </Carousel>
+            <Carousel
+              wrap={true}
+              controls={true}
+              indicators={true}
+              interval={null}
+              prevIcon={<span style={{ fontSize: '36px', color: '#fff', textShadow: '0 1px 4px rgba(0,0,0,0.8)' }} aria-hidden="true">&#8249;</span>}
+              nextIcon={<span style={{ fontSize: '36px', color: '#fff', textShadow: '0 1px 4px rgba(0,0,0,0.8)' }} aria-hidden="true">&#8250;</span>}
+            >
+              <Carousel.Item>
+                <img style={{ width: '100%', maxHeight: '500px', objectFit: 'cover' }} alt="Testimonial from Maryam" src={require("images/anb.png")} />
+                <Carousel.Caption>
+                  <h3>Maryam : Shamiram Media</h3>
+                  <p>Hi my friend...I wanted to share this moment captured by our camera operator. I am looking up a word on sargonsays.com right before a recording! Thank you for the Assyrian invention of the year, has made my life so much easier..🙏🏼</p>
+                </Carousel.Caption>
+              </Carousel.Item>
+              <Carousel.Item>
+                <img style={{ width: '100%', maxHeight: '500px', objectFit: 'cover' }} alt="Testimonial from Timothy" src={require("images/carousel.png")} />
+                <Carousel.Caption>
+                  <h3>Timothy</h3>
+                  <p>I was just searching on Google and I came across your website and I really like how you want to keep the language alive. I am half Assyrian and half German and my wife is Assyrian. I have been wanting to really learn the language for awhile but my wife doesn't have the greatest patience as a teacher. I speak broken Assyrian and have been looking around for a long time for something to help me learn a bit on my own and at work. Have a child on the way and really want our kids to speak the language. So I stand behind you in keeping this site going to help people like me to keep the language alive.</p>
+                </Carousel.Caption>
+              </Carousel.Item>
+              <Carousel.Item>
+                <img style={{ width: '100%', maxHeight: '500px', objectFit: 'cover' }} alt="Testimonial from Edmon" src={require("images/carousel.png")} />
+                <Carousel.Caption>
+                  <h3>Edmon</h3>
+                  <p>Seaching for "cash me outside how bah da!"...It didn't work!!! How Bah Dah 😂😂😂</p>
+                </Carousel.Caption>
+              </Carousel.Item>
+              <Carousel.Item>
+                <img style={{ width: '100%', maxHeight: '500px', objectFit: 'cover' }} alt="Testimonial from Suha" src={require("images/carousel.png")} />
+                <Carousel.Caption>
+                  <h3>Suha</h3>
+                  <p>I actually used it for my Assyrian homework the other day! Great job! Thank you! :)</p>
+                </Carousel.Caption>
+              </Carousel.Item>
+            </Carousel>
           </Tab.Pane>
           <Tab.Pane eventKey={3} style={divStyleOpacity}>
           <Jumbotron>
