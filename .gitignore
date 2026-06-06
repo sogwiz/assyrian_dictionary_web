@@ -15,3 +15,6 @@ bower_components/
 
 .env
 
+
+# Riptide artifacts (cloud-synced)
+.humanlayer/tasks/

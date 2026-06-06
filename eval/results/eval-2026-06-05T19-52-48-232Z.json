@@ -1,0 +1,72 @@
+{
+  "timestamp": "2026-06-05T19:52:48.232Z",
+  "baseUrl": "http://localhost:3001",
+  "judged": false,
+  "overall": {
+    "chrfDefault": 0.5135405729625545,
+    "structPass": "3/3",
+    "judge": null
+  },
+  "cost": {
+    "tokens": 18688,
+    "cost": 0.005976,
+    "latency": 0,
+    "calls": 3
+  },
+  "results": [
+    {
+      "id": "request-want-water-001",
+      "stratum": "request",
+      "reviewed": false,
+      "structPass": true,
+      "structIssues": [],
+      "mustContainPass": true,
+      "chrfDefault": 0.7982776671976411,
+      "chrfMasc": 0.7982776671976411,
+      "chrfFem": 0.8165736945889137,
+      "predicted": "ܐܵܢܵܐ ܒܵܥܹܐ ܫܵܬܹܐ ܡܲܝ̈ܵܐ",
+      "usage": {
+        "promptTokens": 1613,
+        "outputTokens": 478,
+        "totalTokens": 5554,
+        "estCostUsd": 0.001679
+      }
+    },
+    {
+      "id": "greeting-hello-002",
+      "stratum": "greeting",
+      "reviewed": false,
+      "structPass": true,
+      "structIssues": [],
+      "mustContainPass": true,
+      "chrfDefault": 0.324350231224173,
+      "chrfMasc": 0.33134813020089177,
+      "chrfFem": 0.34756906460813897,
+      "predicted": "ܫܠܵܡܵܐ ܠܘܼܟ݂، ܕܲܐܟ݂ܝܼ ܐܲܝܬ݂؟",
+      "usage": {
+        "promptTokens": 1091,
+        "outputTokens": 528,
+        "totalTokens": 6151,
+        "estCostUsd": 0.001647
+      }
+    },
+    {
+      "id": "request-go-outside-003",
+      "stratum": "request",
+      "reviewed": false,
+      "structPass": true,
+      "structIssues": [],
+      "mustContainPass": true,
+      "chrfDefault": 0.4179938204658494,
+      "chrfMasc": null,
+      "chrfFem": null,
+      "predicted": "ܐܵܢܵܐ ܒܵܥܹܝܢ ܕܐܹܙܹܠ ܠܒܲܪ",
+      "usage": {
+        "promptTokens": 1601,
+        "outputTokens": 868,
+        "totalTokens": 6983,
+        "estCostUsd": 0.00265
+      }
+    }
+  ]
+}
