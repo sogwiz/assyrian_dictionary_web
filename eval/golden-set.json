@@ -1,0 +1,62 @@
+{
+  "version": "1.0",
+  "description": "Golden set for the multi-word Assyrian translation endpoint. Each case pairs an English input with a reviewed expected Assyrian translation. Grow toward a few hundred cases, balanced across strata. Mark every reference as native-speaker reviewed before trusting the score as ground truth.",
+  "schema": {
+    "id": "stable unique slug, never reuse",
+    "input": "English text sent to POST /api/translate as { text }",
+    "stratum": "category for per-group scoring: greeting | request | question | statement | tense | negation | gendered | idiom",
+    "reviewed_by": "who verified the expected output (e.g. 'native-speaker:sargon' or 'unreviewed')",
+    "notes": "optional context: grammar feature under test, known ambiguity",
+    "expected": {
+      "default": { "east": "primary correct Syriac script", "phonetic": "optional academic transliteration" },
+      "masculine": { "east": "expected masculine-speaker form (optional)" },
+      "feminine": { "east": "expected feminine-speaker form (optional)" }
+    },
+    "acceptable_alternatives": ["other Syriac strings that are also fully correct — credited if closer than expected.default.east"],
+    "must_contain": ["one or more substrings (key vocabulary glyphs/words) that must ALL appear in the default output (AND semantics); NFC-normalized; whitespace preserved so multi-word entries match literally"]
+  },
+  "cases": [
+    {
+      "id": "request-want-water-001",
+      "input": "I want to drink water",
+      "stratum": "request",
+      "reviewed_by": "unreviewed",
+      "notes": "First-person desire; 'want' conjugates by speaker gender, 'water' is invariant.",
+      "expected": {
+        "default": { "east": "ܐܵܢܵܐ ܟܹܐ ܒܵܥܹܐ ܫܵܬܹܐ ܡܲܝ̈ܵܐ", "phonetic": "a:na: ke: ba:ʕe: ša:te: mayya:" },
+        "masculine": { "east": "ܐܵܢܵܐ ܟܹܐ ܒܵܥܹܐ ܫܵܬܹܐ ܡܲܝ̈ܵܐ" },
+        "feminine": { "east": "ܐܵܢܵܐ ܟܹܐ ܒܵܥܝܵܐ ܫܵܬܝܵܐ ܡܲܝ̈ܵܐ" }
+      },
+      "acceptable_alternatives": [
+        "ܐܵܢܵܐ ܒܵܥܹܝܢܵܐ ܫܵܬܹܝܢ ܡܲܝ̈ܵܐ"
+      ],
+      "must_contain": ["ܡܲܝ̈ܵܐ"]
+    },
+    {
+      "id": "greeting-hello-002",
+      "input": "hello how are you",
+      "stratum": "greeting",
+      "reviewed_by": "unreviewed",
+      "notes": "Common greeting; addressee gender changes the 'you' form.",
+      "expected": {
+        "default": { "east": "ܫܠܵܡܵܐ ܐܲܝܟܵܐ ܝܘܸܬ", "phonetic": "šla:ma: dax iwet" },
+        "masculine": { "east": "ܫܠܵܡܵܐ ܕܵܟ݂ܝ ܝܘܸܬ" },
+        "feminine": { "east": "ܫܠܵܡܵܐ ܕܵܟ݂ܝ ܝܘܵܬܝ" }
+      },
+      "acceptable_alternatives": [],
+      "must_contain": ["ܫܠܵܡܵܐ"]
+    },
+    {
+      "id": "request-go-outside-003",
+      "input": "I want to go outside",
+      "stratum": "request",
+      "reviewed_by": "unreviewed",
+      "notes": "Movement verb; tests 'go' conjugation and 'outside' adverb.",
+      "expected": {
+        "default": { "east": "ܐܵܢܵܐ ܟܹܐ ܒܵܥܹܐ ܐܵܙܹܠ ܠܒܲܕܲܪ", "phonetic": "a:na: ke: ba:ʕe: a:zel l-badar" }
+      },
+      "acceptable_alternatives": [],
+      "must_contain": []
+    }
+  ]
+}

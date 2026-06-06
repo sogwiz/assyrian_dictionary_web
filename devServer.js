@@ -6,8 +6,9 @@ const webpackConfig = require('./webpack.config.dev');
 var MongoClient = require('mongodb').MongoClient
 const compression = require('compression')
 const mailgun = require('./config/mailgun');
-const { emailRateLimiter } = require('./middleware/rateLimit');
-const logger = require('./middleware/logger'); 
+const { emailRateLimiter, translateRateLimiter } = require('./middleware/rateLimit');
+const logger = require('./middleware/logger');
+const llmFactory = require('./lib/llm');
 
 const os = require('os');
 const hostname = os.hostname()
@@ -25,8 +26,49 @@ const redis = require('redis');
 const redisClient = redis.createClient(process.env.REDIS_URL);
 const DURATION_SECONDS_REDIS_DEFAULT = 720000;
 
+// Translation LLM. Provider + model selected via env (LLM_PROVIDER, LLM_MODEL);
+// see lib/llm/index.js. Default: Gemini 2.5 Flash.
+const llm = llmFactory.create();
+logger.info('LLM provider initialized: ' + llm.name + ' / ' + llm.model);
+
+function buildTranslationPrompt(phrase, wordResults, exclude) {
+  var dictionaryContext = wordResults.map(function(wr) {
+    if (!wr.results || wr.results.length === 0) {
+      return 'Word: "' + wr.word + '"\n  (no dictionary entries found)';
+    }
+    var entries = wr.results.map(function(item, idx) {
+      var def = item.definition || {};
+      var east = def.east || '';
+      var phonetic = def.phonetic || '';
+      var english = def.english || def.english_short || '';
+      var partofspeech = def.partofspeech || '';
+      var definitionArr = (def.definition_arr || []).slice(0, 2).join('; ');
+      return '  Entry ' + (idx + 1) + ': east=' + east + ', phonetic=' + phonetic + ', english=' + english + ', pos=' + partofspeech + (definitionArr ? ', definitions=' + definitionArr : '');
+    }).join('\n');
+    return 'Word: "' + wr.word + '"\n' + entries;
+  }).join('\n\n');
+
+  // When regenerating, instruct the model to avoid prior outputs and produce a
+  // genuinely distinct alternative (different word choice, dialect, or phrasing).
+  var exclusionInstruction = '';
+  if (exclude && exclude.length) {
+    exclusionInstruction = '\n\nThe user has already seen the following translation(s) and wants a DIFFERENT alternative. Do NOT repeat any of these — vary the word choice, dialect, register, or phrasing while staying accurate:\n- ' + exclude.join('\n- ') + '\n';
+  }
+
+  var optionsInstruction = (exclude && exclude.length)
+    ? 'Provide exactly 1 fresh translation option that differs from the ones listed above.'
+    : 'Provide 1-2 translation options.';
+
+  return 'You are an expert Assyrian (Syriac/Sureth) language translator. Using the dictionary entries provided below, translate the English phrase into Assyrian. Provide three gender forms for each translation: a default form (the most common or conventional usage when gender is unspecified — typically masculine in Assyrian), plus explicit masculine and feminine forms.\n\nPhrase to translate: "' + phrase + '"\n\nDictionary entries for each word:\n' + dictionaryContext + '\n\nIMPORTANT: The dictionary entries may not include gender markers. Use your knowledge of Assyrian/Syriac grammar to produce correct masculine and feminine verb conjugations. In Eastern Syriac, verbs typically differ between masculine and feminine forms (e.g. masculine ܒܵܥܹܐ vs feminine ܒܵܥܝܵܐ for "want").' + exclusionInstruction + '\n\nRespond with a JSON object in this exact format (no markdown, just raw JSON):\n{\n  "translations": [\n    {\n      "default": {\n        "east": "<Syriac script - default/common form when gender is unspecified>",\n        "phonetic": "<academic transliteration>",\n        "english_phonetic": "<simplified pronunciation guide for English speakers, e.g. ah-nah bah-yeh>"\n      },\n      "masculine": {\n        "east": "<Syriac script - masculine form>",\n        "phonetic": "<academic transliteration>",\n        "english_phonetic": "<simplified pronunciation for English speakers>"\n      },\n      "feminine": {\n        "east": "<Syriac script - feminine form>",\n        "phonetic": "<academic transliteration>",\n        "english_phonetic": "<simplified pronunciation for English speakers>"\n      },\n      "explanation": "<brief explanation of the translation and what differs between the three forms>",\n      "confidence": "<high|medium|low>",\n      "source": "<dictionary-grounded|llm-knowledge>"\n    }\n  ]\n}\n\nUse "dictionary-grounded" as source if the translation is primarily based on the provided dictionary entries, or "llm-knowledge" if you relied on your own knowledge (especially for gender conjugation). ' + optionsInstruction;
+}
 
 var app = express();
+
+// Trust the single nginx reverse proxy in front of us so req.ip reflects the
+// real client IP (from X-Forwarded-For) instead of the nginx container IP.
+// Required for per-IP rate limiting to work correctly. '1' = one proxy hop,
+// which avoids the X-Forwarded-For spoofing risk of a permissive 'true'.
+app.set('trust proxy', 1);
 
 //compress all responses
 app.use(compression())
@@ -584,6 +626,178 @@ app.get('/api/word/related/:searchTerm', function(req, res) {
   })
   // res.send(JSON.stringify({ a: 1 }, null, 3));
 })
+
+var STOP_WORDS = new Set(['a', 'an', 'the', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could', 'should', 'may', 'might', 'must', 'shall', 'can', 'need', 'dare', 'ought', 'used', 'to', 'of', 'in', 'for', 'on', 'with', 'at', 'by', 'from', 'as', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'between', 'under', 'again', 'further', 'then', 'once', 'and', 'but', 'or', 'nor', 'so', 'yet', 'both', 'either', 'neither', 'not', 'only', 'own', 'same', 'than', 'too', 'very', 'just', 'also']);
+var MAX_PHRASE_LENGTH = 500;
+var MAX_WORD_COUNT = 20;
+
+app.post('/api/translate', translateRateLimiter, function(req, res) {
+  res.setHeader('Content-Type', 'application/json');
+
+  const text = req.body && req.body.text;
+  if (!text || typeof text !== 'string' || !text.trim()) {
+    return res.status(400).send(JSON.stringify({ error: 'text is required' }));
+  }
+
+  if (text.length > MAX_PHRASE_LENGTH) {
+    return res.status(400).send(JSON.stringify({ error: 'text too long (max ' + MAX_PHRASE_LENGTH + ' characters)' }));
+  }
+
+  const words = text.split(/\s+/).map(function(w) { return w.toLowerCase().trim(); }).filter(Boolean);
+
+  if (words.length === 0) {
+    return res.status(400).send(JSON.stringify({ error: 'text contains no words' }));
+  }
+
+  if (words.length > MAX_WORD_COUNT) {
+    return res.status(400).send(JSON.stringify({ error: 'text has too many words (max ' + MAX_WORD_COUNT + ')' }));
+  }
+
+  // Optional regeneration controls: prior outputs to avoid + a flag that raises
+  // temperature so "Show another" yields a genuinely different alternative.
+  var exclude = [];
+  if (req.body && Array.isArray(req.body.exclude)) {
+    exclude = req.body.exclude
+      .filter(function(s) { return typeof s === 'string' && s.trim(); })
+      .slice(0, 8); // cap so the prompt stays bounded
+  }
+  var isVariant = !!(req.body && req.body.variant) || exclude.length > 0;
+
+  // Cache key: v1 prefix + normalized phrase (lowercase, collapsed whitespace)
+  var normalizedPhrase = text.toLowerCase().replace(/\s+/g, ' ').trim();
+  var cacheKey = 'v1:translate/' + normalizedPhrase;
+
+  // Variant requests bypass cache — they need fresh LLM output
+  if (!isVariant) {
+    redisClient.get(cacheKey, function(err, cached) {
+      if (!err && cached) {
+        try {
+          var cachedResponse = JSON.parse(cached);
+          logger.info('TRANSLATE_COST ' + JSON.stringify({
+            provider: llm.name,
+            model: llm.model,
+            words: words.length,
+            lookupWords: 0,
+            promptTokens: 0,
+            outputTokens: 0,
+            thoughtTokens: 0,
+            totalTokens: 0,
+            estCostUsd: 0,
+            latencyMs: 0,
+            variant: false,
+            cached: true
+          }));
+          return res.send(cachedResponse);
+        } catch (parseErr) {
+          // Cache corrupted, fall through to fresh fetch
+        }
+      }
+      executeTranslation();
+    });
+  } else {
+    executeTranslation();
+  }
+
+  function executeTranslation() {
+    var lookupWords = words.filter(function(w) { return !STOP_WORDS.has(w); });
+
+    app.locals.db.collection('DictionaryWordDefinitionList').aggregate([
+    { $match: { word: { $in: lookupWords } } },
+    { $sort: { boost: -1 } },
+    {
+      $lookup: {
+        from: 'DictionaryDefinition',
+        localField: 'dictionary_definition',
+        foreignField: '_id',
+        as: 'definition'
+      }
+    },
+    { $unwind: '$definition' }
+  ]).toArray(function(err, result) {
+    if (err) {
+      logger.info('error fetching translate results ' + err);
+      return res.status(500).send(JSON.stringify({ error: 'database error' }));
+    }
+
+    // Group results by word, keeping top 3 per word (only for non-stop-words)
+    var wordMap = {};
+    lookupWords.forEach(function(w) { wordMap[w] = []; });
+
+    (result || []).forEach(function(item) {
+      var w = item.word;
+      if (wordMap[w] && wordMap[w].length < 3) {
+        wordMap[w].push(item);
+      }
+    });
+
+    var wordResults = lookupWords.map(function(w) {
+      return { word: w, results: wordMap[w] };
+    });
+
+    // Call the configured LLM with the dictionary-grounded prompt. Variants
+    // run hotter so the alternative meaningfully differs from what the user
+    // already saw.
+    var prompt = buildTranslationPrompt(text, wordResults, exclude);
+    var startedAt = Date.now();
+    llm.generate({ prompt: prompt, temperature: isVariant ? 0.95 : 0.6 }).then(function(llmResponse) {
+      var translations = [];
+      try {
+        var rawText = llmResponse.text || '';
+        var jsonMatch = rawText.match(/\{[\s\S]*\}/);
+        var jsonStr = jsonMatch ? jsonMatch[0] : rawText;
+        var parsed = JSON.parse(jsonStr);
+        translations = parsed.translations || [];
+      } catch (parseErr) {
+        logger.info('error parsing LLM response: ' + parseErr);
+      }
+
+      // --- Cost accounting: log per-request token usage + estimated cost ---
+      var usage = llmResponse.usage || {};
+      var cost = llmResponse.cost || { totalUsd: 0 };
+      logger.info('TRANSLATE_COST ' + JSON.stringify({
+        provider: llm.name,
+        model: llm.model,
+        words: words.length,
+        lookupWords: lookupWords.length,
+        promptTokens: usage.promptTokens || 0,
+        outputTokens: usage.outputTokens || 0,
+        thoughtTokens: usage.thoughtTokens || 0,
+        totalTokens: usage.totalTokens || 0,
+        estCostUsd: Number(cost.totalUsd.toFixed(6)),
+        latencyMs: Date.now() - startedAt,
+        variant: isVariant,
+        cached: false
+      }));
+
+      var response = {
+        text: text,
+        translations: translations,
+        wordResults: wordResults,
+        usage: {
+          provider: llm.name,
+          model: llm.model,
+          promptTokens: usage.promptTokens || 0,
+          outputTokens: usage.outputTokens || 0,
+          thoughtTokens: usage.thoughtTokens || 0,
+          totalTokens: usage.totalTokens || 0,
+          estCostUsd: Number(cost.totalUsd.toFixed(6))
+        }
+      };
+
+      // Cache successful base translations (not variants, not errors)
+      if (!isVariant && translations.length > 0) {
+        redisClient.set(cacheKey, JSON.stringify(response), 'EX', DURATION_SECONDS_REDIS_DEFAULT);
+      }
+
+      res.send(response);
+    }).catch(function(llmErr) {
+      console.error('LLM call failed:', llmErr);
+      logger.info('LLM call failed: ' + (llmErr.message || llmErr));
+      res.send({ text: text, translations: [], wordResults: wordResults, error: 'Translation unavailable' });
+    });
+  });
+  } // end executeTranslation
+});
 
 app.get('*', function(req, res) {
   res.sendFile(path.join(__dirname, 'index.html'));

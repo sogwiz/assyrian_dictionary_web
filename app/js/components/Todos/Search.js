@@ -7,6 +7,14 @@ mixins: [ParseReact.Mixin]
 import Autosuggest from 'react-autosuggest';
 import _ from 'lodash'
 import DefinitionsList from './DefinitionsList'
+import TranslationResult from './TranslationResult'
+import TranslationLoader from './TranslationLoader'
+import TranslationTip from './TranslationTip'
+import WordBreakdown from './WordBreakdown'
+
+// Mirrors STOP_WORDS in devServer.js so the early per-word breakdown we render
+// while the LLM is in flight matches what the backend ultimately returns.
+const STOP_WORDS = new Set(['a','an','the','is','are','was','were','be','been','being','have','has','had','do','does','did','will','would','could','should','may','might','must','shall','can','need','dare','ought','used','to','of','in','for','on','with','at','by','from','as','into','through','during','before','after','above','below','between','under','again','further','then','once','and','but','or','nor','so','yet','both','either','neither','not','only','own','same','than','too','very','just','also']);
 import TodoDetail from './TodoDetail'
 import SearchTerm from './SearchTerm'
 import Doodle from './widgets/Doodle'
@@ -71,6 +79,12 @@ class Search extends React.Component {
       suggestions: [],
       isLoading: false,
       isSearching: false,
+      isTranslating: false,
+      isLlmLoading: false,
+      translationResult: null,
+      phraseMatch: null,
+      wordBreakdown: null,
+      translationText: '',
       data: [],
       searchQuery: '',
       eastfont: localStorage.getItem('eastfont') || 'east',
@@ -187,6 +201,59 @@ class Search extends React.Component {
   };
 
 
+  // Searches for these terms signal intent to translate a phrase — surface the
+  // feature via a tip on the dictionary results.
+  isTranslateQuery() {
+    var q = (this.state.searchQuery || '').toLowerCase().trim();
+    return ['translate', 'translator', 'translation', 'translations', 'translating'].indexOf(q) !== -1;
+  }
+
+  onTryTranslationExample = (example) => {
+    this.setState({ value: example });
+    this.onSearch(example);
+  };
+
+  renderResults(eastfont, westfont) {
+    // If we have either a dictionary phrase match or an LLM translation, render
+    // the result component — even if the LLM call is still in flight. The phrase
+    // match (when present) gives the user an authoritative answer immediately
+    // while the LLM fills in below.
+    if (this.state.translationResult || this.state.phraseMatch) {
+      return (
+        <TranslationResult
+          result={this.state.translationResult || { text: this.state.translationText, translations: [], wordResults: this.state.wordBreakdown || [] }}
+          phraseMatch={this.state.phraseMatch}
+          isLlmLoading={this.state.isLlmLoading}
+          eastfont={eastfont}
+        />
+      );
+    }
+    // While the LLM is loading and we have nothing else yet, show the animated
+    // loader followed by the per-word breakdown (streaming in as each lookup
+    // returns) so the user has something to read instead of just a spinner.
+    if (this.state.isTranslating) {
+      return (
+        <div>
+          <TranslationLoader text={this.state.translationText} />
+          <WordBreakdown wordResults={this.state.wordBreakdown || []} eastfont={eastfont} />
+        </div>
+      );
+    }
+    return (
+      <div>
+        {this.isTranslateQuery() && (
+          <TranslationTip searchTerm={this.state.searchQuery} onTry={this.onTryTranslationExample} />
+        )}
+        <DefinitionsList
+          todos={this.state.data}
+          searchTerm={this.state.searchQuery}
+          eastfont={eastfont}
+          westfont={westfont}
+        />
+      </div>
+    );
+  }
+
   render() {
     const { value, suggestions } = this.state;
     // Autosuggest will pass through all these props to the input element.
@@ -225,7 +292,7 @@ class Search extends React.Component {
     }
       
     ];
-    if ( (this.state.data && this.state.data.length > 0)||(this.props.params.searchTerm) ) {
+    if ( (this.state.data && this.state.data.length > 0)||(this.props.params.searchTerm)||this.state.isTranslating||this.state.translationResult||this.state.phraseMatch ) {
 
       return (
 
@@ -253,7 +320,7 @@ class Search extends React.Component {
               {!isSupporterUnlocked() && <a href="https://sargonsays.memberful.com/checkout?plan=146420" data-tip data-for='happyFace'><button>&#9825; Keep Assyrian Alive</button></a>}
               <br/><br/>
               <Dropdown options={options} onChange={this.onChangeFont.bind(this)} value={eastfont} placeholder="Select a font" />
-              <div className='todos'><DefinitionsList todos={this.state.data} searchTerm={this.state.searchQuery} eastfont={eastfont} westfont={westfont}/></div>
+              <div className='todos'>{this.renderResults(eastfont, westfont)}</div>
             </div>
           </div>
         </div>
@@ -364,6 +431,14 @@ class Search extends React.Component {
 
     const that = this;
 
+    // Branch: 4+ word inputs go to the LLM translation flow, shorter ones
+    // use the existing single-word dictionary search.
+    const wordCount = input.trim().split(/\s+/).filter(Boolean).length;
+    if (wordCount > 3) {
+      this.runTranslation(input);
+      return;
+    }
+
     console.log('query word ' + input)
     Parse.Cloud.run('searchStats', { word: input.toLowerCase().trim() });
     /*
@@ -379,13 +454,18 @@ class Search extends React.Component {
                  .then (results => {
                      that.setState({
                       isSearching: false,
+                      isTranslating: false,
+                      isLlmLoading: false,
+                      translationResult: null,
+                      phraseMatch: null,
+                      wordBreakdown: null,
                       searchQuery : input,
 
                        data: [...new Set(results.map(item => item))],
                      })
                  })
-                 .catch(error => this.setState({ error:true, 
-                  errorObj:error, 
+                 .catch(error => this.setState({ error:true,
+                  errorObj:error,
                   isSearching: false,
                   data: []
                  }));
@@ -412,6 +492,122 @@ class Search extends React.Component {
       }
     })
     */
+  }
+
+  runTranslation(input) {
+    const that = this;
+
+    // Pre-compute the lookup words so we can render placeholder slots in the
+    // word-by-word breakdown immediately (each filled in as its fetch returns).
+    const allWords = input.trim().split(/\s+/).map(function(w) { return w.toLowerCase(); }).filter(Boolean);
+    const lookupWords = allWords.filter(function(w) { return !STOP_WORDS.has(w); });
+    const initialBreakdown = lookupWords.map(function(w) {
+      return { word: w, results: [], loading: true };
+    });
+
+    // Start with the animated loader; both fetches below clear it as soon as
+    // either one returns a result the user can read.
+    this.setState({
+      isTranslating: true,
+      isLlmLoading: true,
+      translationResult: null,
+      phraseMatch: null,
+      wordBreakdown: initialBreakdown,
+      translationText: input,
+      data: [],
+      searchQuery: input
+    });
+
+    var wordCount = input.trim().split(/\s+/).filter(Boolean).length;
+    ReactGA.event({
+      category: 'Translation',
+      action: 'translate',
+      label: input,
+      value: wordCount
+    });
+
+    // Per-word dictionary lookups stream in alongside the LLM call so the user
+    // sees the word-by-word breakdown almost immediately (these endpoints are
+    // Redis-cached, so common words return in tens of ms). When the LLM call
+    // completes it replaces this with its own wordResults of the same shape.
+    lookupWords.forEach(function(word, idx) {
+      fetch('/api/word/search/' + encodeURIComponent(word))
+        .then(function(r) { return r.json(); })
+        .then(function(results) {
+          var slice = Array.isArray(results) ? results.slice(0, 3) : [];
+          that.setState(function(prev) {
+            if (prev.translationText !== input) return null; // search changed
+            if (!prev.wordBreakdown) return null;
+            var updated = prev.wordBreakdown.slice();
+            updated[idx] = { word: word, results: slice, loading: false };
+            return { wordBreakdown: updated };
+          });
+        })
+        .catch(function() {
+          that.setState(function(prev) {
+            if (prev.translationText !== input) return null;
+            if (!prev.wordBreakdown) return null;
+            var updated = prev.wordBreakdown.slice();
+            updated[idx] = { word: word, results: [], loading: false };
+            return { wordBreakdown: updated };
+          });
+        });
+    });
+
+    // Dictionary phrase lookup runs in parallel with the LLM call. Most phrases
+    // won't match (only ~a handful of curated entries like "water under the
+    // bridge"), but when they do we want to surface the authoritative result
+    // immediately instead of making the user wait for the LLM.
+    fetch('/api/word/search/' + encodeURIComponent(input.toLowerCase().trim()))
+      .then((response) => response.json())
+      .then((results) => {
+        if (Array.isArray(results) && results.length > 0) {
+          ReactGA.event({ category: 'Translation', action: 'phrase_match', label: input, value: results.length });
+          that.setState({
+            phraseMatch: results,
+            isTranslating: false // exit full loader; result is already useful
+          });
+        }
+      })
+      .catch(() => { /* silent — LLM path is still in flight */ });
+
+    fetch('/api/translate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: input })
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        // Track outcome so we can see the success/failure funnel in GA.
+        if (result && result.error) {
+          ReactGA.event({ category: 'Translation', action: 'translate_error', label: input });
+        } else {
+          ReactGA.event({
+            category: 'Translation',
+            action: 'translate_success',
+            label: input,
+            value: (result && result.translations) ? result.translations.length : 0
+          });
+        }
+        that.setState({
+          isTranslating: false,
+          isLlmLoading: false,
+          translationResult: result
+        });
+      })
+      .catch((error) => {
+        ReactGA.event({ category: 'Translation', action: 'translate_error', label: input });
+        that.setState({
+          isTranslating: false,
+          isLlmLoading: false,
+          translationResult: {
+            text: input,
+            translations: [],
+            wordResults: [],
+            error: 'Translation unavailable'
+          }
+        });
+      });
   }
 
 

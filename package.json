@@ -42,6 +42,9 @@
     "webpack-hot-middleware": "^2.12.2"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.1",
+    "@google/generative-ai": "^0.21.0",
+    "openai": "^4.77.0",
     "babel-core": "^6.7.7",
     "babel-eslint": "^6.0.4",
     "babel-loader": "^6.2.4",
@@ -107,7 +110,7 @@
     "winston-daily-rotate-file": "3.10.0"
   },
   "engines": {
-    "node": "14.20.0"
+    "node": ">=18.0.0"
   },
   "scripts": {
     "clean": "rimraf dist",

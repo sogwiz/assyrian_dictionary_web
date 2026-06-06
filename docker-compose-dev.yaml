@@ -31,7 +31,7 @@ services:
 
   web:
     restart: "no"
-    image: node:14
+    image: node:18
     volumes:
         - ./:/usr/src/app
     working_dir: /usr/src/app
@@ -45,6 +45,12 @@ services:
       - REACT_PARSE_SERVER=REACT_PARSE_SERVER
       - REDIS_URL=redis://cache
       - VIRTUAL_HOST=assyrian.local
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      # Switch the translation LLM without changing code. Defaults: gemini / gemini-2.5-flash.
+      - LLM_PROVIDER=${LLM_PROVIDER:-gemini}
+      - LLM_MODEL=${LLM_MODEL:-}
     links:
       - mongodb
       - redis
@@ -52,7 +58,7 @@ services:
       - "3001"
     networks:
       - proxy-tier
-    command: bash -c "npm install && npx tsc && npm run start"
+    command: bash -c "npm install --legacy-peer-deps && npx tsc && npm run start"
 
   nginx:
     image: nginx:alpine
